@@ -12,7 +12,7 @@ BIN_DIR = ./bin
 
 .PHONY:fmt
 fmt:
-	$(GOCMD) fmt $(ALL_FILES)
+	$(GOCMD) fmt -l -w $(ALL_FILES)
 
 .PHONY:lint
 lint: fmt

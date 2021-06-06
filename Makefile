@@ -36,7 +36,7 @@ test:
 .PHONY:clean
 clean:
 	$(GOCMD) clean
-	rm -f ./$(BINARY_LINUX)
+	rm -f ./bin/*
 
 .PHONY:deps
 deps:

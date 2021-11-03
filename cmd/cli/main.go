@@ -20,25 +20,33 @@ const (
 	githubHost = "github.com"
 )
 
-func getLocation() location {
-	org := flag.String("org", "", "GitHub organisation, e.g. agrski")
-	repo := flag.String("repo", "", "GitHub repository, e.g. gitfind")
+var (
+	orgFlag string
+	repoFlag string
+)
 
-	if isEmpty(org) {
+func parseArguments() {
+	flag.StringVar(&orgFlag, "org", "", "GitHub organisation, e.g. agrski")
+	flag.StringVar(&repoFlag, "repo", "", "GitHub repository, e.g. gitfind")
+	flag.Parse()
+}
+
+func getLocation() location {
+	if isEmpty(orgFlag) {
 		fmt.Errorf("org must be specified")
 	}
-	if isEmpty(repo) {
+	if isEmpty(repoFlag) {
 		fmt.Errorf("repo must be specified")
 	}
 
 	return location{
-		organisationName(*org),
-		repositoryName(*repo),
+		organisationName(orgFlag),
+		repositoryName(repoFlag),
 	}
 }
 
-func isEmpty(s *string) bool {
-	return s == nil	|| strings.TrimSpace(*s) == ""
+func isEmpty(s string) bool {
+	return "" == strings.TrimSpace(s)
 }
 
 func makeURI(l location) url.URL {
@@ -50,6 +58,7 @@ func makeURI(l location) url.URL {
 }
 
 func main() {
+	parseArguments()
 	l := getLocation()
 	u := makeURI(l)
 	fmt.Printf("Retrieving files from %s", u.String())

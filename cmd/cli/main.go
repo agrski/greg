@@ -24,12 +24,16 @@ const (
 var (
 	orgFlag string
 	repoFlag string
+	pattern  string
 )
 
 func parseArguments() {
 	flag.StringVar(&orgFlag, "org", "", "GitHub organisation, e.g. agrski")
 	flag.StringVar(&repoFlag, "repo", "", "GitHub repository, e.g. gitfind")
 	flag.Parse()
+	if 1 == flag.NArg() {
+		pattern = flag.Arg(0)
+	}
 }
 
 func getLocation() location {
@@ -44,6 +48,13 @@ func getLocation() location {
 		organisationName(orgFlag),
 		repositoryName(repoFlag),
 	}
+}
+
+func getSearchPattern() string {
+	if isEmpty(pattern) {
+		log.Fatal("search term must be specified; wrap multiple words in quotes")
+	}
+	return pattern
 }
 
 func isEmpty(s string) bool {

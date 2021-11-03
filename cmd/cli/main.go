@@ -73,5 +73,7 @@ func main() {
 	parseArguments()
 	l := getLocation()
 	u := makeURI(l)
-	fmt.Printf("Retrieving files from %s", u.String())
+	p := getSearchPattern()
+
+	fmt.Printf("Searching for %s in %s", p, u.String())
 }

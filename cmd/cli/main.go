@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"net/url"
 	"strings"
 )
@@ -33,10 +34,10 @@ func parseArguments() {
 
 func getLocation() location {
 	if isEmpty(orgFlag) {
-		fmt.Errorf("org must be specified")
+		log.Fatal("org must be specified")
 	}
 	if isEmpty(repoFlag) {
-		fmt.Errorf("repo must be specified")
+		log.Fatal("repo must be specified")
 	}
 
 	return location{

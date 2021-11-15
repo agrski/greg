@@ -27,7 +27,7 @@ const (
 )
 
 var (
-	orgFlag string
+	orgFlag  string
 	repoFlag string
 	pattern  string
 )
@@ -69,8 +69,8 @@ func isEmpty(s string) bool {
 func makeURI(l location) url.URL {
 	return url.URL{
 		Scheme: httpScheme,
-		Host: githubHost,
-		Path: fmt.Sprintf("%s/%s", l.organisation, l.repository),
+		Host:   githubHost,
+		Path:   fmt.Sprintf("%s/%s", l.organisation, l.repository),
 	}
 }
 

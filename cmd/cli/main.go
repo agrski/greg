@@ -29,12 +29,19 @@ const (
 var (
 	orgFlag  string
 	repoFlag string
+	urlFlag  string
 	pattern  string
 )
 
 func parseArguments() {
 	flag.StringVar(&orgFlag, "org", "", "GitHub organisation, e.g. agrski")
 	flag.StringVar(&repoFlag, "repo", "", "GitHub repository, e.g. gitfind")
+	flag.StringVar(
+		&urlFlag,
+		"url",
+		"",
+		"Full URL of GitHub repository, e.g https://github.com/agrski/gitfind",
+	)
 	flag.Parse()
 	if 1 == flag.NArg() {
 		pattern = flag.Arg(0)
@@ -42,16 +49,36 @@ func parseArguments() {
 }
 
 func getLocation() location {
-	if isEmpty(orgFlag) {
-		log.Fatal("org must be specified")
+	if isEmpty(urlFlag) && (isEmpty(orgFlag) || isEmpty(repoFlag)) {
+		log.Fatal("must specify either url or both org and repo")
 	}
-	if isEmpty(repoFlag) {
-		log.Fatal("repo must be specified")
+
+	if isEmpty(urlFlag) {
+		return location{
+			organisationName(orgFlag),
+			repositoryName(repoFlag),
+		}
+	}
+
+	return parseLocationFromUrl(urlFlag)
+}
+
+func parseLocationFromUrl(u string) location {
+	u, err := url.Parse(urlFlag)
+	if err != nil {
+		log.Fatal("unable to parse URL", err)
+	}
+
+	p := u.Path
+	p := strings.TrimPrefix(p, "/")
+	orgAndRepo := strings.SplitN(p, "/", 3)
+	if len(orgAndRepo) < 2 || isEmpty(orgAndRepo[0]) || isEmpty(orgAndRepo[1]) {
+		log.Fatalf("unable to extract both org and repo from %s", u)
 	}
 
 	return location{
-		organisationName(orgFlag),
-		repositoryName(repoFlag),
+		organisationName(orgAndRepo[0]),
+		repositoryName(orgAndRepo[1]),
 	}
 }
 

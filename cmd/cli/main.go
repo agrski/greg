@@ -9,7 +9,6 @@ import (
 )
 
 // TODO
-//  - add support for parsing URL pasted in
 // 	- add tests for functionality here
 // 	- add support for (multiple) file types/suffixes
 

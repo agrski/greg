@@ -69,7 +69,7 @@ func parseLocationFromUrl(rawUrl string) location {
 	}
 
 	p := u.Path
-	p := strings.TrimPrefix(p, "/")
+	p = strings.TrimPrefix(p, "/")
 	orgAndRepo := strings.SplitN(p, "/", 3)
 	if len(orgAndRepo) < 2 || isEmpty(orgAndRepo[0]) || isEmpty(orgAndRepo[1]) {
 		log.Fatalf("unable to extract both org and repo from %s", u)

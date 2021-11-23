@@ -62,8 +62,8 @@ func getLocation() location {
 	return parseLocationFromUrl(urlFlag)
 }
 
-func parseLocationFromUrl(u string) location {
-	u, err := url.Parse(urlFlag)
+func parseLocationFromUrl(rawUrl string) location {
+	u, err := url.Parse(rawUrl)
 	if err != nil {
 		log.Fatal("unable to parse URL", err)
 	}

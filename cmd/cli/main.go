@@ -10,7 +10,6 @@ import (
 
 // TODO
 // 	- add tests for functionality here
-// 	- add support for (multiple) file types/suffixes
 
 type organisationName string
 type repositoryName string
@@ -29,6 +28,7 @@ var (
 	orgFlag  string
 	repoFlag string
 	urlFlag  string
+	filetypeFlag string
 	pattern  string
 )
 
@@ -41,6 +41,7 @@ func parseArguments() {
 		"",
 		"Full URL of GitHub repository, e.g https://github.com/agrski/gitfind",
 	)
+	flag.StringVar(&filetypeFlag, "type", "", "filetype suffix, e.g. md or go")
 	flag.Parse()
 	if 1 == flag.NArg() {
 		pattern = flag.Arg(0)
@@ -79,6 +80,15 @@ func parseLocationFromUrl(rawUrl string) location {
 		organisationName(orgAndRepo[0]),
 		repositoryName(orgAndRepo[1]),
 	}
+}
+
+func getFiletypes() []string {
+	suffixes := strings.Split(filetypeFlag, ",")
+	withoutDots := make([]string, len(suffixes))
+	for _, s := range suffixes {
+		withoutDots = append(withoutDots, strings.TrimPrefix(s, "."))
+	}
+	return withoutDots
 }
 
 func getSearchPattern() string {

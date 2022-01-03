@@ -83,6 +83,10 @@ func parseLocationFromUrl(rawUrl string) location {
 }
 
 func getFiletypes() []string {
+	if isEmpty(filetypeFlag) {
+		return nil
+	}
+
 	suffixes := strings.Split(filetypeFlag, ",")
 	withoutDots := make([]string, len(suffixes))
 	for _, s := range suffixes {

@@ -11,7 +11,7 @@ func Test_getFiletypes(t *testing.T) {
 		name string
 		want []string
 	}{
-		// TODO: Add test cases.
+		{name: "no filetypes succeeds with nil", want: nil},
 	}
 	for _, tt := range tests {
 		t.Run(

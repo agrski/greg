@@ -75,17 +75,39 @@ func Test_getLocation(t *testing.T) {
 }
 
 func Test_getSearchPattern(t *testing.T) {
+	type args struct {
+		p string
+	}
 	tests := []struct {
 		name string
+		args args
 		want string
+		err  bool
 	}{
-		// TODO: Add test cases.
+		{
+			name: "should return pattern when provided",
+			args: args{p: "hello"},
+			want: "hello",
+			err:  false,
+		},
+		{
+			name: "should fail when pattern is not provided",
+			args: args{p: ""},
+			want: "",
+			err:  true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				if got := getSearchPattern(); got != tt.want {
-					t.Errorf("getSearchPattern() = %v, want %v", got, tt.want)
+				pattern = tt.args.p
+
+				got, err := getSearchPattern()
+				if tt.err != (err != nil) {
+					t.Errorf("getSearchPattern() = \"'%v', %v\", want \"'%v', %v\"", got, err, tt.want, tt.err)
+				}
+				if got != tt.want {
+					t.Errorf("getSearchPattern() = \"'%v', %v\", want \"'%v', %v\"", got, err, tt.want, tt.err)
 				}
 			},
 		)

@@ -1,10 +1,12 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"log"
 	"net/url"
+	"os"
 	"strings"
 )
 
@@ -98,11 +100,11 @@ func getFiletypes() []string {
 	return suffixes
 }
 
-func getSearchPattern() string {
+func getSearchPattern() (string, error) {
 	if isEmpty(pattern) {
-		log.Fatal("search term must be specified; wrap multiple words in quotes")
+		return "", errors.New("search term must be specified; wrap multiple words in quotes")
 	}
-	return pattern
+	return pattern, nil
 }
 
 func isEmpty(s string) bool {
@@ -121,7 +123,11 @@ func main() {
 	parseArguments()
 	l := getLocation()
 	u := makeURI(l)
-	p := getSearchPattern()
+	p, err := getSearchPattern()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
 	fmt.Printf("Searching for %s in %s", p, u.String())
 }

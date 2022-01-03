@@ -25,11 +25,11 @@ const (
 )
 
 var (
-	orgFlag  string
-	repoFlag string
-	urlFlag  string
+	orgFlag      string
+	repoFlag     string
+	urlFlag      string
 	filetypeFlag string
-	pattern  string
+	pattern      string
 )
 
 func parseArguments() {

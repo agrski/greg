@@ -136,9 +136,9 @@ func Test_makeURI(t *testing.T) {
 	}
 }
 
-func Test_parseLocationFromUrl(t *testing.T) {
+func Test_parseLocationFromURL(t *testing.T) {
 	type args struct {
-		rawUrl string
+		rawURL string
 	}
 	tests := []struct {
 		name string
@@ -150,8 +150,8 @@ func Test_parseLocationFromUrl(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				if got := parseLocationFromUrl(tt.args.rawUrl); !reflect.DeepEqual(got, tt.want) {
-					t.Errorf("parseLocationFromUrl() = %v, want %v", got, tt.want)
+				if got := parseLocationFromURL(tt.args.rawURL); !reflect.DeepEqual(got, tt.want) {
+					t.Errorf("parseLocationFromURL() = %v, want %v", got, tt.want)
 				}
 			},
 		)

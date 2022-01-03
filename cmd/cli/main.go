@@ -89,13 +89,13 @@ func getFiletypes() []string {
 
 	suffixes := strings.Split(filetypeFlag, ",")
 	for idx, s := range suffixes {
-		suffixes[idx] = strings.TrimSpace(s)
+		withoutWhitespace := strings.TrimSpace(s)
+		withoutLeadingDot := strings.TrimPrefix(withoutWhitespace, ".")
+
+		suffixes[idx] = withoutLeadingDot
 	}
-	withoutDots := make([]string, len(suffixes))
-	for idx, s := range suffixes {
-		withoutDots[idx] = strings.TrimPrefix(s, ".")
-	}
-	return withoutDots
+
+	return suffixes
 }
 
 func getSearchPattern() string {

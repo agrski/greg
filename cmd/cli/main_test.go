@@ -101,7 +101,36 @@ func Test_isEmpty(t *testing.T) {
 		args args
 		want bool
 	}{
-		// TODO: Add test cases.
+		{
+			name: "empty-string should be empty",
+			args: args{s: ""},
+			want: true,
+		},
+		{
+			name: "spaces should be empty",
+			args: args{s: "   "},
+			want: true,
+		},
+		{
+			name: "tabs should be empty",
+			args: args{s: "\t\t"},
+			want: true,
+		},
+		{
+			name: "mixed whitespace should be empty",
+			args: args{s: " \t \u00a0 \u2003"},
+			want: true,
+		},
+		{
+			name: "word should not be empty",
+			args: args{s: "hello"},
+			want: false,
+		},
+		{
+			name: "multiple words should not be empty",
+			args: args{s: "hello world"},
+			want: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(

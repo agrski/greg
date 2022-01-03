@@ -89,8 +89,8 @@ func getFiletypes() []string {
 
 	suffixes := strings.Split(filetypeFlag, ",")
 	withoutDots := make([]string, len(suffixes))
-	for _, s := range suffixes {
-		withoutDots = append(withoutDots, strings.TrimPrefix(s, "."))
+	for idx, s := range suffixes {
+		withoutDots[idx] = strings.TrimPrefix(s, ".")
 	}
 	return withoutDots
 }

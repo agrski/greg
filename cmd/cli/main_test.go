@@ -7,15 +7,24 @@ import (
 )
 
 func Test_getFiletypes(t *testing.T) {
+	type args struct {
+		filetype string
+	}
+
 	tests := []struct {
 		name string
+		args args
 		want []string
 	}{
-		{name: "no filetypes succeeds with nil", want: nil},
+		{name: "no filetypes succeeds with nil", args: args{filetype: ""}, want: nil},
+		{name: "simple letter-only filetype is unchanged", args: args{filetype: "md"}, want: []string{"md"}},
 	}
+
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
+				filetypeFlag = tt.args.filetype
+
 				if got := getFiletypes(); !reflect.DeepEqual(got, tt.want) {
 					t.Errorf("getFiletypes() = %v, want %v", got, tt.want)
 				}

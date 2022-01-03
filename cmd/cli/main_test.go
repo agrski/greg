@@ -8,7 +8,7 @@ import (
 
 func Test_getFiletypes(t *testing.T) {
 	type args struct {
-		filetype string
+		filetypes string
 	}
 
 	tests := []struct {
@@ -16,14 +16,17 @@ func Test_getFiletypes(t *testing.T) {
 		args args
 		want []string
 	}{
-		{name: "no filetypes succeeds with nil", args: args{filetype: ""}, want: nil},
-		{name: "simple letter-only filetype is unchanged", args: args{filetype: "md"}, want: []string{"md"}},
+		{name: "no filetypes succeeds with nil", args: args{filetypes: ""}, want: nil},
+		{name: "simple letter-only filetype is unchanged", args: args{filetypes: "md"}, want: []string{"md"}},
+		{name: "dot prefix is removed", args: args{filetypes: ".md"}, want: []string{"md"}},
+		{name: "multiple suffices are handled correctly", args: args{filetypes: ".md,go,.txt"}, want: []string{"md", "go", "txt"}},
+		{name: "multiple suffices with whitespace are handled correctly", args: args{filetypes: ".md,go , .txt"}, want: []string{"md", "go", "txt"}},
 	}
 
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				filetypeFlag = tt.args.filetype
+				filetypeFlag = tt.args.filetypes
 
 				if got := getFiletypes(); !reflect.DeepEqual(got, tt.want) {
 					t.Errorf("getFiletypes() = %v, want %v", got, tt.want)

@@ -16,11 +16,31 @@ func Test_getFiletypes(t *testing.T) {
 		args args
 		want []string
 	}{
-		{name: "no filetypes succeeds with nil", args: args{filetypes: ""}, want: nil},
-		{name: "simple letter-only filetype is unchanged", args: args{filetypes: "md"}, want: []string{"md"}},
-		{name: "dot prefix is removed", args: args{filetypes: ".md"}, want: []string{"md"}},
-		{name: "multiple suffices are handled correctly", args: args{filetypes: ".md,go,.txt"}, want: []string{"md", "go", "txt"}},
-		{name: "multiple suffices with whitespace are handled correctly", args: args{filetypes: ".md,go , .txt"}, want: []string{"md", "go", "txt"}},
+		{
+			name: "no filetypes succeeds with nil",
+			args: args{filetypes: ""},
+			want: nil,
+		},
+		{
+			name: "simple letter-only filetype is unchanged",
+			args: args{filetypes: "md"},
+			want: []string{"md"},
+		},
+		{
+			name: "dot prefix is removed",
+			args: args{filetypes: ".md"},
+			want: []string{"md"},
+		},
+		{
+			name: "multiple suffices are handled correctly",
+			args: args{filetypes: ".md,go,.txt"},
+			want: []string{"md", "go", "txt"},
+		},
+		{
+			name: "multiple suffices with whitespace are handled correctly",
+			args: args{filetypes: ".md,go , .txt"},
+			want: []string{"md", "go", "txt"},
+		},
 	}
 
 	for _, tt := range tests {

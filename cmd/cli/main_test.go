@@ -152,7 +152,16 @@ func Test_makeURI(t *testing.T) {
 		args args
 		want url.URL
 	}{
-		// TODO: Add test cases.
+		{
+			name: "github.com/agrski/gitfind",
+			args: args{l: location{organisation: "agrski", repository: "gitfind"}},
+			want: url.URL{
+				Scheme: "https",
+				Host:   "github.com",
+				Path:   "agrski/gitfind",
+				User:   nil,
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(

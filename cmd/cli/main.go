@@ -60,6 +60,10 @@ func getLocation() (location, error) {
 		return location{}, errors.New("must specify either url or both org and repo")
 	}
 
+	if !isEmpty(urlFlag) && (!isEmpty(orgFlag) || !isEmpty(repoFlag)) {
+		return location{}, errors.New("cannot specify both url and org or repo")
+	}
+
 	if isEmpty(urlFlag) {
 		return location{
 			hostName(hostFlag),

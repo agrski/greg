@@ -71,6 +71,7 @@ func parseLocationFromURL(rawURL string) (location, error) {
 	}
 
 	p := u.Path
+	p = strings.TrimSuffix(p, ".git")
 	p = strings.TrimPrefix(p, "/")
 	orgAndRepo := strings.SplitN(p, "/", 3)
 	if len(orgAndRepo) < 2 || isEmpty(orgAndRepo[0]) || isEmpty(orgAndRepo[1]) {

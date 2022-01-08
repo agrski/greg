@@ -36,7 +36,7 @@ var (
 )
 
 func parseArguments() {
-	flag.StringVar(&hostFlag, "host", githubHost, "Git-hosting hostname, default: github.com")
+	flag.StringVar(&hostFlag, "host", githubHost, "git hostname, default: github.com")
 	flag.StringVar(&orgFlag, "org", "", "organisation name, e.g. agrski")
 	flag.StringVar(&repoFlag, "repo", "", "repository name, e.g. gitfind")
 	flag.StringVar(

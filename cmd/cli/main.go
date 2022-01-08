@@ -27,6 +27,8 @@ const (
 	githubHost = "github.com"
 )
 
+var supportedHosts = [...]hostName{githubHost}
+
 var (
 	hostFlag     string
 	orgFlag      string
@@ -144,12 +146,28 @@ func makeURI(l location) url.URL {
 	}
 }
 
+func isSupportedHost(host hostName) bool {
+	for _, h := range supportedHosts {
+		if host == h {
+			return true
+		}
+	}
+	return false
+}
+
 func main() {
 	parseArguments()
+
 	l, err := getLocation()
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	allowed := isSupportedHost(l.host)
+	if !allowed {
+		log.Fatalf("unsupported git hosting provider %s", l.host)
+	}
+
 	u := makeURI(l)
 	p, err := getSearchPattern()
 	if err != nil {

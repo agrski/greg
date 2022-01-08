@@ -67,7 +67,7 @@ func getLocation() (location, error) {
 func parseLocationFromURL(rawURL string) (location, error) {
 	u, err := url.Parse(rawURL)
 	if err != nil {
-		return location{}, fmt.Errorf("unable to parse URL", err)
+		return location{}, fmt.Errorf("unable to parse URL - %v", err)
 	}
 
 	p := u.Path

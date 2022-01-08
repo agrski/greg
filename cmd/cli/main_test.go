@@ -60,14 +60,20 @@ func Test_getLocation(t *testing.T) {
 	tests := []struct {
 		name string
 		want location
+		err  bool
 	}{
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				if got := getLocation(); !reflect.DeepEqual(got, tt.want) {
-					t.Errorf("getLocation() = %v, want %v", got, tt.want)
+				got, err := getLocation()
+				gotErr := err != nil
+
+				if tt.err != gotErr {
+				}
+				if !reflect.DeepEqual(got, tt.want) {
+					t.Errorf("getLocation() = %v %v, want %v %v", got, err, tt.want, tt.err)
 				}
 			},
 		)

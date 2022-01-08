@@ -50,38 +50,38 @@ func parseArguments() {
 	}
 }
 
-func getLocation() location {
+func getLocation() (location, error) {
 	if isEmpty(urlFlag) && (isEmpty(orgFlag) || isEmpty(repoFlag)) {
-		log.Fatal("must specify either url or both org and repo")
+		return location{}, errors.New("must specify either url or both org and repo")
 	}
 
 	if isEmpty(urlFlag) {
 		return location{
 			organisationName(orgFlag),
 			repositoryName(repoFlag),
-		}
+		}, nil
 	}
 
 	return parseLocationFromURL(urlFlag)
 }
 
-func parseLocationFromURL(rawURL string) location {
+func parseLocationFromURL(rawURL string) (location, error) {
 	u, err := url.Parse(rawURL)
 	if err != nil {
-		log.Fatal("unable to parse URL", err)
+		return location{}, fmt.Errorf("unable to parse URL", err)
 	}
 
 	p := u.Path
 	p = strings.TrimPrefix(p, "/")
 	orgAndRepo := strings.SplitN(p, "/", 3)
 	if len(orgAndRepo) < 2 || isEmpty(orgAndRepo[0]) || isEmpty(orgAndRepo[1]) {
-		log.Fatalf("unable to extract both org and repo from %s", u)
+		return location{}, fmt.Errorf("unable to extract both org and repo from %s", u)
 	}
 
 	return location{
 		organisationName(orgAndRepo[0]),
 		repositoryName(orgAndRepo[1]),
-	}
+	}, nil
 }
 
 func getFiletypes() []string {
@@ -121,7 +121,10 @@ func makeURI(l location) url.URL {
 
 func main() {
 	parseArguments()
-	l := getLocation()
+	l, err := getLocation()
+	if err != nil {
+		log.Fatal(err)
+	}
 	u := makeURI(l)
 	p, err := getSearchPattern()
 	if err != nil {

@@ -204,18 +204,26 @@ func Test_parseLocationFromURL(t *testing.T) {
 		name string
 		args args
 		want location
+		err  bool
 	}{
 		{
 			name: "full URL",
 			args: args{rawURL: "https://github.com/agrski/gitfind"},
 			want: location{organisation: "agrski", repository: "gitfind"},
+			err:  false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				if got := parseLocationFromURL(tt.args.rawURL); !reflect.DeepEqual(got, tt.want) {
-					t.Errorf("parseLocationFromURL() = %v, want %v", got, tt.want)
+				got, err := parseLocationFromURL(tt.args.rawURL)
+				gotErr := err != nil
+
+				if tt.err != gotErr {
+					t.Errorf("parseLocationFromURL() = %v %v, want %v %v", got, gotErr, tt.want, tt.err)
+				}
+				if !reflect.DeepEqual(got, tt.want) {
+					t.Errorf("parseLocationFromURL() = %v %v, want %v %v", got, gotErr, tt.want, tt.err)
 				}
 			},
 		)

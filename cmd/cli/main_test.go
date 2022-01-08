@@ -268,10 +268,10 @@ func Test_parseLocationFromURL(t *testing.T) {
 				gotErr := err != nil
 
 				if tt.err != gotErr {
-					t.Errorf("parseLocationFromURL() = %v %v, want %v %v", got, gotErr, tt.want, tt.err)
+					t.Errorf("parseLocationFromURL() = %v %v, want %v %v", got, err, tt.want, tt.err)
 				}
 				if !reflect.DeepEqual(got, tt.want) {
-					t.Errorf("parseLocationFromURL() = %v %v, want %v %v", got, gotErr, tt.want, tt.err)
+					t.Errorf("parseLocationFromURL() = %v %v, want %v %v", got, err, tt.want, tt.err)
 				}
 			},
 		)

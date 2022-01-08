@@ -212,6 +212,48 @@ func Test_parseLocationFromURL(t *testing.T) {
 			want: location{organisation: "agrski", repository: "gitfind"},
 			err:  false,
 		},
+		{
+			name: "full URL with git suffix",
+			args: args{rawURL: "https://github.com/agrski/gitfind.git"},
+			want: location{organisation: "agrski", repository: "gitfind"},
+			err:  false,
+		},
+		{
+			name: "without scheme",
+			args: args{rawURL: "github.com/agrski/gitfind"},
+			want: location{organisation: "agrski", repository: "gitfind"},
+			err:  false,
+		},
+		{
+			name: "with extra path",
+			args: args{rawURL: "https://github.com/agrski/gitfind/tree/master/pkg"},
+			want: location{organisation: "agrski", repository: "gitfind"},
+			err:  false,
+		},
+		{
+			name: "not GitHub",
+			args: args{rawURL: "https://gitlab.com/agrski/gitfind"},
+			want: location{},
+			err:  true,
+		},
+		{
+			name: "missing repo - trailing slash",
+			args: args{rawURL: "https://github.com/agrski/"},
+			want: location{},
+			err:  true,
+		},
+		{
+			name: "missing repo - no trailing slash",
+			args: args{rawURL: "https://github.com/agrski"},
+			want: location{},
+			err:  true,
+		},
+		{
+			name: "missing org and repo",
+			args: args{rawURL: "https://github.com/"},
+			want: location{},
+			err:  true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(

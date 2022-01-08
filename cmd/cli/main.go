@@ -9,9 +9,6 @@ import (
 	"strings"
 )
 
-// TODO
-// 	- add tests for functionality here
-
 type hostName string
 type organisationName string
 type repositoryName string

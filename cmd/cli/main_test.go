@@ -205,7 +205,11 @@ func Test_parseLocationFromURL(t *testing.T) {
 		args args
 		want location
 	}{
-		// TODO: Add test cases.
+		{
+			name: "full URL",
+			args: args{rawURL: "https://github.com/agrski/gitfind"},
+			want: location{organisation: "agrski", repository: "gitfind"},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(

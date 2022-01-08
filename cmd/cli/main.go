@@ -12,10 +12,12 @@ import (
 // TODO
 // 	- add tests for functionality here
 
+type hostName string
 type organisationName string
 type repositoryName string
 
 type location struct {
+	host         hostName
 	organisation organisationName
 	repository   repositoryName
 }
@@ -26,6 +28,7 @@ const (
 )
 
 var (
+	hostFlag     string
 	orgFlag      string
 	repoFlag     string
 	urlFlag      string
@@ -34,13 +37,14 @@ var (
 )
 
 func parseArguments() {
-	flag.StringVar(&orgFlag, "org", "", "GitHub organisation, e.g. agrski")
-	flag.StringVar(&repoFlag, "repo", "", "GitHub repository, e.g. gitfind")
+	flag.StringVar(&hostFlag, "host", githubHost, "Git-hosting hostname, default: github.com")
+	flag.StringVar(&orgFlag, "org", "", "organisation name, e.g. agrski")
+	flag.StringVar(&repoFlag, "repo", "", "repository name, e.g. gitfind")
 	flag.StringVar(
 		&urlFlag,
 		"url",
 		"",
-		"Full URL of GitHub repository, e.g https://github.com/agrski/gitfind",
+		"Full URL of git repository, e.g https://github.com/agrski/gitfind",
 	)
 	flag.StringVar(&filetypeFlag, "type", "", "filetype suffix, e.g. md or go")
 	flag.Parse()
@@ -56,6 +60,7 @@ func getLocation() (location, error) {
 
 	if isEmpty(urlFlag) {
 		return location{
+			hostName(hostFlag),
 			organisationName(orgFlag),
 			repositoryName(repoFlag),
 		}, nil
@@ -87,8 +92,8 @@ func parseLocationFromURL(rawURL string) (location, error) {
 	repo := hostAndPath[2]
 	repo = strings.TrimSuffix(repo, ".git")
 
-	if !strings.HasSuffix(host, "github.com") {
-		return location{}, fmt.Errorf("require github.com not %v", host)
+	if isEmpty(host) {
+		return location{}, errors.New("host cannot be empty")
 	}
 	if isEmpty(org) {
 		return location{}, errors.New("org cannot be empty")
@@ -98,6 +103,7 @@ func parseLocationFromURL(rawURL string) (location, error) {
 	}
 
 	return location{
+		hostName(host),
 		organisationName(org),
 		repositoryName(repo),
 	}, nil
@@ -133,7 +139,7 @@ func isEmpty(s string) bool {
 func makeURI(l location) url.URL {
 	return url.URL{
 		Scheme: httpScheme,
-		Host:   githubHost,
+		Host:   string(l.host),
 		Path:   fmt.Sprintf("%s/%s", l.organisation, l.repository),
 	}
 }

@@ -182,7 +182,7 @@ func Test_makeURI(t *testing.T) {
 	}{
 		{
 			name: "github.com/agrski/gitfind",
-			args: args{l: location{organisation: "agrski", repository: "gitfind"}},
+			args: args{l: location{host: "github.com", organisation: "agrski", repository: "gitfind"}},
 			want: url.URL{
 				Scheme: "https",
 				Host:   "github.com",
@@ -215,32 +215,32 @@ func Test_parseLocationFromURL(t *testing.T) {
 		{
 			name: "full URL",
 			args: args{rawURL: "https://github.com/agrski/gitfind"},
-			want: location{organisation: "agrski", repository: "gitfind"},
+			want: location{host: "github.com", organisation: "agrski", repository: "gitfind"},
 			err:  false,
 		},
 		{
 			name: "full URL with git suffix",
 			args: args{rawURL: "https://github.com/agrski/gitfind.git"},
-			want: location{organisation: "agrski", repository: "gitfind"},
+			want: location{host: "github.com", organisation: "agrski", repository: "gitfind"},
 			err:  false,
 		},
 		{
 			name: "without scheme",
 			args: args{rawURL: "github.com/agrski/gitfind"},
-			want: location{organisation: "agrski", repository: "gitfind"},
+			want: location{host: "github.com", organisation: "agrski", repository: "gitfind"},
 			err:  false,
 		},
 		{
 			name: "with extra path",
 			args: args{rawURL: "https://github.com/agrski/gitfind/tree/master/pkg"},
-			want: location{organisation: "agrski", repository: "gitfind"},
+			want: location{host: "github.com", organisation: "agrski", repository: "gitfind"},
 			err:  false,
 		},
 		{
-			name: "not GitHub",
+			name: "full URL - GitLab",
 			args: args{rawURL: "https://gitlab.com/agrski/gitfind"},
-			want: location{},
-			err:  true,
+			want: location{host: "gitlab.com", organisation: "agrski", repository: "gitfind"},
+			err:  false,
 		},
 		{
 			name: "missing repo - trailing slash",

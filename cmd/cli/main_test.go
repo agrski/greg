@@ -57,20 +57,74 @@ func Test_getFiletypes(t *testing.T) {
 }
 
 func Test_getLocation(t *testing.T) {
+	type args struct {
+		host string
+		org  string
+		repo string
+		url  string
+	}
 	tests := []struct {
 		name string
+		args args
 		want location
 		err  bool
 	}{
-		// TODO: Add test cases.
+		{
+			name: "fail if any required arg is missing",
+			args: args{},
+			want: location{},
+			err:  true,
+		},
+		{
+			name: "fail if using org without repo",
+			args: args{org: "fakeOrg"},
+			want: location{},
+			err:  true,
+		},
+		{
+			name: "fail if using repo without org",
+			args: args{repo: "fakeRepo"},
+			want: location{},
+			err:  true,
+		},
+		{
+			name: "fail if using url with org",
+			args: args{url: "https://github.com/fakeOrg/fakeRepo", org: "fakeOrg"},
+			want: location{},
+			err:  true,
+		},
+		{
+			name: "fail if using url with repo",
+			args: args{url: "https://github.com/fakeOrg/fakeRepo", repo: "fakeRepo"},
+			want: location{},
+			err:  true,
+		},
+		{
+			name: "org and repo both provided",
+			args: args{host: githubHost, org: "fakeOrg", repo: "fakeRepo"},
+			want: location{host: githubHost, organisation: "fakeOrg", repository: "fakeRepo"},
+			err:  false,
+		},
+		{
+			name: "url provided",
+			args: args{url: "https://github.com/fakeOrg/fakeRepo"},
+			want: location{host: githubHost, organisation: "fakeOrg", repository: "fakeRepo"},
+			err:  false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
+				hostFlag = tt.args.host
+				orgFlag = tt.args.org
+				repoFlag = tt.args.repo
+				urlFlag = tt.args.url
+
 				got, err := getLocation()
 				gotErr := err != nil
 
 				if tt.err != gotErr {
+					t.Errorf("getLocation() = %v %v, want %v %v", got, err, tt.want, tt.err)
 				}
 				if !reflect.DeepEqual(got, tt.want) {
 					t.Errorf("getLocation() = %v %v, want %v %v", got, err, tt.want, tt.err)

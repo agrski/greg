@@ -55,9 +55,9 @@ func getLocation() (fetch.Location, error) {
 
 	if isEmpty(urlFlag) {
 		return fetch.Location{
-			fetch.HostName(hostFlag),
-			fetch.OrganisationName(orgFlag),
-			fetch.RepositoryName(repoFlag),
+			Host:         fetch.HostName(hostFlag),
+			Organisation: fetch.OrganisationName(orgFlag),
+			Repository:   fetch.RepositoryName(repoFlag),
 		}, nil
 	}
 
@@ -98,9 +98,9 @@ func parseLocationFromURL(rawURL string) (fetch.Location, error) {
 	}
 
 	return fetch.Location{
-		fetch.HostName(host),
-		fetch.OrganisationName(org),
-		fetch.RepositoryName(repo),
+		Host:         fetch.HostName(host),
+		Organisation: fetch.OrganisationName(org),
+		Repository:   fetch.RepositoryName(repo),
 	}, nil
 }
 

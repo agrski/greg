@@ -4,6 +4,8 @@ import (
 	"net/url"
 	"reflect"
 	"testing"
+
+	"github.com/agrski/gitfind/pkg/fetch"
 )
 
 func Test_getFiletypes(t *testing.T) {
@@ -66,49 +68,49 @@ func Test_getLocation(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want location
+		want fetch.Location
 		err  bool
 	}{
 		{
 			name: "fail if any required arg is missing",
 			args: args{},
-			want: location{},
+			want: fetch.Location{},
 			err:  true,
 		},
 		{
 			name: "fail if using org without repo",
 			args: args{org: "fakeOrg"},
-			want: location{},
+			want: fetch.Location{},
 			err:  true,
 		},
 		{
 			name: "fail if using repo without org",
 			args: args{repo: "fakeRepo"},
-			want: location{},
+			want: fetch.Location{},
 			err:  true,
 		},
 		{
 			name: "fail if using url with org",
 			args: args{url: "https://github.com/fakeOrg/fakeRepo", org: "fakeOrg"},
-			want: location{},
+			want: fetch.Location{},
 			err:  true,
 		},
 		{
 			name: "fail if using url with repo",
 			args: args{url: "https://github.com/fakeOrg/fakeRepo", repo: "fakeRepo"},
-			want: location{},
+			want: fetch.Location{},
 			err:  true,
 		},
 		{
 			name: "org and repo both provided",
 			args: args{host: githubHost, org: "fakeOrg", repo: "fakeRepo"},
-			want: location{host: githubHost, organisation: "fakeOrg", repository: "fakeRepo"},
+			want: fetch.Location{Host: githubHost, Organisation: "fakeOrg", Repository: "fakeRepo"},
 			err:  false,
 		},
 		{
 			name: "url provided",
 			args: args{url: "https://github.com/fakeOrg/fakeRepo"},
-			want: location{host: githubHost, organisation: "fakeOrg", repository: "fakeRepo"},
+			want: fetch.Location{Host: githubHost, Organisation: "fakeOrg", Repository: "fakeRepo"},
 			err:  false,
 		},
 	}
@@ -227,7 +229,7 @@ func Test_isEmpty(t *testing.T) {
 
 func Test_makeURI(t *testing.T) {
 	type args struct {
-		l location
+		l fetch.Location
 	}
 	tests := []struct {
 		name string
@@ -236,7 +238,7 @@ func Test_makeURI(t *testing.T) {
 	}{
 		{
 			name: "github.com/agrski/gitfind",
-			args: args{l: location{host: "github.com", organisation: "agrski", repository: "gitfind"}},
+			args: args{l: fetch.Location{Host: "github.com", Organisation: "agrski", Repository: "gitfind"}},
 			want: url.URL{
 				Scheme: "https",
 				Host:   "github.com",
@@ -263,55 +265,55 @@ func Test_parseLocationFromURL(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want location
+		want fetch.Location
 		err  bool
 	}{
 		{
 			name: "full URL",
 			args: args{rawURL: "https://github.com/agrski/gitfind"},
-			want: location{host: "github.com", organisation: "agrski", repository: "gitfind"},
+			want: fetch.Location{Host: "github.com", Organisation: "agrski", Repository: "gitfind"},
 			err:  false,
 		},
 		{
 			name: "full URL with git suffix",
 			args: args{rawURL: "https://github.com/agrski/gitfind.git"},
-			want: location{host: "github.com", organisation: "agrski", repository: "gitfind"},
+			want: fetch.Location{Host: "github.com", Organisation: "agrski", Repository: "gitfind"},
 			err:  false,
 		},
 		{
 			name: "without scheme",
 			args: args{rawURL: "github.com/agrski/gitfind"},
-			want: location{host: "github.com", organisation: "agrski", repository: "gitfind"},
+			want: fetch.Location{Host: "github.com", Organisation: "agrski", Repository: "gitfind"},
 			err:  false,
 		},
 		{
 			name: "with extra path",
 			args: args{rawURL: "https://github.com/agrski/gitfind/tree/master/pkg"},
-			want: location{host: "github.com", organisation: "agrski", repository: "gitfind"},
+			want: fetch.Location{Host: "github.com", Organisation: "agrski", Repository: "gitfind"},
 			err:  false,
 		},
 		{
 			name: "full URL - GitLab",
 			args: args{rawURL: "https://gitlab.com/agrski/gitfind"},
-			want: location{host: "gitlab.com", organisation: "agrski", repository: "gitfind"},
+			want: fetch.Location{Host: "gitlab.com", Organisation: "agrski", Repository: "gitfind"},
 			err:  false,
 		},
 		{
 			name: "missing repo - trailing slash",
 			args: args{rawURL: "https://github.com/agrski/"},
-			want: location{},
+			want: fetch.Location{},
 			err:  true,
 		},
 		{
 			name: "missing repo - no trailing slash",
 			args: args{rawURL: "https://github.com/agrski"},
-			want: location{},
+			want: fetch.Location{},
 			err:  true,
 		},
 		{
 			name: "missing org and repo",
 			args: args{rawURL: "https://github.com/"},
-			want: location{},
+			want: fetch.Location{},
 			err:  true,
 		},
 	}

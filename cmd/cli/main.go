@@ -7,24 +7,16 @@ import (
 	"log"
 	"net/url"
 	"strings"
+
+	"github.com/agrski/gitfind/pkg/fetch"
 )
-
-type hostName string
-type organisationName string
-type repositoryName string
-
-type location struct {
-	host         hostName
-	organisation organisationName
-	repository   repositoryName
-}
 
 const (
 	httpScheme = "https"
 	githubHost = "github.com"
 )
 
-var supportedHosts = [...]hostName{githubHost}
+var supportedHosts = [...]fetch.HostName{githubHost}
 
 var (
 	hostFlag     string
@@ -52,42 +44,42 @@ func parseArguments() {
 	}
 }
 
-func getLocation() (location, error) {
+func getLocation() (fetch.Location, error) {
 	if isEmpty(urlFlag) && (isEmpty(orgFlag) || isEmpty(repoFlag)) {
-		return location{}, errors.New("must specify either url or both org and repo")
+		return fetch.Location{}, errors.New("must specify either url or both org and repo")
 	}
 
 	if !isEmpty(urlFlag) && (!isEmpty(orgFlag) || !isEmpty(repoFlag)) {
-		return location{}, errors.New("cannot specify both url and org or repo")
+		return fetch.Location{}, errors.New("cannot specify both url and org or repo")
 	}
 
 	if isEmpty(urlFlag) {
-		return location{
-			hostName(hostFlag),
-			organisationName(orgFlag),
-			repositoryName(repoFlag),
+		return fetch.Location{
+			fetch.HostName(hostFlag),
+			fetch.OrganisationName(orgFlag),
+			fetch.RepositoryName(repoFlag),
 		}, nil
 	}
 
 	return parseLocationFromURL(urlFlag)
 }
 
-func parseLocationFromURL(rawURL string) (location, error) {
+func parseLocationFromURL(rawURL string) (fetch.Location, error) {
 	if isEmpty(rawURL) {
-		return location{}, errors.New("cannot parse empty string")
+		return fetch.Location{}, errors.New("cannot parse empty string")
 	}
 
 	noWhitespace := strings.TrimSpace(rawURL)
 
 	parts := strings.SplitAfter(noWhitespace, "://")
 	if len(parts) > 2 {
-		return location{}, fmt.Errorf("cannot parse malformed string '%v'", noWhitespace)
+		return fetch.Location{}, fmt.Errorf("cannot parse malformed string '%v'", noWhitespace)
 	}
 
 	withoutScheme := parts[len(parts)-1]
 	hostAndPath := strings.Split(withoutScheme, "/")
 	if len(hostAndPath) < 3 {
-		return location{}, fmt.Errorf("unable to parse host, org, and repo from %v", hostAndPath)
+		return fetch.Location{}, fmt.Errorf("unable to parse host, org, and repo from %v", hostAndPath)
 	}
 
 	host := hostAndPath[0]
@@ -96,19 +88,19 @@ func parseLocationFromURL(rawURL string) (location, error) {
 	repo = strings.TrimSuffix(repo, ".git")
 
 	if isEmpty(host) {
-		return location{}, errors.New("host cannot be empty")
+		return fetch.Location{}, errors.New("host cannot be empty")
 	}
 	if isEmpty(org) {
-		return location{}, errors.New("org cannot be empty")
+		return fetch.Location{}, errors.New("org cannot be empty")
 	}
 	if isEmpty(repo) {
-		return location{}, errors.New("repo cannot be empty")
+		return fetch.Location{}, errors.New("repo cannot be empty")
 	}
 
-	return location{
-		hostName(host),
-		organisationName(org),
-		repositoryName(repo),
+	return fetch.Location{
+		fetch.HostName(host),
+		fetch.OrganisationName(org),
+		fetch.RepositoryName(repo),
 	}, nil
 }
 
@@ -139,15 +131,15 @@ func isEmpty(s string) bool {
 	return "" == strings.TrimSpace(s)
 }
 
-func makeURI(l location) url.URL {
+func makeURI(l fetch.Location) url.URL {
 	return url.URL{
 		Scheme: httpScheme,
-		Host:   string(l.host),
-		Path:   fmt.Sprintf("%s/%s", l.organisation, l.repository),
+		Host:   string(l.Host),
+		Path:   fmt.Sprintf("%s/%s", l.Organisation, l.Repository),
 	}
 }
 
-func isSupportedHost(host hostName) bool {
+func isSupportedHost(host fetch.HostName) bool {
 	for _, h := range supportedHosts {
 		if host == h {
 			return true
@@ -164,9 +156,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	allowed := isSupportedHost(l.host)
+	allowed := isSupportedHost(l.Host)
 	if !allowed {
-		log.Fatalf("unsupported git hosting provider %s", l.host)
+		log.Fatalf("unsupported git hosting provider %s", l.Host)
 	}
 
 	u := makeURI(l)

@@ -24,20 +24,8 @@ const (
 	defaultQueryTimeout = 30 * time.Second
 )
 
-const (
-	TreeEntryDir  = "tree"
-	TreeEntryFile = "blob"
-)
-
 type gitHub struct {
 	client *graphql.Client
-}
-
-type queryParams struct {
-	repoOwner  string
-	repoName   string
-	commitish  string
-	pathPrefix string
 }
 
 func NewGitHub(accessToken string) *gitHub {
@@ -69,23 +57,4 @@ func (g *gitHub) makeBaseQuery(params queryParams) (*Query, error) {
 	err := g.client.Query(ctx, query, variables)
 
 	return query, err
-}
-
-type Query struct {
-	Repository struct {
-		Name   string
-		Object struct {
-			FileInfoFragment `graphql:"... on Tree"`
-		} `graphql:"object(expression: $commitishAndPath)"`
-	} `graphql:"repository(owner: $owner, name: $repo)"`
-}
-
-type FileInfoFragment struct {
-	Entries []FileInfo
-}
-
-type FileInfo struct {
-	Name      string
-	Type      string
-	Extension string
 }

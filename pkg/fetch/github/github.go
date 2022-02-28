@@ -24,7 +24,7 @@ const (
 	defaultQueryTimeout = 30 * time.Second
 )
 
-type gitHub struct {
+type GitHub struct {
 	client *graphql.Client
 }
 
@@ -44,7 +44,7 @@ func NewGitHub(accessToken string) *gitHub {
 	}
 }
 
-func (g *gitHub) makeBaseQuery(params queryParams) (*Query, error) {
+func (g *gitHub) MakeBaseQuery(params queryParams) (*Query, error) {
 	query := &Query{}
 
 	variables := map[string]interface{}{

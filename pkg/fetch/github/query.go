@@ -1,8 +1,10 @@
 package fetch
 
+type TreeEntry string
+
 const (
-	TreeEntryDir  = "tree"
-	TreeEntryFile = "blob"
+	TreeEntryDir  TreeEntry = "tree"
+	TreeEntryFile TreeEntry = "blob"
 )
 
 type QueryParams struct {
@@ -27,6 +29,6 @@ type FileInfoFragment struct {
 
 type FileInfo struct {
 	Name      string
-	Type      string
+	Type      TreeEntry
 	Extension string
 }

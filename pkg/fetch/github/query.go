@@ -18,17 +18,32 @@ type Query struct {
 	Repository struct {
 		Name   string
 		Object struct {
-			FileInfoFragment `graphql:"... on Tree"`
+			Tree struct {
+				Entries []struct {
+					FileInfo
+					Object struct {
+						Tree struct {
+							Entries []struct {
+								FileInfo
+								Object struct {
+									Tree struct {
+										Entries []struct {
+											FileInfo
+										}
+									} `graphql:"... on Tree"`
+								}
+							}
+						} `graphql:"... on Tree"`
+					}
+				}
+			} `graphql:"... on Tree"`
 		} `graphql:"object(expression: $commitishAndPath)"`
 	} `graphql:"repository(owner: $owner, name: $repo)"`
 }
 
-type FileInfoFragment struct {
-	Entries []FileInfo
-}
-
 type FileInfo struct {
-	Name      string
 	Type      TreeEntry
+	Name      string
 	Extension string
+	Path      string
 }

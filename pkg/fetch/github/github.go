@@ -28,7 +28,7 @@ type GitHub struct {
 	client *graphql.Client
 }
 
-func NewGitHub(accessToken string) *gitHub {
+func NewGitHub(accessToken string) *GitHub {
 	// TODO - refactor OAuth handling entirely outside this package
 	tokenSource := oauth2.StaticTokenSource(
 		&oauth2.Token{
@@ -39,12 +39,12 @@ func NewGitHub(accessToken string) *gitHub {
 	authClient := oauth2.NewClient(context.Background(), tokenSource)
 	client := graphql.NewClient(apiUrl, authClient)
 
-	return &gitHub{
+	return &GitHub{
 		client: client,
 	}
 }
 
-func (g *gitHub) MakeBaseQuery(params queryParams) (*Query, error) {
+func (g *GitHub) MakeBaseQuery(params QueryParams) (*Query, error) {
 	query := &Query{}
 
 	variables := map[string]interface{}{

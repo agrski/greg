@@ -26,11 +26,7 @@ type Query struct {
 							Entries []struct {
 								FileInfo
 								Object struct {
-									Tree struct {
-										Entries []struct {
-											FileInfo
-										}
-									} `graphql:"... on Tree"`
+									Leaf `graphql:"... on Tree"`
 								}
 							}
 						} `graphql:"... on Tree"`
@@ -39,6 +35,12 @@ type Query struct {
 			} `graphql:"... on Tree"`
 		} `graphql:"object(expression: $commitishAndPath)"`
 	} `graphql:"repository(owner: $owner, name: $repo)"`
+}
+
+type Leaf struct {
+	Entries []struct {
+		FileInfo
+	}
 }
 
 type FileInfo struct {

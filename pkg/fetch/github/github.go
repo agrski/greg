@@ -44,7 +44,7 @@ func NewGitHub(accessToken string) *GitHub {
 	}
 }
 
-func (g *GitHub) MakeBaseQuery(params QueryParams) (*Query, error) {
+func (g *GitHub) ListFiles(params QueryParams) (*Query, error) {
 	query := &Query{}
 
 	variables := map[string]interface{}{

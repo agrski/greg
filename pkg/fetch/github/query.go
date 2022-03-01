@@ -18,26 +18,39 @@ type Query struct {
 	Repository struct {
 		Name   string
 		Object struct {
-			Tree struct {
-				Entries []struct {
-					FileInfo
-					Object struct {
-						Tree struct {
-							Entries []struct {
-								FileInfo
-								Object struct {
-									Leaf `graphql:"... on Tree"`
-								}
-							}
-						} `graphql:"... on Tree"`
-					}
-				}
-			} `graphql:"... on Tree"`
+			TreeLevel3 `graphql:"... on Tree"`
 		} `graphql:"object(expression: $commitishAndPath)"`
 	} `graphql:"repository(owner: $owner, name: $repo)"`
 }
 
-type Leaf struct {
+type TreeLevel3 struct {
+	Entries []struct {
+		FileInfo
+		Object struct {
+			TreeLevel2 `graphql:"... on Tree"`
+		}
+	}
+}
+
+type TreeLevel2 struct {
+	Entries []struct {
+		FileInfo
+		Object struct {
+			TreeLevel1 `graphql:"... on Tree"`
+		}
+	}
+}
+
+type TreeLevel1 struct {
+	Entries []struct {
+		FileInfo
+		Object struct {
+			TreeLevel0 `graphql:"... on Tree"`
+		}
+	}
+}
+
+type TreeLevel0 struct {
 	Entries []struct {
 		FileInfo
 	}

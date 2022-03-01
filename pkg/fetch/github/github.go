@@ -48,9 +48,9 @@ func (g *GitHub) MakeBaseQuery(params QueryParams) (*Query, error) {
 	query := &Query{}
 
 	variables := map[string]interface{}{
-		"owner":            graphql.String(params.repoOwner),
-		"repo":             graphql.String(params.repoName),
-		"commitishAndPath": graphql.String(params.commitish + ":" + params.pathPrefix),
+		"owner":            graphql.String(params.RepoOwner),
+		"repo":             graphql.String(params.RepoName),
+		"commitishAndPath": graphql.String(params.Commitish + ":" + params.PathPrefix),
 	}
 
 	ctx, _ := context.WithTimeout(context.Background(), defaultQueryTimeout)

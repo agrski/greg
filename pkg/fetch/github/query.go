@@ -8,10 +8,10 @@ const (
 )
 
 type QueryParams struct {
-	repoOwner  string
-	repoName   string
-	commitish  string
-	pathPrefix string
+	RepoOwner  string
+	RepoName   string
+	Commitish  string
+	PathPrefix string
 }
 
 type Query struct {

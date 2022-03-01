@@ -44,6 +44,20 @@ func NewGitHub(accessToken string) *GitHub {
 	}
 }
 
+func (g *GitHub) getDefaultBranchRef(owner string, repo string) (string, error) {
+	q := &branchRefQuery{}
+	variables := map[string]interface{}{
+		"owner": graphql.String(owner),
+		"repo":  graphql.String(repo),
+	}
+	ctx, _ := context.WithTimeout(context.Background(), defaultQueryTimeout)
+	err := g.client.Query(ctx, q, variables)
+	if err != nil {
+		return "", err
+	}
+	return q.Repository.DefaultBranchRef.Name, nil
+}
+
 func (g *GitHub) ListFiles(params QueryParams) (*Query, error) {
 	query := &Query{}
 

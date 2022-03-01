@@ -14,6 +14,14 @@ type QueryParams struct {
 	PathPrefix string
 }
 
+type branchRefQuery struct {
+	Repository struct {
+		DefaultBranchRef struct {
+			Name string
+		}
+	} `graphql:"repository(owner: $owner, name: $repo)"`
+}
+
 type Query struct {
 	Repository struct {
 		Name   string

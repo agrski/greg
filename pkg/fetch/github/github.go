@@ -48,7 +48,7 @@ func NewGitHub(accessToken string) *GitHub {
 	}
 }
 
-func (g *GitHub) ListFiles(params QueryParams) ([]FileInfo, error) {
+func (g *GitHub) ListFiles(params QueryParams) ([]FileMetadata, error) {
 	g.ensureCommitish(&params)
 	variables := g.paramsToVariables(params)
 

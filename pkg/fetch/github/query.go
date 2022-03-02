@@ -33,7 +33,7 @@ type treeQuery struct {
 
 type TreeLevel3 struct {
 	Entries []struct {
-		FileInfo
+		FileMetadata
 		Object struct {
 			Tree         TreeLevel2 `graphql:"... on Tree"`
 			FileContents `graphql:"... on Blob"`
@@ -43,7 +43,7 @@ type TreeLevel3 struct {
 
 type TreeLevel2 struct {
 	Entries []struct {
-		FileInfo
+		FileMetadata
 		Object struct {
 			Tree         TreeLevel1 `graphql:"... on Tree"`
 			FileContents `graphql:"... on Blob"`
@@ -53,7 +53,7 @@ type TreeLevel2 struct {
 
 type TreeLevel1 struct {
 	Entries []struct {
-		FileInfo
+		FileMetadata
 		Object struct {
 			Tree         TreeLevel0 `graphql:"... on Tree"`
 			FileContents `graphql:"... on Blob"`
@@ -63,14 +63,14 @@ type TreeLevel1 struct {
 
 type TreeLevel0 struct {
 	Entries []struct {
-		FileInfo
+		FileMetadata
 		Object struct {
 			FileContents `graphql:"... on Blob"`
 		}
 	}
 }
 
-type FileInfo struct {
+type FileMetadata struct {
 	Type      TreeEntry
 	Name      string
 	Extension string

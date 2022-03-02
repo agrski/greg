@@ -132,6 +132,12 @@ func (g *GitHub) parseTree(tree *treeQuery) ([]FileInfo, error) {
 
 	fs := []FileInfo{}
 
+	g.parseTreeRec(&fs, tree)
+
+	return fs, nil
+}
+
+func (g *GitHub) parseTreeRec(fs *[]FileInfo, tree *treeQuery) {
 	root := tree.Repository.Object.Tree
 	for _, e := range root.Entries {
 		switch e.Type {
@@ -151,7 +157,7 @@ func (g *GitHub) parseTree(tree *treeQuery) ([]FileInfo, error) {
 					Text:     e.Object.Text,
 				},
 			}
-			append(fs, f)
+			*fs = append(*fs, f)
 		case TreeEntryDir:
 			// TODO - recurse
 		default:
@@ -159,6 +165,4 @@ func (g *GitHub) parseTree(tree *treeQuery) ([]FileInfo, error) {
 			continue
 		}
 	}
-
-	return fs, nil
 }

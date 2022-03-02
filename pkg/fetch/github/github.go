@@ -28,6 +28,11 @@ const (
 
 type graphqlVariables map[string]interface{}
 
+type FileInfo struct {
+	FileMetadata
+	FileContents
+}
+
 type GitHub struct {
 	client *graphql.Client
 }
@@ -48,7 +53,7 @@ func NewGitHub(accessToken string) *GitHub {
 	}
 }
 
-func (g *GitHub) ListFiles(params QueryParams) ([]FileMetadata, error) {
+func (g *GitHub) ListFiles(params QueryParams) ([]FileInfo, error) {
 	g.ensureCommitish(&params)
 	variables := g.paramsToVariables(params)
 

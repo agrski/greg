@@ -22,7 +22,7 @@ type branchRefQuery struct {
 	} `graphql:"repository(owner: $owner, name: $repo)"`
 }
 
-type Query struct {
+type treeQuery struct {
 	Repository struct {
 		Name   string
 		Object struct {

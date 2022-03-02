@@ -2,6 +2,8 @@ package fetch
 
 import (
 	"context"
+	"fmt"
+	"strings"
 	"time"
 
 	"github.com/hasura/go-graphql-client"
@@ -44,6 +46,34 @@ func NewGitHub(accessToken string) *GitHub {
 	}
 }
 
+func (g *GitHub) ListFiles(params QueryParams) ([]FileInfo, error) {
+	g.ensureCommitish(&params)
+	variables := g.paramsToVariables(params)
+
+	_, err := g.getTree(variables)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO - parse tree listing into list of file details/contents
+
+	return nil, nil
+}
+
+func (g *GitHub) ensureCommitish(params *QueryParams) error {
+	if strings.TrimSpace(params.Commitish) != "" {
+		return nil
+	}
+
+	c, err := g.getDefaultBranchRef(params.RepoOwner, params.RepoName)
+	if err != nil {
+		return err
+	}
+
+	params.Commitish = c
+	return nil
+}
+
 func (g *GitHub) getDefaultBranchRef(owner string, repo string) (string, error) {
 	q := &branchRefQuery{}
 	variables := map[string]interface{}{
@@ -60,15 +90,24 @@ func (g *GitHub) getDefaultBranchRef(owner string, repo string) (string, error) 
 	return q.Repository.DefaultBranchRef.Name, nil
 }
 
-func (g *GitHub) ListFiles(params QueryParams) (*Query, error) {
-	query := &Query{}
+func (g *GitHub) paramsToVariables(params QueryParams) map[string]interface{} {
+	rootExpression := g.makeRootPathExpression(params.Commitish, params.PathPrefix)
 
 	variables := map[string]interface{}{
 		"owner":            graphql.String(params.RepoOwner),
 		"repo":             graphql.String(params.RepoName),
-		"commitishAndPath": graphql.String(params.Commitish + ":" + params.PathPrefix),
+		"commitishAndPath": graphql.String(rootExpression),
 	}
 
+	return variables
+}
+
+func (g *GitHub) makeRootPathExpression(commitish string, path string) string {
+	return fmt.Sprintf("%s:%s", commitish, path)
+}
+
+func (g *GitHub) getTree(variables map[string]interface{}) (*treeQuery, error) {
+	query := &treeQuery{}
 	ctx, _ := context.WithTimeout(context.Background(), defaultQueryTimeout)
 	err := g.client.Query(ctx, query, variables)
 

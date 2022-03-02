@@ -120,3 +120,15 @@ func (g *GitHub) getTree(variables graphqlVariables) (*treeQuery, error) {
 
 	return query, err
 }
+
+func (g *GitHub) parseTree(tree *treeQuery) ([]FileInfo, err) {
+	// TODO
+	// - Recursive algorithm
+	// - For every entry in Entries, check type
+	//		- If type is blob and blob is not binary, append to list
+	//		- If type is tree, recurse
+
+	fs := make([]FileInfo)
+
+	return fs, nil
+}

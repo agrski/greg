@@ -121,7 +121,7 @@ func (g *GitHub) getTree(variables graphqlVariables) (*treeQuery, error) {
 	return query, err
 }
 
-func (g *GitHub) parseTree(tree *treeQuery) ([]FileInfo, err) {
+func (g *GitHub) parseTree(tree *treeQuery) ([]FileInfo, error) {
 	// TODO
 	// - Recursive algorithm
 	// - For every entry in Entries, check type

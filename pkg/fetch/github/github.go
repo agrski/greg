@@ -130,7 +130,35 @@ func (g *GitHub) parseTree(tree *treeQuery) ([]FileInfo, error) {
 	//		- If type is blob and blob is not binary, append to list
 	//		- If type is tree, recurse
 
-	fs := make([]FileInfo)
+	fs := []FileInfo{}
+
+	root := tree.Repository.Object.Tree
+	for _, e := range root.Entries {
+		switch e.Type {
+		case TreeEntryFile:
+			if e.Object.IsBinary {
+				continue
+			}
+			f := FileInfo{
+				FileMetadata{
+					Name:      e.Name,
+					Type:      e.Type,
+					Extension: e.Extension,
+					Path:      e.Path,
+				},
+				FileContents{
+					IsBinary: e.Object.IsBinary,
+					Text:     e.Object.Text,
+				},
+			}
+			append(fs, f)
+		case TreeEntryDir:
+			// TODO - recurse
+		default:
+			// TODO - log warning
+			continue
+		}
+	}
 
 	return fs, nil
 }

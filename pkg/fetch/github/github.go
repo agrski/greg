@@ -26,6 +26,8 @@ const (
 	defaultQueryTimeout = 30 * time.Second
 )
 
+type graphqlVariables map[string]interface{}
+
 type GitHub struct {
 	client *graphql.Client
 }
@@ -76,7 +78,7 @@ func (g *GitHub) ensureCommitish(params *QueryParams) error {
 
 func (g *GitHub) getDefaultBranchRef(owner string, repo string) (string, error) {
 	q := &branchRefQuery{}
-	variables := map[string]interface{}{
+	variables := graphqlVariables{
 		"owner": graphql.String(owner),
 		"repo":  graphql.String(repo),
 	}
@@ -90,10 +92,10 @@ func (g *GitHub) getDefaultBranchRef(owner string, repo string) (string, error) 
 	return q.Repository.DefaultBranchRef.Name, nil
 }
 
-func (g *GitHub) paramsToVariables(params QueryParams) map[string]interface{} {
+func (g *GitHub) paramsToVariables(params QueryParams) graphqlVariables {
 	rootExpression := g.makeRootPathExpression(params.Commitish, params.PathPrefix)
 
-	variables := map[string]interface{}{
+	variables := graphqlVariables{
 		"owner":            graphql.String(params.RepoOwner),
 		"repo":             graphql.String(params.RepoName),
 		"commitishAndPath": graphql.String(rootExpression),
@@ -106,7 +108,7 @@ func (g *GitHub) makeRootPathExpression(commitish string, path string) string {
 	return fmt.Sprintf("%s:%s", commitish, path)
 }
 
-func (g *GitHub) getTree(variables map[string]interface{}) (*treeQuery, error) {
+func (g *GitHub) getTree(variables graphqlVariables) (*treeQuery, error) {
 	query := &treeQuery{}
 	ctx, _ := context.WithTimeout(context.Background(), defaultQueryTimeout)
 	err := g.client.Query(ctx, query, variables)

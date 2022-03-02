@@ -122,6 +122,8 @@ func (g *GitHub) getTree(variables graphqlVariables) (*treeQuery, error) {
 }
 
 func (g *GitHub) parseTree(tree *treeQuery) ([]FileInfo, error) {
+	// TODO - support filters, e.g. for file type/suffix
+
 	// TODO
 	// - Recursive algorithm
 	// - For every entry in Entries, check type

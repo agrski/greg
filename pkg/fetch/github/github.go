@@ -53,18 +53,16 @@ func NewGitHub(accessToken string) *GitHub {
 	}
 }
 
-func (g *GitHub) ListFiles(params QueryParams) ([]FileInfo, error) {
+func (g *GitHub) ListFiles(params QueryParams) ([]*FileInfo, error) {
 	g.ensureCommitish(&params)
 	variables := g.paramsToVariables(params)
 
-	_, err := g.getTree(variables)
+	tree, err := g.getTree(variables)
 	if err != nil {
 		return nil, err
 	}
 
-	// TODO - parse tree listing into list of file details/contents
-
-	return nil, nil
+	return g.parseTree(tree)
 }
 
 func (g *GitHub) ensureCommitish(params *QueryParams) error {

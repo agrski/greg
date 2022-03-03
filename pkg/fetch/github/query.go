@@ -22,6 +22,10 @@ type branchRefQuery struct {
 	} `graphql:"repository(owner: $owner, name: $repo)"`
 }
 
+type treer interface {
+	parse(fs *[]*FileInfo)
+}
+
 type treeQuery struct {
 	Repository struct {
 		Name   string
@@ -30,6 +34,12 @@ type treeQuery struct {
 		} `graphql:"object(expression: $commitishAndPath)"`
 	} `graphql:"repository(owner: $owner, name: $repo)"`
 }
+
+func (t *treeQuery) parse(fs *[]*FileInfo) {
+	t.Repository.Object.Tree.parse(fs)
+}
+
+var _ treer = (*treeQuery)(nil)
 
 type TreeLevel3 struct {
 	Entries []struct {
@@ -41,6 +51,34 @@ type TreeLevel3 struct {
 	}
 }
 
+func (t TreeLevel3) parse(fs *[]*FileInfo) {
+	for _, e := range t.Entries {
+		switch e.Type {
+		case TreeEntryFile:
+			f := &FileInfo{
+				FileMetadata{
+					Type:      e.Type,
+					Name:      e.Name,
+					Extension: e.Extension,
+					Path:      e.Path,
+				},
+				FileContents{
+					IsBinary: e.Object.IsBinary,
+					Text:     e.Object.Text,
+				},
+			}
+			*fs = append(*fs, f)
+		case TreeEntryDir:
+			e.Object.Tree.parse(fs)
+		default:
+			// TODO - log error
+			return
+		}
+	}
+}
+
+var _ treer = (*TreeLevel3)(nil)
+
 type TreeLevel2 struct {
 	Entries []struct {
 		FileMetadata
@@ -50,6 +88,34 @@ type TreeLevel2 struct {
 		}
 	}
 }
+
+func (t *TreeLevel2) parse(fs *[]*FileInfo) {
+	for _, e := range t.Entries {
+		switch e.Type {
+		case TreeEntryFile:
+			f := &FileInfo{
+				FileMetadata{
+					Type:      e.Type,
+					Name:      e.Name,
+					Extension: e.Extension,
+					Path:      e.Path,
+				},
+				FileContents{
+					IsBinary: e.Object.IsBinary,
+					Text:     e.Object.Text,
+				},
+			}
+			*fs = append(*fs, f)
+		case TreeEntryDir:
+			e.Object.Tree.parse(fs)
+		default:
+			// TODO - log error
+			return
+		}
+	}
+}
+
+var _ treer = (*TreeLevel2)(nil)
 
 type TreeLevel1 struct {
 	Entries []struct {
@@ -61,6 +127,34 @@ type TreeLevel1 struct {
 	}
 }
 
+func (t *TreeLevel1) parse(fs *[]*FileInfo) {
+	for _, e := range t.Entries {
+		switch e.Type {
+		case TreeEntryFile:
+			f := &FileInfo{
+				FileMetadata{
+					Type:      e.Type,
+					Name:      e.Name,
+					Extension: e.Extension,
+					Path:      e.Path,
+				},
+				FileContents{
+					IsBinary: e.Object.IsBinary,
+					Text:     e.Object.Text,
+				},
+			}
+			*fs = append(*fs, f)
+		case TreeEntryDir:
+			e.Object.Tree.parse(fs)
+		default:
+			// TODO - log error
+			return
+		}
+	}
+}
+
+var _ treer = (*TreeLevel1)(nil)
+
 type TreeLevel0 struct {
 	Entries []struct {
 		FileMetadata
@@ -69,6 +163,35 @@ type TreeLevel0 struct {
 		}
 	}
 }
+
+func (t *TreeLevel0) parse(fs *[]*FileInfo) {
+	for _, e := range t.Entries {
+		switch e.Type {
+		case TreeEntryFile:
+			f := &FileInfo{
+				FileMetadata{
+					Type:      e.Type,
+					Name:      e.Name,
+					Extension: e.Extension,
+					Path:      e.Path,
+				},
+				FileContents{
+					IsBinary: e.Object.IsBinary,
+					Text:     e.Object.Text,
+				},
+			}
+			*fs = append(*fs, f)
+		case TreeEntryDir:
+			// TODO - return entries for further queries
+			continue
+		default:
+			// TODO - log error
+			return
+		}
+	}
+}
+
+var _ treer = (*TreeLevel0)(nil)
 
 type FileMetadata struct {
 	Type      TreeEntry

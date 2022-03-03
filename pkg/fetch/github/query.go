@@ -35,7 +35,7 @@ type treeQuery struct {
 	Repository struct {
 		Name   string
 		Object struct {
-			Tree TreeLevel3 `graphql:"... on Tree"`
+			Tree treeLevel3 `graphql:"... on Tree"`
 		} `graphql:"object(expression: $commitishAndPath)"`
 	} `graphql:"repository(owner: $owner, name: $repo)"`
 }
@@ -46,17 +46,17 @@ func (t *treeQuery) parse(fs *[]*FileInfo) {
 
 var _ treeParser = (*treeQuery)(nil)
 
-type TreeLevel3 struct {
+type treeLevel3 struct {
 	Entries []struct {
 		FileMetadata
 		Object struct {
-			Tree         TreeLevel2 `graphql:"... on Tree"`
+			Tree         treeLevel2 `graphql:"... on Tree"`
 			FileContents `graphql:"... on Blob"`
 		}
 	}
 }
 
-func (t TreeLevel3) parse(fs *[]*FileInfo) {
+func (t treeLevel3) parse(fs *[]*FileInfo) {
 	for _, e := range t.Entries {
 		switch e.Type {
 		case TreeEntryFile:
@@ -82,19 +82,19 @@ func (t TreeLevel3) parse(fs *[]*FileInfo) {
 	}
 }
 
-var _ treeParser = (*TreeLevel3)(nil)
+var _ treeParser = (*treeLevel3)(nil)
 
-type TreeLevel2 struct {
+type treeLevel2 struct {
 	Entries []struct {
 		FileMetadata
 		Object struct {
-			Tree         TreeLevel1 `graphql:"... on Tree"`
+			Tree         treeLevel1 `graphql:"... on Tree"`
 			FileContents `graphql:"... on Blob"`
 		}
 	}
 }
 
-func (t *TreeLevel2) parse(fs *[]*FileInfo) {
+func (t *treeLevel2) parse(fs *[]*FileInfo) {
 	for _, e := range t.Entries {
 		switch e.Type {
 		case TreeEntryFile:
@@ -120,19 +120,19 @@ func (t *TreeLevel2) parse(fs *[]*FileInfo) {
 	}
 }
 
-var _ treeParser = (*TreeLevel2)(nil)
+var _ treeParser = (*treeLevel2)(nil)
 
-type TreeLevel1 struct {
+type treeLevel1 struct {
 	Entries []struct {
 		FileMetadata
 		Object struct {
-			Tree         TreeLevel0 `graphql:"... on Tree"`
+			Tree         treeLevel0 `graphql:"... on Tree"`
 			FileContents `graphql:"... on Blob"`
 		}
 	}
 }
 
-func (t *TreeLevel1) parse(fs *[]*FileInfo) {
+func (t *treeLevel1) parse(fs *[]*FileInfo) {
 	for _, e := range t.Entries {
 		switch e.Type {
 		case TreeEntryFile:
@@ -158,9 +158,9 @@ func (t *TreeLevel1) parse(fs *[]*FileInfo) {
 	}
 }
 
-var _ treeParser = (*TreeLevel1)(nil)
+var _ treeParser = (*treeLevel1)(nil)
 
-type TreeLevel0 struct {
+type treeLevel0 struct {
 	Entries []struct {
 		FileMetadata
 		Object struct {
@@ -169,7 +169,7 @@ type TreeLevel0 struct {
 	}
 }
 
-func (t *TreeLevel0) parse(fs *[]*FileInfo) {
+func (t *treeLevel0) parse(fs *[]*FileInfo) {
 	for _, e := range t.Entries {
 		switch e.Type {
 		case TreeEntryFile:
@@ -196,7 +196,7 @@ func (t *TreeLevel0) parse(fs *[]*FileInfo) {
 	}
 }
 
-var _ treeParser = (*TreeLevel0)(nil)
+var _ treeParser = (*treeLevel0)(nil)
 
 type FileMetadata struct {
 	Type      TreeEntry

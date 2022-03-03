@@ -124,45 +124,7 @@ func (g *GitHub) getTree(variables graphqlVariables) (*treeQuery, error) {
 func (g *GitHub) parseTree(tree *treeQuery) ([]*FileInfo, error) {
 	// TODO - support filters, e.g. for file type/suffix
 
-	// TODO
-	// - Recursive algorithm
-	// - For every entry in Entries, check type
-	//		- If type is blob and blob is not binary, append to list
-	//		- If type is tree, recurse
-
 	fs := []*FileInfo{}
-
 	tree.Repository.Object.Tree.parse(&fs)
-
 	return fs, nil
-}
-
-func (g *GitHub) parseTreeRec(fs *[]FileInfo, tree *treeQuery) {
-	root := tree.Repository.Object.Tree
-	for _, e := range root.Entries {
-		switch e.Type {
-		case TreeEntryFile:
-			if e.Object.IsBinary {
-				continue
-			}
-			f := FileInfo{
-				FileMetadata{
-					Name:      e.Name,
-					Type:      e.Type,
-					Extension: e.Extension,
-					Path:      e.Path,
-				},
-				FileContents{
-					IsBinary: e.Object.IsBinary,
-					Text:     e.Object.Text,
-				},
-			}
-			*fs = append(*fs, f)
-		case TreeEntryDir:
-			// TODO - recurse
-		default:
-			// TODO - log warning
-			continue
-		}
-	}
 }

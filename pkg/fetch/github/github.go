@@ -121,7 +121,7 @@ func (g *GitHub) getTree(variables graphqlVariables) (*treeQuery, error) {
 	return query, err
 }
 
-func (g *GitHub) parseTree(tree *treeQuery) ([]FileInfo, error) {
+func (g *GitHub) parseTree(tree *treeQuery) ([]*FileInfo, error) {
 	// TODO - support filters, e.g. for file type/suffix
 
 	// TODO
@@ -130,9 +130,9 @@ func (g *GitHub) parseTree(tree *treeQuery) ([]FileInfo, error) {
 	//		- If type is blob and blob is not binary, append to list
 	//		- If type is tree, recurse
 
-	fs := []FileInfo{}
+	fs := []*FileInfo{}
 
-	g.parseTreeRec(&fs, tree)
+	tree.Repository.Object.Tree.parse(&fs)
 
 	return fs, nil
 }

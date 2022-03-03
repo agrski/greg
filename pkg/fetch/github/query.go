@@ -23,11 +23,11 @@ type branchRefQuery struct {
 }
 
 // TODO
-// The `treer` interface would benefit from the introduction
+// The `treeParser` interface would benefit from the introduction
 // of generics in Go 1.18.
 // A type list for the subtree (TreeLevelX) structs would
 // mitigate the excrutiating duplication of the `parse` methods.
-type treer interface {
+type treeParser interface {
 	parse(fs *[]*FileInfo)
 }
 
@@ -44,7 +44,7 @@ func (t *treeQuery) parse(fs *[]*FileInfo) {
 	t.Repository.Object.Tree.parse(fs)
 }
 
-var _ treer = (*treeQuery)(nil)
+var _ treeParser = (*treeQuery)(nil)
 
 type TreeLevel3 struct {
 	Entries []struct {
@@ -82,7 +82,7 @@ func (t TreeLevel3) parse(fs *[]*FileInfo) {
 	}
 }
 
-var _ treer = (*TreeLevel3)(nil)
+var _ treeParser = (*TreeLevel3)(nil)
 
 type TreeLevel2 struct {
 	Entries []struct {
@@ -120,7 +120,7 @@ func (t *TreeLevel2) parse(fs *[]*FileInfo) {
 	}
 }
 
-var _ treer = (*TreeLevel2)(nil)
+var _ treeParser = (*TreeLevel2)(nil)
 
 type TreeLevel1 struct {
 	Entries []struct {
@@ -158,7 +158,7 @@ func (t *TreeLevel1) parse(fs *[]*FileInfo) {
 	}
 }
 
-var _ treer = (*TreeLevel1)(nil)
+var _ treeParser = (*TreeLevel1)(nil)
 
 type TreeLevel0 struct {
 	Entries []struct {
@@ -196,7 +196,7 @@ func (t *TreeLevel0) parse(fs *[]*FileInfo) {
 	}
 }
 
-var _ treer = (*TreeLevel0)(nil)
+var _ treeParser = (*TreeLevel0)(nil)
 
 type FileMetadata struct {
 	Type      TreeEntry

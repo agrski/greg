@@ -22,6 +22,11 @@ type branchRefQuery struct {
 	} `graphql:"repository(owner: $owner, name: $repo)"`
 }
 
+// TODO
+// The `treer` interface would benefit from the introduction
+// of generics in Go 1.18.
+// A type list for the subtree (TreeLevelX) structs would
+// mitigate the excrutiating duplication of the `parse` methods.
 type treer interface {
 	parse(fs *[]*FileInfo)
 }

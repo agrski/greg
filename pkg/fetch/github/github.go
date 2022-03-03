@@ -125,6 +125,6 @@ func (g *GitHub) parseTree(tree *treeQuery) ([]*FileInfo, error) {
 	// TODO - support filters, e.g. for file type/suffix
 
 	fs := []*FileInfo{}
-	tree.Repository.Object.Tree.parse(&fs)
+	tree.parse(&fs)
 	return fs, nil
 }

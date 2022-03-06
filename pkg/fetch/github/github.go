@@ -53,6 +53,15 @@ func NewGitHub(accessToken string) *GitHub {
 	}
 }
 
+func (g *GitHub) StreamFiles(params QueryParams) (<-chan *FileInfo, func(), error) {
+	results := make(chan *FileInfo, 100)
+	cancel := make(chan struct{})
+	canceller := func() {
+		close(cancel)
+	}
+	return results, canceller, nil
+}
+
 func (g *GitHub) ListFiles(params QueryParams) ([]*FileInfo, error) {
 	g.ensureCommitish(&params)
 	variables := g.paramsToVariables(params)

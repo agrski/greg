@@ -49,6 +49,3 @@ type FileContents struct {
 	IsBinary bool
 	Text     string
 }
-
-// TODO - support both tree listing (to discover files to filter)
-//	AND file querying, which is a simpler form with a path in `expression`

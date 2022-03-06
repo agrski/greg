@@ -154,7 +154,6 @@ func (g *GitHub) parseTree(
 	remaining chan<- string,
 	cancel <-chan struct{},
 ) {
-	// TODO - add logic for streaming remaining  non-leaf nodes
 	root := tree.Repository.Object.Tree
 
 	for _, e := range root.Entries {

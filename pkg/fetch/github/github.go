@@ -59,6 +59,17 @@ func (g *GitHub) StreamFiles(params QueryParams) (<-chan *FileInfo, func(), erro
 	canceller := func() {
 		close(cancel)
 	}
+
+	g.ensureCommitish(&params)
+	variables := g.paramsToVariables(params)
+
+	tree, err := g.getTree(variables)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	go g.streamTree(tree, results, cancel)
+
 	return results, canceller, nil
 }
 
@@ -126,6 +137,28 @@ func (g *GitHub) getTree(variables graphqlVariables) (*treeQuery, error) {
 	err := g.client.Query(ctx, query, variables)
 
 	return query, err
+}
+
+func (g *GitHub) streamTree(tree *treeQuery, out chan<- *FileInfo, cancel <-chan struct{}) {
+	// TODO - add logic for streaming remaining  non-leaf nodes
+	remaining := []*FileMetadata{}
+	root := tree.Repository.Object.Tree
+
+	for _, e := range root.Entries {
+		switch e.Type {
+		case TreeEntryDir:
+			remaining = append(remaining, &e.FileMetadata)
+		case TreeEntryFile:
+			f := &FileInfo{
+				FileMetadata: e.FileMetadata,
+				FileContents: e.Object.FileContents,
+			}
+			out <- f
+		default:
+			// TODO - log error
+			continue
+		}
+	}
 }
 
 func (g *GitHub) parseTree(tree *treeQuery) ([]*FileInfo, error) {

@@ -22,181 +22,23 @@ type branchRefQuery struct {
 	} `graphql:"repository(owner: $owner, name: $repo)"`
 }
 
-// TODO
-// The `treeParser` interface would benefit from the introduction
-// of generics in Go 1.18.
-// A type list for the subtree (TreeLevelX) structs would
-// mitigate the excrutiating duplication of the `parse` methods.
-type treeParser interface {
-	parse(fs *[]*FileInfo)
-}
-
 type treeQuery struct {
 	Repository struct {
 		Name   string
 		Object struct {
-			Tree treeLevel3 `graphql:"... on Tree"`
+			Tree treeLevel1 `graphql:"... on Tree"`
 		} `graphql:"object(expression: $commitishAndPath)"`
 	} `graphql:"repository(owner: $owner, name: $repo)"`
 }
-
-func (t *treeQuery) parse(fs *[]*FileInfo) {
-	t.Repository.Object.Tree.parse(fs)
-}
-
-var _ treeParser = (*treeQuery)(nil)
-
-type treeLevel3 struct {
-	Entries []struct {
-		FileMetadata
-		Object struct {
-			Tree         treeLevel2 `graphql:"... on Tree"`
-			FileContents `graphql:"... on Blob"`
-		}
-	}
-}
-
-func (t treeLevel3) parse(fs *[]*FileInfo) {
-	for _, e := range t.Entries {
-		switch e.Type {
-		case TreeEntryFile:
-			f := &FileInfo{
-				FileMetadata{
-					Type:      e.Type,
-					Name:      e.Name,
-					Extension: e.Extension,
-					Path:      e.Path,
-				},
-				FileContents{
-					IsBinary: e.Object.IsBinary,
-					Text:     e.Object.Text,
-				},
-			}
-			*fs = append(*fs, f)
-		case TreeEntryDir:
-			e.Object.Tree.parse(fs)
-		default:
-			// TODO - log error
-			return
-		}
-	}
-}
-
-var _ treeParser = (*treeLevel3)(nil)
-
-type treeLevel2 struct {
-	Entries []struct {
-		FileMetadata
-		Object struct {
-			Tree         treeLevel1 `graphql:"... on Tree"`
-			FileContents `graphql:"... on Blob"`
-		}
-	}
-}
-
-func (t *treeLevel2) parse(fs *[]*FileInfo) {
-	for _, e := range t.Entries {
-		switch e.Type {
-		case TreeEntryFile:
-			f := &FileInfo{
-				FileMetadata{
-					Type:      e.Type,
-					Name:      e.Name,
-					Extension: e.Extension,
-					Path:      e.Path,
-				},
-				FileContents{
-					IsBinary: e.Object.IsBinary,
-					Text:     e.Object.Text,
-				},
-			}
-			*fs = append(*fs, f)
-		case TreeEntryDir:
-			e.Object.Tree.parse(fs)
-		default:
-			// TODO - log error
-			return
-		}
-	}
-}
-
-var _ treeParser = (*treeLevel2)(nil)
 
 type treeLevel1 struct {
 	Entries []struct {
 		FileMetadata
 		Object struct {
-			Tree         treeLevel0 `graphql:"... on Tree"`
 			FileContents `graphql:"... on Blob"`
 		}
 	}
 }
-
-func (t *treeLevel1) parse(fs *[]*FileInfo) {
-	for _, e := range t.Entries {
-		switch e.Type {
-		case TreeEntryFile:
-			f := &FileInfo{
-				FileMetadata{
-					Type:      e.Type,
-					Name:      e.Name,
-					Extension: e.Extension,
-					Path:      e.Path,
-				},
-				FileContents{
-					IsBinary: e.Object.IsBinary,
-					Text:     e.Object.Text,
-				},
-			}
-			*fs = append(*fs, f)
-		case TreeEntryDir:
-			e.Object.Tree.parse(fs)
-		default:
-			// TODO - log error
-			return
-		}
-	}
-}
-
-var _ treeParser = (*treeLevel1)(nil)
-
-type treeLevel0 struct {
-	Entries []struct {
-		FileMetadata
-		Object struct {
-			FileContents `graphql:"... on Blob"`
-		}
-	}
-}
-
-func (t *treeLevel0) parse(fs *[]*FileInfo) {
-	for _, e := range t.Entries {
-		switch e.Type {
-		case TreeEntryFile:
-			f := &FileInfo{
-				FileMetadata{
-					Type:      e.Type,
-					Name:      e.Name,
-					Extension: e.Extension,
-					Path:      e.Path,
-				},
-				FileContents{
-					IsBinary: e.Object.IsBinary,
-					Text:     e.Object.Text,
-				},
-			}
-			*fs = append(*fs, f)
-		case TreeEntryDir:
-			// TODO - return entries for further queries
-			continue
-		default:
-			// TODO - log error
-			return
-		}
-	}
-}
-
-var _ treeParser = (*treeLevel0)(nil)
 
 type FileMetadata struct {
 	Type      TreeEntry

@@ -148,7 +148,12 @@ func (g *GitHub) getTree(variables graphqlVariables) (*treeQuery, error) {
 	return query, err
 }
 
-func (g *GitHub) parseTree(tree *treeQuery, results chan<- *FileInfo, remaining chan<- string, cancel <-chan struct{}) {
+func (g *GitHub) parseTree(
+	tree *treeQuery,
+	results chan<- *FileInfo,
+	remaining chan<- string,
+	cancel <-chan struct{},
+) {
 	// TODO - add logic for streaming remaining  non-leaf nodes
 	root := tree.Repository.Object.Tree
 

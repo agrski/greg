@@ -157,28 +157,24 @@ func (g *GitHub) parseTree(
 	// TODO - add logic for streaming remaining  non-leaf nodes
 	root := tree.Repository.Object.Tree
 
-loop:
 	for _, e := range root.Entries {
-		switch e.Type {
-		case TreeEntryDir:
-			select {
-			case remaining <- e.Path:
-			case <-cancel:
-				break loop
-			}
-		case TreeEntryFile:
-			f := &FileInfo{
-				FileMetadata: e.FileMetadata,
-				FileContents: e.Object.FileContents,
-			}
-			select {
-			case results <- f:
-			case <-cancel:
-				break loop
-			}
+		select {
+		case <-cancel:
+			return
 		default:
-			// TODO - log error
-			continue
+			switch e.Type {
+			case TreeEntryDir:
+				remaining <- e.Path
+			case TreeEntryFile:
+				f := &FileInfo{
+					FileMetadata: e.FileMetadata,
+					FileContents: e.Object.FileContents,
+				}
+				results <- f
+			default:
+				// TODO - log error
+				continue
+			}
 		}
 	}
 }

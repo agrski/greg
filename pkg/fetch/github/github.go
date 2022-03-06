@@ -55,6 +55,7 @@ func NewGitHub(accessToken string) *GitHub {
 
 func (g *GitHub) StreamFiles(params QueryParams) (<-chan *FileInfo, func(), error) {
 	results := make(chan *FileInfo, 100)
+	remaining := make(chan string, 100)
 	cancel := make(chan struct{})
 	canceller := func() {
 		close(cancel)
@@ -68,7 +69,22 @@ func (g *GitHub) StreamFiles(params QueryParams) (<-chan *FileInfo, func(), erro
 		return nil, nil, err
 	}
 
-	go g.streamTree(tree, results, cancel)
+	go g.streamTree(tree, results, remaining, cancel)
+	go func() {
+		// TODO - use `cancel` to terminate this goroutine
+		for path := range remaining {
+			params.PathPrefix = path
+			subtreeVars := g.paramsToVariables(params)
+
+			subTree, err := g.getTree(subtreeVars)
+			if err != nil {
+				// TODO - log warning or exit?
+				return
+			}
+
+			g.streamTree(subTree, results, remaining, cancel)
+		}
+	}()
 
 	return results, canceller, nil
 }
@@ -139,16 +155,15 @@ func (g *GitHub) getTree(variables graphqlVariables) (*treeQuery, error) {
 	return query, err
 }
 
-func (g *GitHub) streamTree(tree *treeQuery, out chan<- *FileInfo, cancel <-chan struct{}) {
+func (g *GitHub) streamTree(tree *treeQuery, out chan<- *FileInfo, remaining chan<- string, cancel <-chan struct{}) {
 	// TODO - add logic for streaming remaining  non-leaf nodes
-	remaining := []*FileMetadata{}
 	root := tree.Repository.Object.Tree
 
 loop:
 	for _, e := range root.Entries {
 		switch e.Type {
 		case TreeEntryDir:
-			remaining = append(remaining, &e.FileMetadata)
+			remaining <- e.Path
 		case TreeEntryFile:
 			f := &FileInfo{
 				FileMetadata: e.FileMetadata,

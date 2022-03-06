@@ -94,18 +94,6 @@ func (g *GitHub) StreamFiles(params QueryParams) (<-chan *FileInfo, func(), erro
 	return results, canceller, nil
 }
 
-func (g *GitHub) ListFiles(params QueryParams) ([]*FileInfo, error) {
-	g.ensureCommitish(&params)
-	variables := g.paramsToVariables(params)
-
-	tree, err := g.getTree(variables)
-	if err != nil {
-		return nil, err
-	}
-
-	return g.parseTree(tree)
-}
-
 func (g *GitHub) ensureCommitish(params *QueryParams) error {
 	if strings.TrimSpace(params.Commitish) != "" {
 		return nil
@@ -184,12 +172,4 @@ loop:
 			continue
 		}
 	}
-}
-
-func (g *GitHub) parseTree(tree *treeQuery) ([]*FileInfo, error) {
-	// TODO - support filters, e.g. for file type/suffix
-
-	fs := []*FileInfo{}
-	tree.parse(&fs)
-	return fs, nil
 }

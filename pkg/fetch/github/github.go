@@ -44,7 +44,7 @@ func NewGitHub(accessToken string) *GitHub {
 	}
 }
 
-func (g *GitHub) GetFiles(params QueryParams) (<-chan *FileInfo, func(), error) {
+func (g *GitHub) GetFiles(params QueryParams) (<-chan *FileInfo, func()) {
 	results := make(chan *FileInfo, treeResultsCapacity)
 	remaining := make(chan string, treesRemainingCapacity)
 	cancel := make(chan struct{})
@@ -82,7 +82,7 @@ func (g *GitHub) GetFiles(params QueryParams) (<-chan *FileInfo, func(), error) 
 		}
 	}()
 
-	return results, canceller, nil
+	return results, canceller
 }
 
 func (g *GitHub) ensureCommitish(params *QueryParams) error {

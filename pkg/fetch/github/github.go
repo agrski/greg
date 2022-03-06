@@ -164,6 +164,8 @@ loop:
 			continue
 		}
 	}
+
+	close(out)
 }
 
 func (g *GitHub) parseTree(tree *treeQuery) ([]*FileInfo, error) {

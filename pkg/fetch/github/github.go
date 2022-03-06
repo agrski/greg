@@ -144,6 +144,7 @@ func (g *GitHub) streamTree(tree *treeQuery, out chan<- *FileInfo, cancel <-chan
 	remaining := []*FileMetadata{}
 	root := tree.Repository.Object.Tree
 
+loop:
 	for _, e := range root.Entries {
 		switch e.Type {
 		case TreeEntryDir:
@@ -153,7 +154,11 @@ func (g *GitHub) streamTree(tree *treeQuery, out chan<- *FileInfo, cancel <-chan
 				FileMetadata: e.FileMetadata,
 				FileContents: e.Object.FileContents,
 			}
-			out <- f
+			select {
+			case out <- f:
+			case <-cancel:
+				break loop
+			}
 		default:
 			// TODO - log error
 			continue

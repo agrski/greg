@@ -11,8 +11,10 @@ import (
 )
 
 const (
-	apiUrl              = "https://api.github.com/graphql"
-	defaultQueryTimeout = 30 * time.Second
+	apiUrl                 = "https://api.github.com/graphql"
+	defaultQueryTimeout    = 30 * time.Second
+	treeResultsCapacity    = 100
+	treesRemainingCapacity = 10_000 // Max subtrees we support for any node; TODO - make configurable
 )
 
 type graphqlVariables map[string]interface{}
@@ -43,8 +45,8 @@ func NewGitHub(accessToken string) *GitHub {
 }
 
 func (g *GitHub) GetFiles(params QueryParams) (<-chan *FileInfo, func(), error) {
-	results := make(chan *FileInfo, 100)
-	remaining := make(chan string, 10_000) // Max subtrees we support for any node; TODO - make configurable
+	results := make(chan *FileInfo, treeResultsCapacity)
+	remaining := make(chan string, treesRemainingCapacity)
 	cancel := make(chan struct{})
 	canceller := func() {
 		close(cancel)

@@ -53,7 +53,7 @@ func NewGitHub(accessToken string) *GitHub {
 	}
 }
 
-func (g *GitHub) StreamFiles(params QueryParams) (<-chan *FileInfo, func(), error) {
+func (g *GitHub) GetFiles(params QueryParams) (<-chan *FileInfo, func(), error) {
 	results := make(chan *FileInfo, 100)
 	remaining := make(chan string, 10_000) // Max subtrees we support for any node; TODO - make configurable
 	cancel := make(chan struct{})
@@ -82,7 +82,7 @@ func (g *GitHub) StreamFiles(params QueryParams) (<-chan *FileInfo, func(), erro
 					return
 				}
 
-				g.streamTree(tree, results, remaining, cancel)
+				g.parseTree(tree, results, remaining, cancel)
 			case <-cancel:
 				return
 			default:
@@ -148,7 +148,7 @@ func (g *GitHub) getTree(variables graphqlVariables) (*treeQuery, error) {
 	return query, err
 }
 
-func (g *GitHub) streamTree(tree *treeQuery, out chan<- *FileInfo, remaining chan<- string, cancel <-chan struct{}) {
+func (g *GitHub) parseTree(tree *treeQuery, out chan<- *FileInfo, remaining chan<- string, cancel <-chan struct{}) {
 	// TODO - add logic for streaming remaining  non-leaf nodes
 	root := tree.Repository.Object.Tree
 

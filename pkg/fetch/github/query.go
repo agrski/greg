@@ -26,18 +26,16 @@ type treeQuery struct {
 	Repository struct {
 		Name   string
 		Object struct {
-			Tree treeLevel1 `graphql:"... on Tree"`
+			Tree struct {
+				Entries []struct {
+					FileMetadata
+					Object struct {
+						FileContents `graphql:"... on Blob"`
+					}
+				}
+			} `graphql:"... on Tree"`
 		} `graphql:"object(expression: $commitishAndPath)"`
 	} `graphql:"repository(owner: $owner, name: $repo)"`
-}
-
-type treeLevel1 struct {
-	Entries []struct {
-		FileMetadata
-		Object struct {
-			FileContents `graphql:"... on Blob"`
-		}
-	}
 }
 
 type FileMetadata struct {

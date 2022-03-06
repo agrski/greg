@@ -10,17 +10,6 @@ import (
 	"golang.org/x/oauth2"
 )
 
-/*
-	Candidate GraphQL clients:
-	* https://github.com/hasura/go-graphql-client
-		- Generic usage (not GitHub-specific)
-		- Struct-based rather than string-based
-	* https://github.com/shurcooL/githubv4
-		- GitHub-specific
-		- Struct-based
-		- Supports pagination
-*/
-
 const (
 	apiUrl              = "https://api.github.com/graphql"
 	defaultQueryTimeout = 30 * time.Second

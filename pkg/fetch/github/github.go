@@ -55,34 +55,39 @@ func NewGitHub(accessToken string) *GitHub {
 
 func (g *GitHub) StreamFiles(params QueryParams) (<-chan *FileInfo, func(), error) {
 	results := make(chan *FileInfo, 100)
-	remaining := make(chan string, 100)
+	remaining := make(chan string, 10_000) // Max subtrees we support for any node; TODO - make configurable
 	cancel := make(chan struct{})
 	canceller := func() {
 		close(cancel)
 	}
 
 	g.ensureCommitish(&params)
-	variables := g.paramsToVariables(params)
 
-	tree, err := g.getTree(variables)
-	if err != nil {
-		return nil, nil, err
-	}
+	// Bootstrap loop with root of query
+	remaining <- params.PathPrefix
 
-	go g.streamTree(tree, results, remaining, cancel)
 	go func() {
-		// TODO - use `cancel` to terminate this goroutine
-		for path := range remaining {
-			params.PathPrefix = path
-			subtreeVars := g.paramsToVariables(params)
+		defer close(results)
+		defer close(remaining)
 
-			subTree, err := g.getTree(subtreeVars)
-			if err != nil {
-				// TODO - log warning or exit?
+		for {
+			select {
+			case path := <-remaining:
+				params.PathPrefix = path
+				variables := g.paramsToVariables(params)
+
+				tree, err := g.getTree(variables)
+				if err != nil {
+					// TODO - log warning or exit?
+					return
+				}
+
+				g.streamTree(tree, results, remaining, cancel)
+			case <-cancel:
+				return
+			default:
 				return
 			}
-
-			g.streamTree(subTree, results, remaining, cancel)
 		}
 	}()
 
@@ -179,8 +184,6 @@ loop:
 			continue
 		}
 	}
-
-	close(out)
 }
 
 func (g *GitHub) parseTree(tree *treeQuery) ([]*FileInfo, error) {

@@ -161,7 +161,11 @@ loop:
 	for _, e := range root.Entries {
 		switch e.Type {
 		case TreeEntryDir:
-			remaining <- e.Path
+			select {
+			case remaining <- e.Path:
+			case <-cancel:
+				break loop
+			}
 		case TreeEntryFile:
 			f := &FileInfo{
 				FileMetadata: e.FileMetadata,

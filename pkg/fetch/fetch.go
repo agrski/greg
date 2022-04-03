@@ -26,14 +26,14 @@ type Fetcher interface {
 	Next() interface{} // TODO - formalise this return param for interop with matcher
 }
 
-func New(l Location) Fetcher {
+func New(l Location, accessToken string) Fetcher {
 	// TODO - support (GitHub) token/file
 	githubFetcher := github.New(
 		github.QueryParams{
 			RepoOwner: string(l.Organisation),
 			RepoName:  string(l.Repository),
 		},
-		"",
+		accessToken,
 	)
 	return githubFetcher
 }

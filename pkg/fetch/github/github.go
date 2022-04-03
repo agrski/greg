@@ -105,7 +105,8 @@ func (g *GitHub) getDefaultBranchRef(owner string, repo string) (string, error) 
 		"owner": graphql.String(owner),
 		"repo":  graphql.String(repo),
 	}
-	ctx, _ := context.WithTimeout(context.Background(), defaultQueryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), defaultQueryTimeout)
+	defer cancel()
 
 	err := g.client.Query(ctx, q, variables)
 	if err != nil {
@@ -133,7 +134,8 @@ func (g *GitHub) makeRootPathExpression(commitish string, path string) string {
 
 func (g *GitHub) getTree(variables graphqlVariables) (*treeQuery, error) {
 	query := &treeQuery{}
-	ctx, _ := context.WithTimeout(context.Background(), defaultQueryTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), defaultQueryTimeout)
+	defer cancel()
 	err := g.client.Query(ctx, query, variables)
 
 	return query, err

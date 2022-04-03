@@ -20,12 +20,14 @@ const (
 var supportedHosts = [...]fetch.HostName{githubHost}
 
 var (
-	hostFlag     string
-	orgFlag      string
-	repoFlag     string
-	urlFlag      string
-	filetypeFlag string
-	pattern      string
+	hostFlag        string
+	orgFlag         string
+	repoFlag        string
+	urlFlag         string
+	filetypeFlag    string
+	pattern         string
+	accessToken     string
+	accessTokenFile string
 )
 
 func parseArguments() {
@@ -39,7 +41,19 @@ func parseArguments() {
 		"Full URL of git repository, e.g https://github.com/agrski/gitfind",
 	)
 	flag.StringVar(&filetypeFlag, "type", "", "filetype suffix, e.g. md or go")
+	flag.StringVar(&accessToken, "access-token", "", "raw access token for repository access")
+	flag.StringVar(
+		&accessTokenFile,
+		"access-token-file",
+		"",
+		"file containing access token for repository access",
+	)
 	flag.Parse()
+
+	if !isEmpty(accessToken) && !isEmpty(accessTokenFile) {
+		log.Println("using raw access token instead of file")
+	}
+
 	if 1 == flag.NArg() {
 		pattern = flag.Arg(0)
 	}

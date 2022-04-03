@@ -22,6 +22,6 @@ type Fetcher interface {
 	Next() *interface{}
 }
 
-func NewFetcher(l Location) *Fetcher {
+func New(l Location) *Fetcher {
 	return nil
 }

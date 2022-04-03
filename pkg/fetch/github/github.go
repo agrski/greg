@@ -28,7 +28,7 @@ type GitHub struct {
 	client *graphql.Client
 }
 
-func NewGitHub(accessToken string) *GitHub {
+func New(accessToken string) *GitHub {
 	// TODO - refactor OAuth handling entirely outside this package
 	tokenSource := oauth2.StaticTokenSource(
 		&oauth2.Token{

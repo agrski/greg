@@ -1,5 +1,9 @@
 package fetch
 
+import (
+	"github.com/agrski/gitfind/pkg/fetch/github"
+)
+
 /*
 	Strategy pattern that select from supported providers.
 	Currently the CLI knows about supported git providers,
@@ -23,5 +27,7 @@ type Fetcher interface {
 }
 
 func New(l Location) Fetcher {
-	return nil
+	// TODO - support (GitHub) token/file
+	githubFetcher := github.New(l, "")
+	return githubFetcher
 }

@@ -200,5 +200,10 @@ func main() {
 		log.Fatal(err)
 	}
 
+	token, err := getAccessToken(accessToken, accessTokenFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	fmt.Printf("Searching for %s in %s", p, u.String())
 }

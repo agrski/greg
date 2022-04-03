@@ -19,7 +19,7 @@ type Location struct {
 type Fetcher interface {
 	Start() error
 	Stop() error
-	Next() *interface{}
+	Next() interface{}
 }
 
 func New(l Location) *Fetcher {

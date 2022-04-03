@@ -8,6 +8,8 @@ import (
 
 	"github.com/hasura/go-graphql-client"
 	"golang.org/x/oauth2"
+
+	"github.com/agrski/gitfind/pkg/fetch"
 )
 
 const (
@@ -25,10 +27,15 @@ type FileInfo struct {
 }
 
 type GitHub struct {
-	client *graphql.Client
+	client   *graphql.Client
+	location fetch.Location
+	results  <-chan *FileInfo
+	cancel   func()
 }
 
-func New(accessToken string) *GitHub {
+var _ fetch.Fetcher = (*GitHub)(nil)
+
+func New(l fetch.Location, accessToken string) *GitHub {
 	// TODO - refactor OAuth handling entirely outside this package
 	tokenSource := oauth2.StaticTokenSource(
 		&oauth2.Token{
@@ -40,11 +47,38 @@ func New(accessToken string) *GitHub {
 	client := graphql.NewClient(apiUrl, authClient)
 
 	return &GitHub{
-		client: client,
+		client:   client,
+		location: l,
 	}
 }
 
-func (g *GitHub) GetFiles(params QueryParams) (<-chan *FileInfo, func()) {
+func (g *GitHub) Start() error {
+	results, cancel := g.getFiles(
+		QueryParams{
+			RepoOwner: string(g.location.Organisation),
+			RepoName:  string(g.location.Repository),
+		},
+	)
+	g.results = results
+	g.cancel = cancel
+	return nil
+}
+
+func (g *GitHub) Stop() error {
+	g.cancel()
+	return nil
+}
+
+func (g *GitHub) Next() interface{} {
+	select {
+	case n := <-g.results:
+		return n
+	default:
+		return nil
+	}
+}
+
+func (g *GitHub) getFiles(params QueryParams) (<-chan *FileInfo, func()) {
 	results := make(chan *FileInfo, treeResultsCapacity)
 	remaining := make(chan string, treesRemainingCapacity)
 	cancel := make(chan struct{})

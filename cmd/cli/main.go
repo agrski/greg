@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/url"
+	"os"
 	"strings"
 
 	"github.com/agrski/gitfind/pkg/fetch"
@@ -149,6 +150,8 @@ func isSupportedHost(host fetch.HostName) bool {
 }
 
 func main() {
+	log.SetOutput(os.Stderr)
+
 	parseArguments()
 
 	l, err := getLocation()

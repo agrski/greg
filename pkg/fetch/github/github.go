@@ -8,8 +8,6 @@ import (
 
 	"github.com/hasura/go-graphql-client"
 	"golang.org/x/oauth2"
-
-	"github.com/agrski/gitfind/pkg/fetch"
 )
 
 const (
@@ -27,15 +25,13 @@ type FileInfo struct {
 }
 
 type GitHub struct {
-	client   *graphql.Client
-	location fetch.Location
-	results  <-chan *FileInfo
-	cancel   func()
+	client      *graphql.Client
+	queryParams QueryParams
+	results     <-chan *FileInfo
+	cancel      func()
 }
 
-var _ fetch.Fetcher = (*GitHub)(nil)
-
-func New(l fetch.Location, accessToken string) *GitHub {
+func New(q QueryParams, accessToken string) *GitHub {
 	// TODO - refactor OAuth handling entirely outside this package
 	tokenSource := oauth2.StaticTokenSource(
 		&oauth2.Token{
@@ -47,18 +43,13 @@ func New(l fetch.Location, accessToken string) *GitHub {
 	client := graphql.NewClient(apiUrl, authClient)
 
 	return &GitHub{
-		client:   client,
-		location: l,
+		client:      client,
+		queryParams: q,
 	}
 }
 
 func (g *GitHub) Start() error {
-	results, cancel := g.getFiles(
-		QueryParams{
-			RepoOwner: string(g.location.Organisation),
-			RepoName:  string(g.location.Repository),
-		},
-	)
+	results, cancel := g.getFiles(g.queryParams)
 	g.results = results
 	g.cancel = cancel
 	return nil

@@ -28,6 +28,12 @@ type Fetcher interface {
 
 func New(l Location) Fetcher {
 	// TODO - support (GitHub) token/file
-	githubFetcher := github.New(l, "")
+	githubFetcher := github.New(
+		github.QueryParams{
+			RepoOwner: string(l.Organisation),
+			RepoName:  string(l.Repository),
+		},
+		"",
+	)
 	return githubFetcher
 }

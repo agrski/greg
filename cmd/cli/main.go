@@ -205,5 +205,13 @@ func main() {
 		log.Fatal(err)
 	}
 
+	fetcher := fetch.New(
+		l,
+		token,
+	)
+
+	fetcher.Start()
 	fmt.Printf("Searching for %s in %s", p, u.String())
+
+	fetcher.Stop()
 }

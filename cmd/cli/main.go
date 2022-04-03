@@ -50,10 +50,6 @@ func parseArguments() {
 	)
 	flag.Parse()
 
-	if !isEmpty(accessToken) && !isEmpty(accessTokenFile) {
-		log.Println("using raw access token instead of file")
-	}
-
 	if 1 == flag.NArg() {
 		pattern = flag.Arg(0)
 	}
@@ -161,6 +157,26 @@ func isSupportedHost(host fetch.HostName) bool {
 		}
 	}
 	return false
+}
+
+func getAccessToken(rawAccessToken string, accessTokenFile string) (string, error) {
+	if !isEmpty(accessToken) && !isEmpty(accessTokenFile) {
+		return "", errors.New("only one of access token and access token file may be specified")
+	}
+
+	if !isEmpty(accessTokenFile) {
+		_, err := os.Stat(accessTokenFile)
+		if err != nil {
+			return "", err
+		}
+		token, err := os.ReadFile(accessTokenFile)
+		if err != nil {
+			return "", err
+		}
+		return string(token), nil
+	}
+
+	return rawAccessToken, nil
 }
 
 func main() {

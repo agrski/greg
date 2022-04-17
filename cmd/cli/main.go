@@ -216,7 +216,12 @@ func main() {
 	fetcher := fetch.New(l, token)
 
 	fetcher.Start()
-	fmt.Printf("Searching for %s in %s", p, u.String())
+	fmt.Printf("Searching for %s in %s\n", p, u.String())
+
+	next, ok := fetcher.Next()
+	if ok {
+		fmt.Println(next)
+	}
 
 	fetcher.Stop()
 }

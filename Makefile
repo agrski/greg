@@ -23,7 +23,7 @@ vet: fmt
 	$(GOCMD) vet $(ALL_FILES)
 
 .PHONY:cli
-cli: vet
+cli: clean vet
 	GOOS=linux GOARCH=amd64 \
 			 $(GOCMD) build -v -o $(BIN_DIR)/$(BINARY_LINUX) ./cmd/cli/main.go
 	GOOS=windows GOARCH=amd64 \

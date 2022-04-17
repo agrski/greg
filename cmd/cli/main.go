@@ -6,33 +6,28 @@ import (
 	"fmt"
 	"log"
 	"net/url"
+	"os"
 	"strings"
+
+	"github.com/agrski/gitfind/pkg/fetch"
 )
-
-type hostName string
-type organisationName string
-type repositoryName string
-
-type location struct {
-	host         hostName
-	organisation organisationName
-	repository   repositoryName
-}
 
 const (
 	httpScheme = "https"
 	githubHost = "github.com"
 )
 
-var supportedHosts = [...]hostName{githubHost}
+var supportedHosts = [...]fetch.HostName{githubHost}
 
 var (
-	hostFlag     string
-	orgFlag      string
-	repoFlag     string
-	urlFlag      string
-	filetypeFlag string
-	pattern      string
+	hostFlag        string
+	orgFlag         string
+	repoFlag        string
+	urlFlag         string
+	filetypeFlag    string
+	pattern         string
+	accessToken     string
+	accessTokenFile string
 )
 
 func parseArguments() {
@@ -46,48 +41,56 @@ func parseArguments() {
 		"Full URL of git repository, e.g https://github.com/agrski/gitfind",
 	)
 	flag.StringVar(&filetypeFlag, "type", "", "filetype suffix, e.g. md or go")
+	flag.StringVar(&accessToken, "access-token", "", "raw access token for repository access")
+	flag.StringVar(
+		&accessTokenFile,
+		"access-token-file",
+		"",
+		"file containing access token for repository access",
+	)
 	flag.Parse()
+
 	if 1 == flag.NArg() {
 		pattern = flag.Arg(0)
 	}
 }
 
-func getLocation() (location, error) {
+func getLocation() (fetch.Location, error) {
 	if isEmpty(urlFlag) && (isEmpty(orgFlag) || isEmpty(repoFlag)) {
-		return location{}, errors.New("must specify either url or both org and repo")
+		return fetch.Location{}, errors.New("must specify either url or both org and repo")
 	}
 
 	if !isEmpty(urlFlag) && (!isEmpty(orgFlag) || !isEmpty(repoFlag)) {
-		return location{}, errors.New("cannot specify both url and org or repo")
+		return fetch.Location{}, errors.New("cannot specify both url and org or repo")
 	}
 
 	if isEmpty(urlFlag) {
-		return location{
-			hostName(hostFlag),
-			organisationName(orgFlag),
-			repositoryName(repoFlag),
+		return fetch.Location{
+			Host:         fetch.HostName(hostFlag),
+			Organisation: fetch.OrganisationName(orgFlag),
+			Repository:   fetch.RepositoryName(repoFlag),
 		}, nil
 	}
 
 	return parseLocationFromURL(urlFlag)
 }
 
-func parseLocationFromURL(rawURL string) (location, error) {
+func parseLocationFromURL(rawURL string) (fetch.Location, error) {
 	if isEmpty(rawURL) {
-		return location{}, errors.New("cannot parse empty string")
+		return fetch.Location{}, errors.New("cannot parse empty string")
 	}
 
 	noWhitespace := strings.TrimSpace(rawURL)
 
 	parts := strings.SplitAfter(noWhitespace, "://")
 	if len(parts) > 2 {
-		return location{}, fmt.Errorf("cannot parse malformed string '%v'", noWhitespace)
+		return fetch.Location{}, fmt.Errorf("cannot parse malformed string '%v'", noWhitespace)
 	}
 
 	withoutScheme := parts[len(parts)-1]
 	hostAndPath := strings.Split(withoutScheme, "/")
 	if len(hostAndPath) < 3 {
-		return location{}, fmt.Errorf("unable to parse host, org, and repo from %v", hostAndPath)
+		return fetch.Location{}, fmt.Errorf("unable to parse host, org, and repo from %v", hostAndPath)
 	}
 
 	host := hostAndPath[0]
@@ -96,19 +99,19 @@ func parseLocationFromURL(rawURL string) (location, error) {
 	repo = strings.TrimSuffix(repo, ".git")
 
 	if isEmpty(host) {
-		return location{}, errors.New("host cannot be empty")
+		return fetch.Location{}, errors.New("host cannot be empty")
 	}
 	if isEmpty(org) {
-		return location{}, errors.New("org cannot be empty")
+		return fetch.Location{}, errors.New("org cannot be empty")
 	}
 	if isEmpty(repo) {
-		return location{}, errors.New("repo cannot be empty")
+		return fetch.Location{}, errors.New("repo cannot be empty")
 	}
 
-	return location{
-		hostName(host),
-		organisationName(org),
-		repositoryName(repo),
+	return fetch.Location{
+		Host:         fetch.HostName(host),
+		Organisation: fetch.OrganisationName(org),
+		Repository:   fetch.RepositoryName(repo),
 	}, nil
 }
 
@@ -139,15 +142,15 @@ func isEmpty(s string) bool {
 	return "" == strings.TrimSpace(s)
 }
 
-func makeURI(l location) url.URL {
+func makeURI(l fetch.Location) url.URL {
 	return url.URL{
 		Scheme: httpScheme,
-		Host:   string(l.host),
-		Path:   fmt.Sprintf("%s/%s", l.organisation, l.repository),
+		Host:   string(l.Host),
+		Path:   fmt.Sprintf("%s/%s", l.Organisation, l.Repository),
 	}
 }
 
-func isSupportedHost(host hostName) bool {
+func isSupportedHost(host fetch.HostName) bool {
 	for _, h := range supportedHosts {
 		if host == h {
 			return true
@@ -156,7 +159,37 @@ func isSupportedHost(host hostName) bool {
 	return false
 }
 
+func getAccessToken(rawAccessToken string, accessTokenFile string) (string, error) {
+	if !isEmpty(accessToken) && !isEmpty(accessTokenFile) {
+		return "", errors.New("only one of access token and access token file may be specified")
+	}
+
+	if !isEmpty(accessTokenFile) {
+		_, err := os.Stat(accessTokenFile)
+		if err != nil {
+			return "", err
+		}
+
+		token, err := os.ReadFile(accessTokenFile)
+		if err != nil {
+			return "", err
+		}
+
+		asString := string(token)
+		asString = strings.TrimSpace(asString)
+		if isEmpty(asString) {
+			return "", errors.New("access token file cannot be empty")
+		}
+
+		return asString, nil
+	}
+
+	return rawAccessToken, nil
+}
+
 func main() {
+	log.SetOutput(os.Stderr)
+
 	parseArguments()
 
 	l, err := getLocation()
@@ -164,9 +197,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	allowed := isSupportedHost(l.host)
+	allowed := isSupportedHost(l.Host)
 	if !allowed {
-		log.Fatalf("unsupported git hosting provider %s", l.host)
+		log.Fatalf("unsupported git hosting provider %s", l.Host)
 	}
 
 	u := makeURI(l)
@@ -175,5 +208,20 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("Searching for %s in %s", p, u.String())
+	token, err := getAccessToken(accessToken, accessTokenFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fetcher := fetch.New(l, token)
+
+	fetcher.Start()
+	fmt.Printf("Searching for %s in %s\n", p, u.String())
+
+	next, ok := fetcher.Next()
+	if ok {
+		fmt.Println(next)
+	}
+
+	fetcher.Stop()
 }

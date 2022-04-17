@@ -94,6 +94,7 @@ func (g *GitHub) getFiles(params QueryParams) (<-chan *FileInfo, func()) {
 
 				tree, err := g.getTree(variables)
 				if err != nil {
+					fmt.Printf("unable to fetch from GitHub: %v", err)
 					// TODO - log warning or exit?
 					return
 				}

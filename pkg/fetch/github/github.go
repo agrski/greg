@@ -24,6 +24,9 @@ type FileInfo struct {
 	FileContents
 }
 
+// GitHub instances retrieve the files present as of some commit in a GitHub repository.
+// An instance should only be used once, as it stores intermediate state internally.
+// A stopped instance cannot be restarted cleanly; instead, create a fresh instance.
 type GitHub struct {
 	client      *graphql.Client
 	queryParams QueryParams

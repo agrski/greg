@@ -49,7 +49,7 @@ func New(q QueryParams, accessToken string) *GitHub {
 }
 
 func (g *GitHub) Start() error {
-	results, cancel := g.getFiles(g.queryParams)
+	results, cancel := g.getFiles()
 	g.results = results
 	g.cancel = cancel
 	return nil
@@ -69,7 +69,7 @@ func (g *GitHub) Next() (interface{}, bool) {
 	}
 }
 
-func (g *GitHub) getFiles(params QueryParams) (<-chan *FileInfo, func()) {
+func (g *GitHub) getFiles() (<-chan *FileInfo, func()) {
 	results := make(chan *FileInfo, treeResultsCapacity)
 	remaining := make(chan string, treesRemainingCapacity)
 	cancel := make(chan struct{})
@@ -77,10 +77,10 @@ func (g *GitHub) getFiles(params QueryParams) (<-chan *FileInfo, func()) {
 		close(cancel)
 	}
 
-	g.ensureCommitish(&params)
+	g.ensureCommitish()
 
 	// Bootstrap loop with root of query
-	remaining <- params.PathPrefix
+	remaining <- g.queryParams.PathPrefix
 
 	go func() {
 		defer close(results)
@@ -89,8 +89,8 @@ func (g *GitHub) getFiles(params QueryParams) (<-chan *FileInfo, func()) {
 		for {
 			select {
 			case path := <-remaining:
-				params.PathPrefix = path
-				variables := g.paramsToVariables(params)
+				g.queryParams.PathPrefix = path
+				variables := g.paramsToVariables()
 
 				tree, err := g.getTree(variables)
 				if err != nil {
@@ -110,25 +110,25 @@ func (g *GitHub) getFiles(params QueryParams) (<-chan *FileInfo, func()) {
 	return results, canceller
 }
 
-func (g *GitHub) ensureCommitish(params *QueryParams) error {
-	if strings.TrimSpace(params.Commitish) != "" {
+func (g *GitHub) ensureCommitish() error {
+	if strings.TrimSpace(g.queryParams.Commitish) != "" {
 		return nil
 	}
 
-	c, err := g.getDefaultBranchRef(params.RepoOwner, params.RepoName)
+	c, err := g.getDefaultBranchRef()
 	if err != nil {
 		return err
 	}
 
-	params.Commitish = c
+	g.queryParams.Commitish = c
 	return nil
 }
 
-func (g *GitHub) getDefaultBranchRef(owner string, repo string) (string, error) {
+func (g *GitHub) getDefaultBranchRef() (string, error) {
 	q := &branchRefQuery{}
 	variables := graphqlVariables{
-		"owner": graphql.String(owner),
-		"repo":  graphql.String(repo),
+		"owner": graphql.String(g.queryParams.RepoOwner),
+		"repo":  graphql.String(g.queryParams.RepoName),
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), defaultQueryTimeout)
 	defer cancel()
@@ -141,12 +141,12 @@ func (g *GitHub) getDefaultBranchRef(owner string, repo string) (string, error) 
 	return q.Repository.DefaultBranchRef.Name, nil
 }
 
-func (g *GitHub) paramsToVariables(params QueryParams) graphqlVariables {
-	rootExpression := g.makeRootPathExpression(params.Commitish, params.PathPrefix)
+func (g *GitHub) paramsToVariables() graphqlVariables {
+	rootExpression := g.makeRootPathExpression(g.queryParams.Commitish, g.queryParams.PathPrefix)
 
 	variables := graphqlVariables{
-		"owner":            graphql.String(params.RepoOwner),
-		"repo":             graphql.String(params.RepoName),
+		"owner":            graphql.String(g.queryParams.RepoOwner),
+		"repo":             graphql.String(g.queryParams.RepoName),
 		"commitishAndPath": graphql.String(rootExpression),
 	}
 

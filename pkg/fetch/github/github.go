@@ -142,7 +142,7 @@ func (g *GitHub) getDefaultBranchRef() (string, error) {
 }
 
 func (g *GitHub) paramsToVariables() graphqlVariables {
-	rootExpression := g.makeRootPathExpression(g.queryParams.Commitish, g.queryParams.PathPrefix)
+	rootExpression := g.makeRootPathExpression()
 
 	variables := graphqlVariables{
 		"owner":            graphql.String(g.queryParams.RepoOwner),
@@ -153,8 +153,8 @@ func (g *GitHub) paramsToVariables() graphqlVariables {
 	return variables
 }
 
-func (g *GitHub) makeRootPathExpression(commitish string, path string) string {
-	return fmt.Sprintf("%s:%s", commitish, path)
+func (g *GitHub) makeRootPathExpression() string {
+	return fmt.Sprintf("%s:%s", g.queryParams.Commitish, g.queryParams.PathPrefix)
 }
 
 func (g *GitHub) getTree(variables graphqlVariables) (*treeQuery, error) {

@@ -23,7 +23,7 @@ type Location struct {
 type Fetcher interface {
 	Start() error
 	Stop() error
-	Next() interface{} // TODO - formalise this return param for interop with matcher
+	Next() (interface{}, bool) // TODO - formalise this return param for interop with matcher
 }
 
 func New(l Location, accessToken string) Fetcher {

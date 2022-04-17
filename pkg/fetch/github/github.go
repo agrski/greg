@@ -60,12 +60,12 @@ func (g *GitHub) Stop() error {
 	return nil
 }
 
-func (g *GitHub) Next() interface{} {
-	select {
-	case n := <-g.results:
-		return n
-	default:
-		return nil
+func (g *GitHub) Next() (interface{}, bool) {
+	next := <-g.results
+	if next == nil {
+		return nil, false
+	} else {
+		return next, true
 	}
 }
 

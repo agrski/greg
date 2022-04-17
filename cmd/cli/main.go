@@ -169,11 +169,19 @@ func getAccessToken(rawAccessToken string, accessTokenFile string) (string, erro
 		if err != nil {
 			return "", err
 		}
+
 		token, err := os.ReadFile(accessTokenFile)
 		if err != nil {
 			return "", err
 		}
-		return string(token), nil
+
+		asString := string(token)
+		asString = strings.TrimSpace(asString)
+		if isEmpty(asString) {
+			return "", errors.New("access token file cannot be empty")
+		}
+
+		return asString, nil
 	}
 
 	return rawAccessToken, nil

@@ -34,14 +34,7 @@ type GitHub struct {
 	cancel      func()
 }
 
-func New(q QueryParams, accessToken string) *GitHub {
-	// TODO - refactor OAuth handling entirely outside this package
-	tokenSource := oauth2.StaticTokenSource(
-		&oauth2.Token{
-			AccessToken: accessToken,
-		},
-	)
-
+func New(q QueryParams, tokenSource oauth2.TokenSource) *GitHub {
 	authClient := oauth2.NewClient(context.Background(), tokenSource)
 	client := graphql.NewClient(apiUrl, authClient)
 

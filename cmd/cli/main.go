@@ -9,6 +9,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/agrski/gitfind/pkg/auth"
 	"github.com/agrski/gitfind/pkg/fetch"
 )
 
@@ -213,7 +214,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fetcher := fetch.New(l, token)
+	tokenSource := auth.ToTokenSource(token)
+
+	fetcher := fetch.New(l, tokenSource)
 
 	fetcher.Start()
 	fmt.Printf("Searching for %s in %s\n", p, u.String())

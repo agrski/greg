@@ -11,6 +11,7 @@ import (
 
 	"github.com/agrski/gitfind/pkg/auth"
 	"github.com/agrski/gitfind/pkg/fetch"
+	"golang.org/x/oauth2"
 )
 
 const (
@@ -160,32 +161,21 @@ func isSupportedHost(host fetch.HostName) bool {
 	return false
 }
 
-func getAccessToken(rawAccessToken string, accessTokenFile string) (string, error) {
+func getAccessToken(rawAccessToken string, accessTokenFile string) (oauth2.TokenSource, error) {
+	if isEmpty(accessToken) && isEmpty(accessTokenFile) {
+		return nil, errors.New("must specify either access token or access token file")
+	}
+
 	if !isEmpty(accessToken) && !isEmpty(accessTokenFile) {
-		return "", errors.New("only one of access token and access token file may be specified")
+		return nil, errors.New("only one of access token and access token file may be specified")
 	}
 
-	if !isEmpty(accessTokenFile) {
-		_, err := os.Stat(accessTokenFile)
-		if err != nil {
-			return "", err
-		}
-
-		token, err := os.ReadFile(accessTokenFile)
-		if err != nil {
-			return "", err
-		}
-
-		asString := string(token)
-		asString = strings.TrimSpace(asString)
-		if isEmpty(asString) {
-			return "", errors.New("access token file cannot be empty")
-		}
-
-		return asString, nil
+	tokenSource, err := auth.TokenSourceFromString(rawAccessToken)
+	if err != nil {
+		tokenSource, err = auth.TokenSourceFromFile(accessTokenFile)
 	}
 
-	return rawAccessToken, nil
+	return tokenSource, err
 }
 
 func main() {
@@ -209,12 +199,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	token, err := getAccessToken(accessToken, accessTokenFile)
+	tokenSource, err := getAccessToken(accessToken, accessTokenFile)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	tokenSource := auth.ToTokenSource(token)
 
 	fetcher := fetch.New(l, tokenSource)
 

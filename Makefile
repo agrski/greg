@@ -33,6 +33,10 @@ cli: clean vet
 test:
 	$(GOCMD) test $(ALL_FILES)
 
+.PHONY:test-integration
+test-integration:
+	$(GOCMD) test -tags integration $(ALL_FILES)
+
 .PHONY:clean
 clean:
 	$(GOCMD) clean

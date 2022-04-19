@@ -154,9 +154,10 @@ func (g *GitHub) makeRootPathExpression() string {
 }
 
 func (g *GitHub) getTree(variables graphqlVariables) (*treeQuery, error) {
-	query := &treeQuery{}
 	ctx, cancel := context.WithTimeout(context.Background(), defaultQueryTimeout)
 	defer cancel()
+
+	query := &treeQuery{}
 	err := g.client.Query(ctx, query, variables)
 
 	return query, err

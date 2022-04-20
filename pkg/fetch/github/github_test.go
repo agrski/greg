@@ -35,6 +35,32 @@ func TestParseTree(t *testing.T) {
 					FileContents "graphql:\"... on Blob\""
 				}
 			}{},
+			expectedResults:   []*FileInfo{},
+			expectedRemaining: []string{},
+		},
+		{
+			name: "one empty directory",
+			entries: []struct {
+				FileMetadata
+				Object struct {
+					FileContents "graphql:\"... on Blob\""
+				}
+			}{
+				{
+					FileMetadata{
+						Type: TreeEntryDir,
+						Name: "dir1",
+						Path: "dir1",
+					},
+					struct {
+						FileContents "graphql:\"... on Blob\""
+					}{
+						FileContents{},
+					},
+				},
+			},
+			expectedResults:   []*FileInfo{},
+			expectedRemaining: []string{"dir1"},
 		},
 	}
 

@@ -94,7 +94,7 @@ func (g *GitHub) getFiles() (<-chan *FileInfo, func()) {
 					return
 				}
 
-				g.parseTree(tree, results, remaining, cancel)
+				parseTree(tree, results, remaining, cancel)
 			case <-cancel:
 				return
 			default:
@@ -163,7 +163,7 @@ func (g *GitHub) getTree(variables graphqlVariables) (*treeQuery, error) {
 	return query, err
 }
 
-func (g *GitHub) parseTree(
+func parseTree(
 	tree *treeQuery,
 	results chan<- *FileInfo,
 	remaining chan<- string,

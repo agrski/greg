@@ -50,6 +50,9 @@ test:
 test-integration:
 	$(GOCMD) test $(VERBOSE) -tags integration $(ALL_FILES)
 
+.PHONY:test-all
+test-all: test test-integration
+
 .PHONY:clean
 clean:
 	$(GOCMD) clean

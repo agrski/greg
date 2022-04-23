@@ -104,12 +104,10 @@ func TestGetFiles(t *testing.T) {
 	)
 
 	fs, cancel := g.getFiles()
-
 	for f := range fs {
 		require.NotNil(t, f)
 		numResults++
 	}
-
 	cancel()
 
 	require.NotZero(t, numResults)

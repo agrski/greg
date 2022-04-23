@@ -94,6 +94,25 @@ func TestEnsureCommitish(t *testing.T) {
 }
 
 func TestGetFiles(t *testing.T) {
+	numResults := 0
+	g := New(
+		QueryParams{
+			RepoOwner: "agrski",
+			RepoName:  "gitfind",
+		},
+		getTokenSource(t),
+	)
+
+	fs, cancel := g.getFiles()
+
+	for f := range fs {
+		require.NotNil(t, f)
+		numResults++
+	}
+
+	cancel()
+
+	require.NotZero(t, numResults)
 }
 
 func TestStart(t *testing.T) {

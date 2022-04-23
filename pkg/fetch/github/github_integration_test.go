@@ -8,6 +8,8 @@ import (
 	"testing"
 
 	"github.com/agrski/gitfind/pkg/auth"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"golang.org/x/oauth2"
 )
 
@@ -98,4 +100,20 @@ func TestStart(t *testing.T) {
 }
 
 func TestStop(t *testing.T) {
+	g := New(
+		QueryParams{
+			RepoOwner: "agrski",
+			RepoName:  "gitfind",
+		},
+		getTokenSource(t),
+	)
+
+	// Stopping immediately should be far too fast for any real results to be fetched
+	g.Start()
+	g.Stop()
+
+	next, ok := g.Next()
+	require.False(t, ok)
+	require.Nil(t, next)
+	assert.Empty(t, g.results)
 }

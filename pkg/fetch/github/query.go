@@ -23,19 +23,29 @@ type branchRefQuery struct {
 }
 
 type treeQuery struct {
-	Repository struct {
-		Name   string
-		Object struct {
-			Tree struct {
-				Entries []struct {
-					FileMetadata
-					Object struct {
-						FileContents `graphql:"... on Blob"`
-					}
-				}
-			} `graphql:"... on Tree"`
-		} `graphql:"object(expression: $commitishAndPath)"`
-	} `graphql:"repository(owner: $owner, name: $repo)"`
+	Repository `graphql:"repository(owner: $owner, name: $repo)"`
+}
+
+type Repository struct {
+	Name   string
+	Object repositoryObject `graphql:"object(expression: $commitishAndPath)"`
+}
+
+type repositoryObject struct {
+	Tree tree `graphql:"... on Tree"`
+}
+
+type tree struct {
+	Entries []entry
+}
+
+type entry struct {
+	FileMetadata
+	Object entryObject
+}
+
+type entryObject struct {
+	FileContents `graphql:"... on Blob"`
 }
 
 type FileMetadata struct {

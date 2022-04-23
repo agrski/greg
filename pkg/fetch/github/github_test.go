@@ -17,46 +17,29 @@ func TestParseTree(t *testing.T) {
 	}
 
 	type test struct {
-		name    string
-		entries []struct {
-			FileMetadata
-			Object struct {
-				FileContents "graphql:\"... on Blob\""
-			}
-		}
+		name              string
+		entries           []entry
 		expectedResults   []*FileInfo
 		expectedRemaining []string
 	}
 
 	tests := []test{
 		{
-			name: "empty root dir",
-			entries: []struct {
-				FileMetadata
-				Object struct {
-					FileContents "graphql:\"... on Blob\""
-				}
-			}{},
+			name:              "empty root dir",
+			entries:           []entry{},
 			expectedResults:   []*FileInfo{},
 			expectedRemaining: []string{},
 		},
 		{
 			name: "one empty directory",
-			entries: []struct {
-				FileMetadata
-				Object struct {
-					FileContents "graphql:\"... on Blob\""
-				}
-			}{
+			entries: []entry{
 				{
 					FileMetadata{
 						Type: TreeEntryDir,
 						Name: "dir1",
 						Path: "dir1",
 					},
-					struct {
-						FileContents "graphql:\"... on Blob\""
-					}{
+					entryObject{
 						FileContents{},
 					},
 				},
@@ -66,21 +49,14 @@ func TestParseTree(t *testing.T) {
 		},
 		{
 			name: "one file in root dir",
-			entries: []struct {
-				FileMetadata
-				Object struct {
-					FileContents "graphql:\"... on Blob\""
-				}
-			}{
+			entries: []entry{
 				{
 					FileMetadata{
 						Type:      TreeEntryFile,
 						Name:      "file1.txt",
 						Extension: ".txt",
 					},
-					struct {
-						FileContents "graphql:\"... on Blob\""
-					}{
+					entryObject{
 						FileContents{
 							IsBinary: false,
 							Text:     "some text",
@@ -105,21 +81,14 @@ func TestParseTree(t *testing.T) {
 		},
 		{
 			name: "files and nested dirs",
-			entries: []struct {
-				FileMetadata
-				Object struct {
-					FileContents "graphql:\"... on Blob\""
-				}
-			}{
+			entries: []entry{
 				{
 					FileMetadata{
 						Type:      TreeEntryFile,
 						Name:      "file1.txt",
 						Extension: ".txt",
 					},
-					struct {
-						FileContents "graphql:\"... on Blob\""
-					}{
+					entryObject{
 						FileContents{
 							IsBinary: false,
 							Text:     "some text",
@@ -132,9 +101,7 @@ func TestParseTree(t *testing.T) {
 						Name: "dir1",
 						Path: "dir1",
 					},
-					struct {
-						FileContents "graphql:\"... on Blob\""
-					}{},
+					entryObject{},
 				},
 			},
 			expectedResults: []*FileInfo{

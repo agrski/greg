@@ -97,6 +97,27 @@ func TestGetFiles(t *testing.T) {
 }
 
 func TestStart(t *testing.T) {
+	numFiles := 5
+	results := make([]*FileInfo, 0, numFiles)
+	g := New(
+		QueryParams{
+			RepoOwner: "agrski",
+			RepoName:  "gitfind",
+		},
+		getTokenSource(t),
+	)
+
+	// Ensure API returns some files
+	g.Start()
+	for i := 0; i < numFiles; i++ {
+		if next, ok := g.Next(); ok {
+			assert.IsType(t, &FileInfo{}, next)
+			results = append(results, next.(*FileInfo))
+		}
+	}
+	g.Stop()
+
+	require.Len(t, results, numFiles)
 }
 
 func TestStop(t *testing.T) {

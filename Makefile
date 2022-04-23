@@ -10,6 +10,10 @@ BINARY_WINDOWS = gitfind_win
 ALL_FILES = ./...
 BIN_DIR = ./bin
 
+ifneq ($(VERBOSE),)
+	VERBOSE = -v
+endif
+
 .PHONY:fmt
 fmt:
 	$(GOCMD) fmt $(ALL_FILES)
@@ -31,11 +35,11 @@ cli: clean vet
 
 .PHONY:test
 test:
-	$(GOCMD) test $(ALL_FILES)
+	$(GOCMD) test $(VERBOSE) $(ALL_FILES)
 
 .PHONY:test-integration
 test-integration:
-	$(GOCMD) test -tags integration $(ALL_FILES)
+	$(GOCMD) test $(VERBOSE) -tags integration $(ALL_FILES)
 
 .PHONY:clean
 clean:

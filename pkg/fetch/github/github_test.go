@@ -62,6 +62,94 @@ func TestParseTree(t *testing.T) {
 			expectedResults:   []*FileInfo{},
 			expectedRemaining: []string{"dir1"},
 		},
+		{
+			name: "one file in root dir",
+			entries: []struct {
+				FileMetadata
+				Object struct {
+					FileContents "graphql:\"... on Blob\""
+				}
+			}{
+				{
+					FileMetadata{
+						Type:      TreeEntryFile,
+						Name:      "file1.txt",
+						Extension: ".txt",
+					},
+					struct {
+						FileContents "graphql:\"... on Blob\""
+					}{
+						FileContents{
+							IsBinary: false,
+							Text:     "some text",
+						},
+					},
+				},
+			},
+			expectedResults: []*FileInfo{
+				{
+					FileMetadata{
+						Type:      TreeEntryFile,
+						Name:      "file1.txt",
+						Extension: ".txt",
+					},
+					FileContents{
+						IsBinary: false,
+						Text:     "some text",
+					},
+				},
+			},
+			expectedRemaining: []string{},
+		},
+		{
+			name: "files and nested dirs",
+			entries: []struct {
+				FileMetadata
+				Object struct {
+					FileContents "graphql:\"... on Blob\""
+				}
+			}{
+				{
+					FileMetadata{
+						Type:      TreeEntryFile,
+						Name:      "file1.txt",
+						Extension: ".txt",
+					},
+					struct {
+						FileContents "graphql:\"... on Blob\""
+					}{
+						FileContents{
+							IsBinary: false,
+							Text:     "some text",
+						},
+					},
+				},
+				{
+					FileMetadata{
+						Type: TreeEntryDir,
+						Name: "dir1",
+						Path: "dir1",
+					},
+					struct {
+						FileContents "graphql:\"... on Blob\""
+					}{},
+				},
+			},
+			expectedResults: []*FileInfo{
+				{
+					FileMetadata{
+						Type:      TreeEntryFile,
+						Name:      "file1.txt",
+						Extension: ".txt",
+					},
+					FileContents{
+						IsBinary: false,
+						Text:     "some text",
+					},
+				},
+			},
+			expectedRemaining: []string{"dir1"},
+		},
 	}
 
 	for _, tt := range tests {

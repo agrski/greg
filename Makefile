@@ -43,7 +43,7 @@ cli: clean vet
 			 $(GOCMD) build -v -o $(BIN_DIR)/$(BINARY_WINDOWS) ./cmd/cli/main.go
 
 .PHONY:test-unit
-test:
+test-unit:
 	$(GOCMD) test $(VERBOSE) $(ALL_FILES)
 
 .PHONY:test-integration
@@ -51,7 +51,7 @@ test-integration:
 	$(GOCMD) test $(VERBOSE) -tags integration $(ALL_FILES)
 
 .PHONY:test
-test-all: test-unit test-integration
+test: test-unit test-integration
 
 .PHONY:clean
 clean:

@@ -94,7 +94,7 @@ func (g *GitHub) getFiles() (<-chan *FileInfo, func()) {
 					return
 				}
 
-				g.parseTree(tree, results, remaining, cancel)
+				parseTree(tree, results, remaining, cancel)
 			case <-cancel:
 				return
 			default:
@@ -154,15 +154,16 @@ func (g *GitHub) makeRootPathExpression() string {
 }
 
 func (g *GitHub) getTree(variables graphqlVariables) (*treeQuery, error) {
-	query := &treeQuery{}
 	ctx, cancel := context.WithTimeout(context.Background(), defaultQueryTimeout)
 	defer cancel()
+
+	query := &treeQuery{}
 	err := g.client.Query(ctx, query, variables)
 
 	return query, err
 }
 
-func (g *GitHub) parseTree(
+func parseTree(
 	tree *treeQuery,
 	results chan<- *FileInfo,
 	remaining chan<- string,

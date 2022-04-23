@@ -90,3 +90,12 @@ func TestEnsureCommitish(t *testing.T) {
 		})
 	}
 }
+
+func TestGetFiles(t *testing.T) {
+}
+
+func TestStart(t *testing.T) {
+}
+
+func TestStop(t *testing.T) {
+}

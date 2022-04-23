@@ -42,7 +42,7 @@ cli: clean vet
 	GOOS=windows GOARCH=amd64 \
 			 $(GOCMD) build -v -o $(BIN_DIR)/$(BINARY_WINDOWS) ./cmd/cli/main.go
 
-.PHONY:test
+.PHONY:test-unit
 test:
 	$(GOCMD) test $(VERBOSE) $(ALL_FILES)
 
@@ -50,8 +50,8 @@ test:
 test-integration:
 	$(GOCMD) test $(VERBOSE) -tags integration $(ALL_FILES)
 
-.PHONY:test-all
-test-all: test test-integration
+.PHONY:test
+test-all: test-unit test-integration
 
 .PHONY:clean
 clean:

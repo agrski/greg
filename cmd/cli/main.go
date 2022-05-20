@@ -8,9 +8,11 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/agrski/gitfind/pkg/auth"
 	"github.com/agrski/gitfind/pkg/fetch"
+	"github.com/rs/zerolog"
 	"golang.org/x/oauth2"
 )
 
@@ -179,6 +181,27 @@ func getAccessToken(rawAccessToken string, accessTokenFile string) (oauth2.Token
 }
 
 func main() {
+	logWriter := zerolog.ConsoleWriter{
+		Out:        os.Stderr,
+		TimeFormat: time.RFC3339,
+		FormatLevel: func(v interface{}) string {
+			return strings.ToUpper(
+				fmt.Sprintf("%-6s ", v),
+			)
+		},
+		FormatFieldName: func(v interface{}) string {
+			return strings.ToUpper(
+				fmt.Sprintf("%s=", v),
+			)
+		},
+	}
+	logger := zerolog.
+		New(logWriter).
+		Level(zerolog.InfoLevel).
+		With().
+		Timestamp().
+		Logger()
+
 	log.SetOutput(os.Stderr)
 
 	parseArguments()

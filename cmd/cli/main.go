@@ -181,6 +181,11 @@ func getAccessToken(rawAccessToken string, accessTokenFile string) (oauth2.Token
 }
 
 func main() {
+	fieldKeyFormatter := func(v interface{}) string {
+		return strings.ToUpper(
+			fmt.Sprintf("%s=", v),
+		)
+	}
 	logWriter := zerolog.ConsoleWriter{
 		Out:        os.Stderr,
 		TimeFormat: time.RFC3339,
@@ -189,11 +194,8 @@ func main() {
 				fmt.Sprintf("%-6s ", v),
 			)
 		},
-		FormatFieldName: func(v interface{}) string {
-			return strings.ToUpper(
-				fmt.Sprintf("%s=", v),
-			)
-		},
+		FormatFieldName:    fieldKeyFormatter,
+		FormatErrFieldName: fieldKeyFormatter,
 	}
 	logger := zerolog.
 		New(logWriter).

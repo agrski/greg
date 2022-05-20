@@ -210,23 +210,26 @@ func main() {
 
 	l, err := getLocation()
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal().Err(err).Send()
 	}
 
 	allowed := isSupportedHost(l.Host)
 	if !allowed {
-		log.Fatalf("unsupported git hosting provider %s", l.Host)
+		logger.
+			Fatal().
+			Err(fmt.Errorf("unsupported git hosting provider %s", l.Host)).
+			Send()
 	}
 
 	u := makeURI(l)
 	p, err := getSearchPattern()
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal().Err(err).Send()
 	}
 
 	tokenSource, err := getAccessToken(accessToken, accessTokenFile)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal().Err(err).Send()
 	}
 
 	fetcher := fetch.New(l, tokenSource)

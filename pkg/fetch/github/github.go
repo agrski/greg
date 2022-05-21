@@ -49,7 +49,13 @@ func New(l zerolog.Logger, q QueryParams, tokenSource oauth2.TokenSource) *GitHu
 }
 
 func (g *GitHub) Start() error {
-	g.logger.Info().Str("func", "Start").Msg("starting GitHub fetcher")
+	g.logger.
+		Info().
+		Str("func", "Start").
+		Dur("query timeout", defaultQueryTimeout).
+		Int("fetch capacity", treesRemainingCapacity).
+		Int("result capacity", treeResultsCapacity).
+		Msg("starting GitHub fetcher")
 
 	results, cancel := g.getFiles()
 	g.results = results

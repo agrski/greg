@@ -4,7 +4,6 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"log"
 	"net/url"
 	"os"
 	"strings"
@@ -209,7 +208,6 @@ func makeLogger(level zerolog.Level) *zerolog.Logger {
 
 func main() {
 	logger := makeLogger(zerolog.InfoLevel)
-	log.SetOutput(os.Stderr)
 
 	parseArguments()
 

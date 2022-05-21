@@ -30,6 +30,17 @@ var (
 	accessTokenFile string
 )
 
+type rawArgs struct {
+	host            string
+	org             string
+	repo            string
+	url             string
+	filetype        string
+	searchPattern   string
+	accessToken     string
+	accessTokenFile string
+}
+
 func parseArguments() {
 	flag.StringVar(&hostFlag, "host", githubHost, "git hostname, default: github.com")
 	flag.StringVar(&orgFlag, "org", "", "organisation name, e.g. agrski")

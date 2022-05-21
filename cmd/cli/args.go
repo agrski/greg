@@ -57,7 +57,7 @@ func GetArgs() (*Args, error) {
 		return nil, err
 	}
 
-	tokenSource, err := getAccessToken(raw.accessToken, raw.accessTokenFile)
+	tokenSource, err := getAccessToken(raw)
 	if err != nil {
 		return nil, err
 	}
@@ -205,18 +205,18 @@ func isSupportedHost(host fetch.HostName) bool {
 	return false
 }
 
-func getAccessToken(rawAccessToken string, accessTokenFile string) (oauth2.TokenSource, error) {
-	if isEmpty(accessToken) && isEmpty(accessTokenFile) {
+func getAccessToken(args *rawArgs) (oauth2.TokenSource, error) {
+	if isEmpty(args.accessToken) && isEmpty(args.accessTokenFile) {
 		return nil, errors.New("must specify either access token or access token file")
 	}
 
-	if !isEmpty(accessToken) && !isEmpty(accessTokenFile) {
+	if !isEmpty(args.accessToken) && !isEmpty(args.accessTokenFile) {
 		return nil, errors.New("only one of access token and access token file may be specified")
 	}
 
-	tokenSource, err := auth.TokenSourceFromString(rawAccessToken)
+	tokenSource, err := auth.TokenSourceFromString(args.accessToken)
 	if err != nil {
-		tokenSource, err = auth.TokenSourceFromFile(accessTokenFile)
+		tokenSource, err = auth.TokenSourceFromFile(args.accessTokenFile)
 	}
 
 	return tokenSource, err

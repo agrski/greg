@@ -189,9 +189,15 @@ func makeLogger(level zerolog.Level) zerolog.Logger {
 		Out:        os.Stderr,
 		TimeFormat: time.RFC3339,
 		FormatLevel: func(v interface{}) string {
-			return strings.ToUpper(
-				fmt.Sprintf("%-6s ", v),
-			)
+			l, ok := v.(string)
+			switch {
+			case !ok, l == zerolog.InfoLevel.String():
+				return ""
+			default:
+				return strings.ToUpper(
+					fmt.Sprintf("%-6s ", v),
+				)
+			}
 		},
 		FormatFieldName:    fieldKeyFormatter,
 		FormatErrFieldName: fieldKeyFormatter,

@@ -115,7 +115,7 @@ func (g *GitHub) getFiles() (<-chan *FileInfo, func()) {
 					return
 				}
 
-				parseTree(tree, results, remaining, cancel)
+				g.parseTree(tree, results, remaining, cancel)
 			case <-cancel:
 				return
 			default:
@@ -189,12 +189,13 @@ func (g *GitHub) getTree(variables graphqlVariables) (*treeQuery, error) {
 	return query, err
 }
 
-func parseTree(
+func (g *GitHub) parseTree(
 	tree *treeQuery,
 	results chan<- *FileInfo,
 	remaining chan<- string,
 	cancel <-chan struct{},
 ) {
+	logger := g.logger.With().Str("func", "parseTree").Logger()
 	root := tree.Repository.Object.Tree
 
 	for _, e := range root.Entries {
@@ -212,7 +213,7 @@ func parseTree(
 				}
 				results <- f
 			default:
-				// TODO - log error
+				logger.Warn().Str("type", string(e.Type)).Msg("unknown entry type")
 				continue
 			}
 		}

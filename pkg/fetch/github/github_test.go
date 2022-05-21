@@ -5,6 +5,7 @@ package github
 import (
 	"testing"
 
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )
 
@@ -131,7 +132,11 @@ func TestParseTree(t *testing.T) {
 			remaining := make(chan string, 100)
 			cancel := make(chan struct{}, 1)
 
-			parseTree(tree, results, remaining, cancel)
+			g := GitHub{
+				logger: zerolog.Nop(),
+			}
+
+			g.parseTree(tree, results, remaining, cancel)
 
 			close(results)
 			close(remaining)

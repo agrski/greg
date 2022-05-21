@@ -41,20 +41,22 @@ type rawArgs struct {
 	accessTokenFile string
 }
 
-func parseArguments() {
-	flag.StringVar(&hostFlag, "host", githubHost, "git hostname, default: github.com")
-	flag.StringVar(&orgFlag, "org", "", "organisation name, e.g. agrski")
-	flag.StringVar(&repoFlag, "repo", "", "repository name, e.g. gitfind")
+func parseArguments() *rawArgs {
+	args := rawArgs{}
+
+	flag.StringVar(&args.host, "host", githubHost, "git hostname, default: github.com")
+	flag.StringVar(&args.org, "org", "", "organisation name, e.g. agrski")
+	flag.StringVar(&args.repo, "repo", "", "repository name, e.g. gitfind")
 	flag.StringVar(
-		&urlFlag,
+		&args.url,
 		"url",
 		"",
 		"Full URL of git repository, e.g https://github.com/agrski/gitfind",
 	)
-	flag.StringVar(&filetypeFlag, "type", "", "filetype suffix, e.g. md or go")
-	flag.StringVar(&accessToken, "access-token", "", "raw access token for repository access")
+	flag.StringVar(&args.filetype, "type", "", "filetype suffix, e.g. md or go")
+	flag.StringVar(&args.accessToken, "access-token", "", "raw access token for repository access")
 	flag.StringVar(
-		&accessTokenFile,
+		&args.accessTokenFile,
 		"access-token-file",
 		"",
 		"file containing access token for repository access",
@@ -62,8 +64,10 @@ func parseArguments() {
 	flag.Parse()
 
 	if 1 == flag.NArg() {
-		pattern = flag.Arg(0)
+		args.searchPattern = flag.Arg(0)
 	}
+
+	return &args
 }
 
 func getLocation() (fetch.Location, error) {

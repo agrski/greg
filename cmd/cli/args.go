@@ -43,9 +43,9 @@ func GetArgs() (*Args, error) {
 		return nil, err
 	}
 
-	allowed := isSupportedHost(fetch.HostName(raw.host))
-	if !allowed {
-		return nil, fmt.Errorf("unsupported git hosting provider %s", raw.host)
+	err = isSupportedHost(raw.host)
+	if err != nil {
+		return nil, err
 	}
 
 	location, err := getLocation(raw)
@@ -198,13 +198,14 @@ func makeURI(l fetch.Location) url.URL {
 	}
 }
 
-func isSupportedHost(host fetch.HostName) bool {
+func isSupportedHost(host string) error {
+	hostname := fetch.HostName(host)
 	for _, h := range supportedHosts {
-		if host == h {
-			return true
+		if hostname == h {
+			return nil
 		}
 	}
-	return false
+	return fmt.Errorf("unsupported git hosting provider %s", host)
 }
 
 func getAccessToken(args *rawArgs) (oauth2.TokenSource, error) {

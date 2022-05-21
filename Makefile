@@ -8,8 +8,8 @@ SHELL = /bin/bash
 .SUFFIXES = .go
 
 GOCMD = go
-BINARY_LINUX = gitfind
-BINARY_WINDOWS = gitfind_win
+BINARY_LINUX = greg
+BINARY_WINDOWS = greg.exe
 ALL_FILES = ./...
 BIN_DIR = ./bin
 

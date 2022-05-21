@@ -23,7 +23,7 @@ type rawArgs struct {
 	org             string
 	repo            string
 	url             string
-	filetype        string
+	filetypes       string
 	searchPattern   string
 	accessToken     string
 	accessTokenFile string
@@ -62,7 +62,7 @@ func GetArgs() (*Args, error) {
 		return nil, err
 	}
 
-	filetypes := getFiletypes(raw.filetype)
+	filetypes := getFiletypes(raw.filetypes)
 
 	return &Args{
 		location:      location,
@@ -84,7 +84,7 @@ func parseArguments() (*rawArgs, error) {
 		"",
 		"Full URL of git repository, e.g https://github.com/agrski/gitfind",
 	)
-	flag.StringVar(&args.filetype, "type", "", "filetype suffix, e.g. md or go")
+	flag.StringVar(&args.filetypes, "type", "", "filetype suffix, e.g. md or go")
 	flag.StringVar(&args.accessToken, "access-token", "", "raw access token for repository access")
 	flag.StringVar(
 		&args.accessTokenFile,

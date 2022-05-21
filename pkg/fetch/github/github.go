@@ -85,6 +85,8 @@ func (g *GitHub) Next() (interface{}, bool) {
 }
 
 func (g *GitHub) getFiles() (<-chan *FileInfo, func()) {
+	logger := g.logger.With().Str("func", "getFiles").Logger()
+
 	results := make(chan *FileInfo, treeResultsCapacity)
 	remaining := make(chan string, treesRemainingCapacity)
 	cancel := make(chan struct{})
@@ -109,7 +111,7 @@ func (g *GitHub) getFiles() (<-chan *FileInfo, func()) {
 
 				tree, err := g.getTree(variables)
 				if err != nil {
-					fmt.Printf("unable to fetch from GitHub: %v", err)
+					logger.Error().Err(err).Msg("unable to fetch from GitHub")
 					return
 				}
 
@@ -173,6 +175,11 @@ func (g *GitHub) makeRootPathExpression() string {
 }
 
 func (g *GitHub) getTree(variables graphqlVariables) (*treeQuery, error) {
+	g.logger.
+		Info().
+		Str("func", "getTree").
+		Interface("commit and path", variables["commitishAndPath"]).
+		Send()
 	ctx, cancel := context.WithTimeout(context.Background(), defaultQueryTimeout)
 	defer cancel()
 

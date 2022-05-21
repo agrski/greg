@@ -11,43 +11,43 @@ import (
 
 func Test_getFiletypes(t *testing.T) {
 	type test struct {
-		name string
-		args *rawArgs
-		want []string
+		name      string
+		filetypes string
+		want      []string
 	}
 
 	tests := []test{
 		{
-			name: "no filetypes succeeds with nil",
-			args: &rawArgs{filetype: ""},
-			want: nil,
+			name:      "no filetypes succeeds with nil",
+			filetypes: "",
+			want:      nil,
 		},
 		{
-			name: "simple letter-only filetype is unchanged",
-			args: &rawArgs{filetype: "md"},
-			want: []string{"md"},
+			name:      "simple letter-only filetype is unchanged",
+			filetypes: "md",
+			want:      []string{"md"},
 		},
 		{
-			name: "dot prefix is removed",
-			args: &rawArgs{filetype: ".md"},
-			want: []string{"md"},
+			name:      "dot prefix is removed",
+			filetypes: ".md",
+			want:      []string{"md"},
 		},
 		{
-			name: "multiple suffices are handled correctly",
-			args: &rawArgs{filetype: ".md,go,.txt"},
-			want: []string{"md", "go", "txt"},
+			name:      "multiple suffices are handled correctly",
+			filetypes: ".md,go,.txt",
+			want:      []string{"md", "go", "txt"},
 		},
 		{
-			name: "multiple suffices with whitespace are handled correctly",
-			args: &rawArgs{filetype: ".md,go , .txt"},
-			want: []string{"md", "go", "txt"},
+			name:      "multiple suffices with whitespace are handled correctly",
+			filetypes: ".md,go , .txt",
+			want:      []string{"md", "go", "txt"},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				if got := getFiletypes(tt.args); !reflect.DeepEqual(got, tt.want) {
+				if got := getFiletypes(tt.filetypes); !reflect.DeepEqual(got, tt.want) {
 					t.Errorf("getFiletypes() = %v, want %v", got, tt.want)
 				}
 			},
@@ -125,29 +125,29 @@ func Test_getLocation(t *testing.T) {
 
 func Test_getSearchPattern(t *testing.T) {
 	type test struct {
-		name string
-		args *rawArgs
-		want string
-		err  bool
+		name          string
+		searchPattern string
+		want          string
+		err           bool
 	}
 	tests := []test{
 		{
-			name: "should return pattern when provided",
-			args: &rawArgs{searchPattern: "hello"},
-			want: "hello",
-			err:  false,
+			name:          "should return pattern when provided",
+			searchPattern: "hello",
+			want:          "hello",
+			err:           false,
 		},
 		{
-			name: "should fail when pattern is not provided",
-			args: &rawArgs{searchPattern: ""},
-			want: "",
-			err:  true,
+			name:          "should fail when pattern is not provided",
+			searchPattern: "",
+			want:          "",
+			err:           true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				got, err := getSearchPattern(tt.args)
+				got, err := getSearchPattern(tt.searchPattern)
 				if tt.err != (err != nil) {
 					t.Errorf("getSearchPattern() = \"'%v', %v\", want \"'%v', %v\"", got, err, tt.want, tt.err)
 				}

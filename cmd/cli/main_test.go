@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/agrski/gitfind/pkg/fetch"
+	"github.com/agrski/greg/pkg/fetch"
 	"github.com/stretchr/testify/require"
 )
 

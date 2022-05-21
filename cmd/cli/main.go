@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/agrski/gitfind/pkg/fetch"
+	"github.com/agrski/greg/pkg/fetch"
 	"github.com/rs/zerolog"
 )
 

@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/agrski/gitfind/pkg/auth"
-	"github.com/agrski/gitfind/pkg/fetch"
+	"github.com/agrski/greg/pkg/auth"
+	"github.com/agrski/greg/pkg/fetch"
 	"golang.org/x/oauth2"
 )
 

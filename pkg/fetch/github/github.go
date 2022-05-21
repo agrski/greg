@@ -49,6 +49,8 @@ func New(l zerolog.Logger, q QueryParams, tokenSource oauth2.TokenSource) *GitHu
 }
 
 func (g *GitHub) Start() error {
+	g.logger.Info().Str("func", "Start").Msg("starting GitHub fetcher")
+
 	results, cancel := g.getFiles()
 	g.results = results
 	g.cancel = cancel
@@ -56,15 +58,20 @@ func (g *GitHub) Start() error {
 }
 
 func (g *GitHub) Stop() error {
+	g.logger.Info().Str("func", "Stop").Msg("stopping GitHub fetcher")
+
 	g.cancel()
 	return nil
 }
 
 func (g *GitHub) Next() (interface{}, bool) {
+	logger := g.logger.With().Str("func", "Next").Logger()
 	next := <-g.results
 	if next == nil {
+		logger.Debug().Msg("no more results")
 		return nil, false
 	} else {
+		logger.Debug().Msg("providing next result")
 		return next, true
 	}
 }

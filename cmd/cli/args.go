@@ -41,6 +41,48 @@ type rawArgs struct {
 	accessTokenFile string
 }
 
+type Args struct {
+	location        fetch.Location
+	searchPattern   string
+	filetypes       []string
+	tokenSource     oauth2.TokenSource
+	accessToken     string
+	accessTokenFile string
+}
+
+func GetArgs() (*Args, error) {
+	raw := parseArguments()
+
+	allowed := isSupportedHost(fetch.HostName(raw.host))
+	if !allowed {
+		return nil, fmt.Errorf("unsupported git hosting provider %s", raw.host)
+	}
+
+	location, err := getLocation(raw)
+	if err != nil {
+		return nil, err
+	}
+
+	pattern, err := getSearchPattern(raw)
+	if err != nil {
+		return nil, err
+	}
+
+	tokenSource, err := getAccessToken(raw.accessToken, raw.accessTokenFile)
+	if err != nil {
+		return nil, err
+	}
+
+	filetypes := getFiletypes(raw)
+
+	return &Args{
+		location:      location,
+		searchPattern: pattern,
+		filetypes:     filetypes,
+		tokenSource:   tokenSource,
+	}, nil
+}
+
 func parseArguments() *rawArgs {
 	args := rawArgs{}
 
@@ -70,24 +112,24 @@ func parseArguments() *rawArgs {
 	return &args
 }
 
-func getLocation() (fetch.Location, error) {
-	if isEmpty(urlFlag) && (isEmpty(orgFlag) || isEmpty(repoFlag)) {
+func getLocation(args *rawArgs) (fetch.Location, error) {
+	if isEmpty(args.url) && (isEmpty(args.org) || isEmpty(args.repo)) {
 		return fetch.Location{}, errors.New("must specify either url or both org and repo")
 	}
 
-	if !isEmpty(urlFlag) && (!isEmpty(orgFlag) || !isEmpty(repoFlag)) {
+	if !isEmpty(args.url) && (!isEmpty(args.org) || !isEmpty(args.repo)) {
 		return fetch.Location{}, errors.New("cannot specify both url and org or repo")
 	}
 
-	if isEmpty(urlFlag) {
+	if isEmpty(args.url) {
 		return fetch.Location{
-			Host:         fetch.HostName(hostFlag),
-			Organisation: fetch.OrganisationName(orgFlag),
-			Repository:   fetch.RepositoryName(repoFlag),
+			Host:         fetch.HostName(args.host),
+			Organisation: fetch.OrganisationName(args.org),
+			Repository:   fetch.RepositoryName(args.repo),
 		}, nil
 	}
 
-	return parseLocationFromURL(urlFlag)
+	return parseLocationFromURL(args.url)
 }
 
 func parseLocationFromURL(rawURL string) (fetch.Location, error) {
@@ -130,12 +172,12 @@ func parseLocationFromURL(rawURL string) (fetch.Location, error) {
 	}, nil
 }
 
-func getFiletypes() []string {
-	if isEmpty(filetypeFlag) {
+func getFiletypes(args *rawArgs) []string {
+	if isEmpty(args.filetype) {
 		return nil
 	}
 
-	suffixes := strings.Split(filetypeFlag, ",")
+	suffixes := strings.Split(args.filetype, ",")
 	for idx, s := range suffixes {
 		withoutWhitespace := strings.TrimSpace(s)
 		withoutLeadingDot := strings.TrimPrefix(withoutWhitespace, ".")
@@ -146,11 +188,11 @@ func getFiletypes() []string {
 	return suffixes
 }
 
-func getSearchPattern() (string, error) {
-	if isEmpty(pattern) {
+func getSearchPattern(args *rawArgs) (string, error) {
+	if isEmpty(args.searchPattern) {
 		return "", errors.New("search term must be specified; wrap multiple words in quotes")
 	}
-	return pattern, nil
+	return args.searchPattern, nil
 }
 
 func isEmpty(s string) bool {

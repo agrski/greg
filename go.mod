@@ -1,4 +1,4 @@
-module github.com/agrski/gitfind
+module github.com/agrski/greg
 
 go 1.16
 

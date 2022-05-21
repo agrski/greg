@@ -1,7 +1,7 @@
 package fetch
 
 import (
-	"github.com/agrski/gitfind/pkg/fetch/github"
+	"github.com/agrski/greg/pkg/fetch/github"
 	"github.com/rs/zerolog"
 	"golang.org/x/oauth2"
 )

@@ -13,42 +13,25 @@ import (
 func main() {
 	logger := makeLogger(zerolog.InfoLevel)
 
-	parseArguments()
-
-	l, err := getLocation()
+	args, err := GetArgs()
 	if err != nil {
 		logger.Fatal().Err(err).Send()
 	}
 
-	allowed := isSupportedHost(l.Host)
-	if !allowed {
-		logger.
-			Fatal().
-			Err(fmt.Errorf("unsupported git hosting provider %s", l.Host)).
-			Send()
-	}
+	fetcher := fetch.New(logger, args.location, args.tokenSource)
+	uri := makeURI(args.location)
 
-	u := makeURI(l)
-	p, err := getSearchPattern()
-	if err != nil {
-		logger.Fatal().Err(err).Send()
-	}
-
-	tokenSource, err := getAccessToken(accessToken, accessTokenFile)
-	if err != nil {
-		logger.Fatal().Err(err).Send()
-	}
-
-	fetcher := fetch.New(logger, l, tokenSource)
+	logger.
+		Info().
+		Str("pattern", args.searchPattern).
+		Str("URL", uri.String()).
+		Msg("searching")
 
 	fetcher.Start()
-	logger.Info().Str("pattern", p).Str("URL", u.String()).Msg("searching")
-
 	next, ok := fetcher.Next()
 	if ok {
 		fmt.Println(next)
 	}
-
 	fetcher.Stop()
 }
 

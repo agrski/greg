@@ -207,7 +207,7 @@ func makeLogger(level zerolog.Level) zerolog.Logger {
 }
 
 func main() {
-	logger := makeLogger(zerolog.WarnLevel)
+	logger := makeLogger(zerolog.InfoLevel)
 
 	parseArguments()
 

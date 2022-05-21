@@ -31,12 +31,10 @@ type rawArgs struct {
 }
 
 type Args struct {
-	location        fetch.Location
-	searchPattern   string
-	filetypes       []string
-	tokenSource     oauth2.TokenSource
-	accessToken     string
-	accessTokenFile string
+	location      fetch.Location
+	searchPattern string
+	filetypes     []string
+	tokenSource   oauth2.TokenSource
 }
 
 func GetArgs() (*Args, error) {

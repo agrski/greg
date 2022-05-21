@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"strings"
 	"time"
@@ -66,4 +67,12 @@ func makeLogger(level zerolog.Level) zerolog.Logger {
 		Logger()
 
 	return logger
+}
+
+func makeURI(l fetch.Location) url.URL {
+	return url.URL{
+		Scheme: httpScheme,
+		Host:   string(l.Host),
+		Path:   fmt.Sprintf("%s/%s", l.Organisation, l.Repository),
+	}
 }

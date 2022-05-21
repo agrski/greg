@@ -4,7 +4,6 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"net/url"
 	"strings"
 
 	"github.com/agrski/gitfind/pkg/auth"
@@ -188,14 +187,6 @@ func getSearchPattern(pattern string) (string, error) {
 
 func isEmpty(s string) bool {
 	return "" == strings.TrimSpace(s)
-}
-
-func makeURI(l fetch.Location) url.URL {
-	return url.URL{
-		Scheme: httpScheme,
-		Host:   string(l.Host),
-		Path:   fmt.Sprintf("%s/%s", l.Organisation, l.Repository),
-	}
 }
 
 func isSupportedHost(host string) error {

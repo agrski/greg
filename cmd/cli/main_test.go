@@ -11,38 +11,36 @@ import (
 )
 
 func Test_getFiletypes(t *testing.T) {
-	type args struct {
-		filetypes string
+	type test struct {
+		name string
+		args *rawArgs
+		want []string
 	}
 
-	tests := []struct {
-		name string
-		args args
-		want []string
-	}{
+	tests := []test{
 		{
 			name: "no filetypes succeeds with nil",
-			args: args{filetypes: ""},
+			args: &rawArgs{filetype: ""},
 			want: nil,
 		},
 		{
 			name: "simple letter-only filetype is unchanged",
-			args: args{filetypes: "md"},
+			args: &rawArgs{filetype: "md"},
 			want: []string{"md"},
 		},
 		{
 			name: "dot prefix is removed",
-			args: args{filetypes: ".md"},
+			args: &rawArgs{filetype: ".md"},
 			want: []string{"md"},
 		},
 		{
 			name: "multiple suffices are handled correctly",
-			args: args{filetypes: ".md,go,.txt"},
+			args: &rawArgs{filetype: ".md,go,.txt"},
 			want: []string{"md", "go", "txt"},
 		},
 		{
 			name: "multiple suffices with whitespace are handled correctly",
-			args: args{filetypes: ".md,go , .txt"},
+			args: &rawArgs{filetype: ".md,go , .txt"},
 			want: []string{"md", "go", "txt"},
 		},
 	}
@@ -50,9 +48,7 @@ func Test_getFiletypes(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				filetypeFlag = tt.args.filetypes
-
-				if got := getFiletypes(); !reflect.DeepEqual(got, tt.want) {
+				if got := getFiletypes(tt.args); !reflect.DeepEqual(got, tt.want) {
 					t.Errorf("getFiletypes() = %v, want %v", got, tt.want)
 				}
 			},
@@ -61,57 +57,52 @@ func Test_getFiletypes(t *testing.T) {
 }
 
 func Test_getLocation(t *testing.T) {
-	type args struct {
-		host string
-		org  string
-		repo string
-		url  string
-	}
-	tests := []struct {
+	type test struct {
 		name string
-		args args
+		args *rawArgs
 		want fetch.Location
 		err  bool
-	}{
+	}
+	tests := []test{
 		{
 			name: "fail if any required arg is missing",
-			args: args{},
+			args: &rawArgs{},
 			want: fetch.Location{},
 			err:  true,
 		},
 		{
 			name: "fail if using org without repo",
-			args: args{org: "fakeOrg"},
+			args: &rawArgs{org: "fakeOrg"},
 			want: fetch.Location{},
 			err:  true,
 		},
 		{
 			name: "fail if using repo without org",
-			args: args{repo: "fakeRepo"},
+			args: &rawArgs{repo: "fakeRepo"},
 			want: fetch.Location{},
 			err:  true,
 		},
 		{
 			name: "fail if using url with org",
-			args: args{url: "https://github.com/fakeOrg/fakeRepo", org: "fakeOrg"},
+			args: &rawArgs{url: "https://github.com/fakeOrg/fakeRepo", org: "fakeOrg"},
 			want: fetch.Location{},
 			err:  true,
 		},
 		{
 			name: "fail if using url with repo",
-			args: args{url: "https://github.com/fakeOrg/fakeRepo", repo: "fakeRepo"},
+			args: &rawArgs{url: "https://github.com/fakeOrg/fakeRepo", repo: "fakeRepo"},
 			want: fetch.Location{},
 			err:  true,
 		},
 		{
 			name: "org and repo both provided",
-			args: args{host: githubHost, org: "fakeOrg", repo: "fakeRepo"},
+			args: &rawArgs{host: githubHost, org: "fakeOrg", repo: "fakeRepo"},
 			want: fetch.Location{Host: githubHost, Organisation: "fakeOrg", Repository: "fakeRepo"},
 			err:  false,
 		},
 		{
 			name: "url provided",
-			args: args{url: "https://github.com/fakeOrg/fakeRepo"},
+			args: &rawArgs{url: "https://github.com/fakeOrg/fakeRepo"},
 			want: fetch.Location{Host: githubHost, Organisation: "fakeOrg", Repository: "fakeRepo"},
 			err:  false,
 		},
@@ -119,12 +110,7 @@ func Test_getLocation(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				hostFlag = tt.args.host
-				orgFlag = tt.args.org
-				repoFlag = tt.args.repo
-				urlFlag = tt.args.url
-
-				got, err := getLocation()
+				got, err := getLocation(tt.args)
 				gotErr := err != nil
 
 				if tt.err != gotErr {
@@ -139,24 +125,22 @@ func Test_getLocation(t *testing.T) {
 }
 
 func Test_getSearchPattern(t *testing.T) {
-	type args struct {
-		p string
-	}
-	tests := []struct {
+	type test struct {
 		name string
-		args args
+		args *rawArgs
 		want string
 		err  bool
-	}{
+	}
+	tests := []test{
 		{
 			name: "should return pattern when provided",
-			args: args{p: "hello"},
+			args: &rawArgs{searchPattern: "hello"},
 			want: "hello",
 			err:  false,
 		},
 		{
 			name: "should fail when pattern is not provided",
-			args: args{p: ""},
+			args: &rawArgs{searchPattern: ""},
 			want: "",
 			err:  true,
 		},
@@ -164,9 +148,7 @@ func Test_getSearchPattern(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				pattern = tt.args.p
-
-				got, err := getSearchPattern()
+				got, err := getSearchPattern(tt.args)
 				if tt.err != (err != nil) {
 					t.Errorf("getSearchPattern() = \"'%v', %v\", want \"'%v', %v\"", got, err, tt.want, tt.err)
 				}

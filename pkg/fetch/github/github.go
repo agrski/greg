@@ -55,6 +55,8 @@ func (g *GitHub) Start() error {
 		Dur("query timeout", defaultQueryTimeout).
 		Int("fetch capacity", treesRemainingCapacity).
 		Int("result capacity", treeResultsCapacity).
+		Str("org", g.queryParams.RepoOwner).
+		Str("repo", g.queryParams.RepoName).
 		Msg("starting GitHub fetcher")
 
 	results, cancel := g.getFiles()

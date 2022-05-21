@@ -180,7 +180,7 @@ func getAccessToken(rawAccessToken string, accessTokenFile string) (oauth2.Token
 	return tokenSource, err
 }
 
-func main() {
+func makeLogger(level zerolog.Level) *zerolog.Logger {
 	fieldKeyFormatter := func(v interface{}) string {
 		return strings.ToUpper(
 			fmt.Sprintf("%s=", v),
@@ -199,11 +199,16 @@ func main() {
 	}
 	logger := zerolog.
 		New(logWriter).
-		Level(zerolog.InfoLevel).
+		Level(level).
 		With().
 		Timestamp().
 		Logger()
 
+	return &logger
+}
+
+func main() {
+	logger := makeLogger(zerolog.InfoLevel)
 	log.SetOutput(os.Stderr)
 
 	parseArguments()

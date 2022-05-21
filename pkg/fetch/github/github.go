@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/hasura/go-graphql-client"
+	"github.com/rs/zerolog"
 	"golang.org/x/oauth2"
 )
 
@@ -30,15 +31,18 @@ type FileInfo struct {
 type GitHub struct {
 	client      *graphql.Client
 	queryParams QueryParams
+	logger      zerolog.Logger
 	results     <-chan *FileInfo
 	cancel      func()
 }
 
-func New(q QueryParams, tokenSource oauth2.TokenSource) *GitHub {
+func New(l zerolog.Logger, q QueryParams, tokenSource oauth2.TokenSource) *GitHub {
 	authClient := oauth2.NewClient(context.Background(), tokenSource)
 	client := graphql.NewClient(apiUrl, authClient)
+	logger := l.With().Str("source", "GitHub").Logger()
 
 	return &GitHub{
+		logger:      logger,
 		client:      client,
 		queryParams: q,
 	}

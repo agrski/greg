@@ -235,7 +235,7 @@ func main() {
 		logger.Fatal().Err(err).Send()
 	}
 
-	fetcher := fetch.New(l, tokenSource)
+	fetcher := fetch.New(logger, l, tokenSource)
 
 	fetcher.Start()
 	fmt.Printf("Searching for %s in %s\n", p, u.String())

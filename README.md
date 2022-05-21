@@ -1,6 +1,9 @@
-# gitfind
+# greg
 
-Golang tool to search for arbitrary strings in GitHub orgs/repos.
+GReG stands for Git REpository Grepper, or Git Remote Entry Grepper if you prefer.
+It is a Golang tool to search for arbitrary strings in GitHub orgs/repos.
+
+_Other git hosting providers may be supported in the future._
 
 ## Motivation
 

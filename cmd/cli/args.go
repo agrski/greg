@@ -19,17 +19,6 @@ const (
 
 var supportedHosts = [...]fetch.HostName{githubHost}
 
-var (
-	hostFlag        string
-	orgFlag         string
-	repoFlag        string
-	urlFlag         string
-	filetypeFlag    string
-	pattern         string
-	accessToken     string
-	accessTokenFile string
-)
-
 type rawArgs struct {
 	host            string
 	org             string

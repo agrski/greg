@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/agrski/gitfind/pkg/auth"
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/oauth2"
@@ -39,6 +40,7 @@ func TestGetDefaultBranchRef(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			g := New(
+				zerolog.Nop(),
 				QueryParams{
 					RepoOwner: tt.owner,
 					RepoName:  tt.repo,
@@ -73,6 +75,7 @@ func TestEnsureCommitish(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			g := New(
+				zerolog.Nop(),
 				QueryParams{
 					Commitish: tt.commit,
 					RepoOwner: "agrski",
@@ -96,6 +99,7 @@ func TestEnsureCommitish(t *testing.T) {
 func TestGetFiles(t *testing.T) {
 	numResults := 0
 	g := New(
+		zerolog.Nop(),
 		QueryParams{
 			RepoOwner: "agrski",
 			RepoName:  "gitfind",
@@ -117,6 +121,7 @@ func TestStart(t *testing.T) {
 	numFiles := 5
 	results := make([]*FileInfo, 0, numFiles)
 	g := New(
+		zerolog.Nop(),
 		QueryParams{
 			RepoOwner: "agrski",
 			RepoName:  "gitfind",
@@ -139,6 +144,7 @@ func TestStart(t *testing.T) {
 
 func TestStop(t *testing.T) {
 	g := New(
+		zerolog.Nop(),
 		QueryParams{
 			RepoOwner: "agrski",
 			RepoName:  "gitfind",

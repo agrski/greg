@@ -238,7 +238,7 @@ func main() {
 	fetcher := fetch.New(logger, l, tokenSource)
 
 	fetcher.Start()
-	fmt.Printf("Searching for %s in %s\n", p, u.String())
+	logger.Info().Str("pattern", p).Str("URL", u.String()).Msg("searching")
 
 	next, ok := fetcher.Next()
 	if ok {

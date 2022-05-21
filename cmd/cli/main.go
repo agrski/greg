@@ -10,39 +10,6 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func makeLogger(level zerolog.Level) zerolog.Logger {
-	fieldKeyFormatter := func(v interface{}) string {
-		return strings.ToUpper(
-			fmt.Sprintf("%s=", v),
-		)
-	}
-	logWriter := zerolog.ConsoleWriter{
-		Out:        os.Stderr,
-		TimeFormat: time.RFC3339,
-		FormatLevel: func(v interface{}) string {
-			l, ok := v.(string)
-			switch {
-			case !ok, l == zerolog.InfoLevel.String():
-				return ""
-			default:
-				return strings.ToUpper(
-					fmt.Sprintf("%-6s ", v),
-				)
-			}
-		},
-		FormatFieldName:    fieldKeyFormatter,
-		FormatErrFieldName: fieldKeyFormatter,
-	}
-	logger := zerolog.
-		New(logWriter).
-		Level(level).
-		With().
-		Timestamp().
-		Logger()
-
-	return logger
-}
-
 func main() {
 	logger := makeLogger(zerolog.InfoLevel)
 
@@ -83,4 +50,37 @@ func main() {
 	}
 
 	fetcher.Stop()
+}
+
+func makeLogger(level zerolog.Level) zerolog.Logger {
+	fieldKeyFormatter := func(v interface{}) string {
+		return strings.ToUpper(
+			fmt.Sprintf("%s=", v),
+		)
+	}
+	logWriter := zerolog.ConsoleWriter{
+		Out:        os.Stderr,
+		TimeFormat: time.RFC3339,
+		FormatLevel: func(v interface{}) string {
+			l, ok := v.(string)
+			switch {
+			case !ok, l == zerolog.InfoLevel.String():
+				return ""
+			default:
+				return strings.ToUpper(
+					fmt.Sprintf("%-6s ", v),
+				)
+			}
+		},
+		FormatFieldName:    fieldKeyFormatter,
+		FormatErrFieldName: fieldKeyFormatter,
+	}
+	logger := zerolog.
+		New(logWriter).
+		Level(level).
+		With().
+		Timestamp().
+		Logger()
+
+	return logger
 }

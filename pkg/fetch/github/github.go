@@ -50,7 +50,7 @@ func New(l zerolog.Logger, q QueryParams, tokenSource oauth2.TokenSource) *GitHu
 
 func (g *GitHub) Start() error {
 	g.logger.
-		Info().
+		Debug().
 		Str("func", "Start").
 		Dur("query timeout", defaultQueryTimeout).
 		Int("fetch capacity", treesRemainingCapacity).
@@ -66,7 +66,7 @@ func (g *GitHub) Start() error {
 }
 
 func (g *GitHub) Stop() error {
-	g.logger.Info().Str("func", "Stop").Msg("stopping GitHub fetcher")
+	g.logger.Debug().Str("func", "Stop").Msg("stopping GitHub fetcher")
 
 	g.cancel()
 	return nil
@@ -76,10 +76,10 @@ func (g *GitHub) Next() (interface{}, bool) {
 	logger := g.logger.With().Str("func", "Next").Logger()
 	next := <-g.results
 	if next == nil {
-		logger.Debug().Msg("no more results")
+		logger.Trace().Msg("no more results")
 		return nil, false
 	} else {
-		logger.Debug().Msg("providing next result")
+		logger.Trace().Msg("providing next result")
 		return next, true
 	}
 }
@@ -176,7 +176,7 @@ func (g *GitHub) makeRootPathExpression() string {
 
 func (g *GitHub) getTree(variables graphqlVariables) (*treeQuery, error) {
 	g.logger.
-		Info().
+		Debug().
 		Str("func", "getTree").
 		Interface("commit and path", variables["commitishAndPath"]).
 		Send()

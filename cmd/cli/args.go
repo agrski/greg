@@ -38,7 +38,10 @@ type Args struct {
 }
 
 func GetArgs() (*Args, error) {
-	raw := parseArguments()
+	raw, err := parseArguments()
+	if err != nil {
+		return nil, err
+	}
 
 	allowed := isSupportedHost(fetch.HostName(raw.host))
 	if !allowed {
@@ -70,7 +73,7 @@ func GetArgs() (*Args, error) {
 	}, nil
 }
 
-func parseArguments() *rawArgs {
+func parseArguments() (*rawArgs, error) {
 	args := rawArgs{}
 
 	flag.StringVar(&args.host, "host", githubHost, "git hostname, default: github.com")
@@ -92,11 +95,12 @@ func parseArguments() *rawArgs {
 	)
 	flag.Parse()
 
-	if 1 == flag.NArg() {
-		args.searchPattern = flag.Arg(0)
+	if 1 != flag.NArg() {
+		return nil, fmt.Errorf("expected one search term but found %d", flag.NArg())
 	}
+	args.searchPattern = flag.Arg(0)
 
-	return &args
+	return &args, nil
 }
 
 func getLocation(args *rawArgs) (fetch.Location, error) {

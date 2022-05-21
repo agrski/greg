@@ -161,49 +161,49 @@ func Test_getSearchPattern(t *testing.T) {
 }
 
 func Test_isEmpty(t *testing.T) {
-	type args struct {
-		s string
+	type test struct {
+		name  string
+		input string
+		want  bool
 	}
-	tests := []struct {
-		name string
-		args args
-		want bool
-	}{
+
+	tests := []test{
 		{
-			name: "empty-string should be empty",
-			args: args{s: ""},
-			want: true,
+			name:  "empty-string should be empty",
+			input: "",
+			want:  true,
 		},
 		{
-			name: "spaces should be empty",
-			args: args{s: "   "},
-			want: true,
+			name:  "spaces should be empty",
+			input: "   ",
+			want:  true,
 		},
 		{
-			name: "tabs should be empty",
-			args: args{s: "\t\t"},
-			want: true,
+			name:  "tabs should be empty",
+			input: "\t\t",
+			want:  true,
 		},
 		{
-			name: "mixed whitespace should be empty",
-			args: args{s: " \t \u00a0 \u2003"},
-			want: true,
+			name:  "mixed whitespace should be empty",
+			input: " \t \u00a0 \u2003",
+			want:  true,
 		},
 		{
-			name: "word should not be empty",
-			args: args{s: "hello"},
-			want: false,
+			name:  "word should not be empty",
+			input: "hello",
+			want:  false,
 		},
 		{
-			name: "multiple words should not be empty",
-			args: args{s: "hello world"},
-			want: false,
+			name:  "multiple words should not be empty",
+			input: "hello world",
+			want:  false,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				if got := isEmpty(tt.args.s); got != tt.want {
+				if got := isEmpty(tt.input); got != tt.want {
 					t.Errorf("isEmpty() = %v, want %v", got, tt.want)
 				}
 			},
@@ -212,17 +212,16 @@ func Test_isEmpty(t *testing.T) {
 }
 
 func Test_makeURI(t *testing.T) {
-	type args struct {
-		l fetch.Location
+	type test struct {
+		name     string
+		location fetch.Location
+		want     url.URL
 	}
-	tests := []struct {
-		name string
-		args args
-		want url.URL
-	}{
+
+	tests := []test{
 		{
-			name: "github.com/agrski/gitfind",
-			args: args{l: fetch.Location{Host: "github.com", Organisation: "agrski", Repository: "gitfind"}},
+			name:     "github.com/agrski/gitfind",
+			location: fetch.Location{Host: "github.com", Organisation: "agrski", Repository: "gitfind"},
 			want: url.URL{
 				Scheme: "https",
 				Host:   "github.com",
@@ -231,10 +230,11 @@ func Test_makeURI(t *testing.T) {
 			},
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				if got := makeURI(tt.args.l); !reflect.DeepEqual(got, tt.want) {
+				if got := makeURI(tt.location); !reflect.DeepEqual(got, tt.want) {
 					t.Errorf("makeURI() = %v, want %v", got, tt.want)
 				}
 			},
@@ -243,68 +243,67 @@ func Test_makeURI(t *testing.T) {
 }
 
 func Test_parseLocationFromURL(t *testing.T) {
-	type args struct {
-		rawURL string
+	type test struct {
+		name   string
+		rawUrl string
+		want   fetch.Location
+		err    bool
 	}
-	tests := []struct {
-		name string
-		args args
-		want fetch.Location
-		err  bool
-	}{
+
+	tests := []test{
 		{
-			name: "full URL",
-			args: args{rawURL: "https://github.com/agrski/gitfind"},
-			want: fetch.Location{Host: "github.com", Organisation: "agrski", Repository: "gitfind"},
-			err:  false,
+			name:   "full URL",
+			rawUrl: "https://github.com/agrski/gitfind",
+			want:   fetch.Location{Host: "github.com", Organisation: "agrski", Repository: "gitfind"},
+			err:    false,
 		},
 		{
-			name: "full URL with git suffix",
-			args: args{rawURL: "https://github.com/agrski/gitfind.git"},
-			want: fetch.Location{Host: "github.com", Organisation: "agrski", Repository: "gitfind"},
-			err:  false,
+			name:   "full URL with git suffix",
+			rawUrl: "https://github.com/agrski/gitfind.git",
+			want:   fetch.Location{Host: "github.com", Organisation: "agrski", Repository: "gitfind"},
+			err:    false,
 		},
 		{
-			name: "without scheme",
-			args: args{rawURL: "github.com/agrski/gitfind"},
-			want: fetch.Location{Host: "github.com", Organisation: "agrski", Repository: "gitfind"},
-			err:  false,
+			name:   "without scheme",
+			rawUrl: "github.com/agrski/gitfind",
+			want:   fetch.Location{Host: "github.com", Organisation: "agrski", Repository: "gitfind"},
+			err:    false,
 		},
 		{
-			name: "with extra path",
-			args: args{rawURL: "https://github.com/agrski/gitfind/tree/master/pkg"},
-			want: fetch.Location{Host: "github.com", Organisation: "agrski", Repository: "gitfind"},
-			err:  false,
+			name:   "with extra path",
+			rawUrl: "https://github.com/agrski/gitfind/tree/master/pkg",
+			want:   fetch.Location{Host: "github.com", Organisation: "agrski", Repository: "gitfind"},
+			err:    false,
 		},
 		{
-			name: "full URL - GitLab",
-			args: args{rawURL: "https://gitlab.com/agrski/gitfind"},
-			want: fetch.Location{Host: "gitlab.com", Organisation: "agrski", Repository: "gitfind"},
-			err:  false,
+			name:   "full URL - GitLab",
+			rawUrl: "https://gitlab.com/agrski/gitfind",
+			want:   fetch.Location{Host: "gitlab.com", Organisation: "agrski", Repository: "gitfind"},
+			err:    false,
 		},
 		{
-			name: "missing repo - trailing slash",
-			args: args{rawURL: "https://github.com/agrski/"},
-			want: fetch.Location{},
-			err:  true,
+			name:   "missing repo - trailing slash",
+			rawUrl: "https://github.com/agrski/",
+			want:   fetch.Location{},
+			err:    true,
 		},
 		{
-			name: "missing repo - no trailing slash",
-			args: args{rawURL: "https://github.com/agrski"},
-			want: fetch.Location{},
-			err:  true,
+			name:   "missing repo - no trailing slash",
+			rawUrl: "https://github.com/agrski",
+			want:   fetch.Location{},
+			err:    true,
 		},
 		{
-			name: "missing org and repo",
-			args: args{rawURL: "https://github.com/"},
-			want: fetch.Location{},
-			err:  true,
+			name:   "missing org and repo",
+			rawUrl: "https://github.com/",
+			want:   fetch.Location{},
+			err:    true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				got, err := parseLocationFromURL(tt.args.rawURL)
+				got, err := parseLocationFromURL(tt.rawUrl)
 				gotErr := err != nil
 
 				if tt.err != gotErr {

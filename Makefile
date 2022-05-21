@@ -38,9 +38,9 @@ vet: fmt
 .PHONY:cli
 cli: clean vet
 	GOOS=linux GOARCH=amd64 \
-			 $(GOCMD) build -v -o $(BIN_DIR)/$(BINARY_LINUX) ./cmd/cli/main.go
+			 $(GOCMD) build -o $(BIN_DIR)/$(BINARY_LINUX) ./cmd/cli/main.go
 	GOOS=windows GOARCH=amd64 \
-			 $(GOCMD) build -v -o $(BIN_DIR)/$(BINARY_WINDOWS) ./cmd/cli/main.go
+			 $(GOCMD) build -o $(BIN_DIR)/$(BINARY_WINDOWS) ./cmd/cli/main.go
 
 .PHONY:test-unit
 test-unit:

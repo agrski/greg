@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/hasura/go-graphql-client"
+	"github.com/rs/zerolog"
 	"golang.org/x/oauth2"
 )
 
@@ -30,21 +31,34 @@ type FileInfo struct {
 type GitHub struct {
 	client      *graphql.Client
 	queryParams QueryParams
+	logger      zerolog.Logger
 	results     <-chan *FileInfo
 	cancel      func()
 }
 
-func New(q QueryParams, tokenSource oauth2.TokenSource) *GitHub {
+func New(l zerolog.Logger, q QueryParams, tokenSource oauth2.TokenSource) *GitHub {
 	authClient := oauth2.NewClient(context.Background(), tokenSource)
 	client := graphql.NewClient(apiUrl, authClient)
+	logger := l.With().Str("source", "GitHub").Logger()
 
 	return &GitHub{
+		logger:      logger,
 		client:      client,
 		queryParams: q,
 	}
 }
 
 func (g *GitHub) Start() error {
+	g.logger.
+		Debug().
+		Str("func", "Start").
+		Dur("query timeout", defaultQueryTimeout).
+		Int("fetch capacity", treesRemainingCapacity).
+		Int("result capacity", treeResultsCapacity).
+		Str("org", g.queryParams.RepoOwner).
+		Str("repo", g.queryParams.RepoName).
+		Msg("starting GitHub fetcher")
+
 	results, cancel := g.getFiles()
 	g.results = results
 	g.cancel = cancel
@@ -52,20 +66,27 @@ func (g *GitHub) Start() error {
 }
 
 func (g *GitHub) Stop() error {
+	g.logger.Debug().Str("func", "Stop").Msg("stopping GitHub fetcher")
+
 	g.cancel()
 	return nil
 }
 
 func (g *GitHub) Next() (interface{}, bool) {
+	logger := g.logger.With().Str("func", "Next").Logger()
 	next := <-g.results
 	if next == nil {
+		logger.Trace().Msg("no more results")
 		return nil, false
 	} else {
+		logger.Trace().Msg("providing next result")
 		return next, true
 	}
 }
 
 func (g *GitHub) getFiles() (<-chan *FileInfo, func()) {
+	logger := g.logger.With().Str("func", "getFiles").Logger()
+
 	results := make(chan *FileInfo, treeResultsCapacity)
 	remaining := make(chan string, treesRemainingCapacity)
 	cancel := make(chan struct{})
@@ -90,11 +111,11 @@ func (g *GitHub) getFiles() (<-chan *FileInfo, func()) {
 
 				tree, err := g.getTree(variables)
 				if err != nil {
-					fmt.Printf("unable to fetch from GitHub: %v", err)
+					logger.Error().Err(err).Msg("unable to fetch from GitHub")
 					return
 				}
 
-				parseTree(tree, results, remaining, cancel)
+				g.parseTree(tree, results, remaining, cancel)
 			case <-cancel:
 				return
 			default:
@@ -154,6 +175,11 @@ func (g *GitHub) makeRootPathExpression() string {
 }
 
 func (g *GitHub) getTree(variables graphqlVariables) (*treeQuery, error) {
+	g.logger.
+		Debug().
+		Str("func", "getTree").
+		Interface("commit and path", variables["commitishAndPath"]).
+		Send()
 	ctx, cancel := context.WithTimeout(context.Background(), defaultQueryTimeout)
 	defer cancel()
 
@@ -163,12 +189,13 @@ func (g *GitHub) getTree(variables graphqlVariables) (*treeQuery, error) {
 	return query, err
 }
 
-func parseTree(
+func (g *GitHub) parseTree(
 	tree *treeQuery,
 	results chan<- *FileInfo,
 	remaining chan<- string,
 	cancel <-chan struct{},
 ) {
+	logger := g.logger.With().Str("func", "parseTree").Logger()
 	root := tree.Repository.Object.Tree
 
 	for _, e := range root.Entries {
@@ -186,7 +213,7 @@ func parseTree(
 				}
 				results <- f
 			default:
-				// TODO - log error
+				logger.Warn().Str("type", string(e.Type)).Msg("unknown entry type")
 				continue
 			}
 		}

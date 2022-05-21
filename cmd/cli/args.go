@@ -53,17 +53,17 @@ func GetArgs() (*Args, error) {
 		return nil, err
 	}
 
-	pattern, err := getSearchPattern(raw)
+	pattern, err := getSearchPattern(raw.searchPattern)
 	if err != nil {
 		return nil, err
 	}
 
-	tokenSource, err := getAccessToken(raw)
+	tokenSource, err := getAccessToken(raw.accessToken, raw.accessTokenFile)
 	if err != nil {
 		return nil, err
 	}
 
-	filetypes := getFiletypes(raw)
+	filetypes := getFiletypes(raw.filetype)
 
 	return &Args{
 		location:      location,
@@ -163,12 +163,12 @@ func parseLocationFromURL(rawURL string) (fetch.Location, error) {
 	}, nil
 }
 
-func getFiletypes(args *rawArgs) []string {
-	if isEmpty(args.filetype) {
+func getFiletypes(filetypes string) []string {
+	if isEmpty(filetypes) {
 		return nil
 	}
 
-	suffixes := strings.Split(args.filetype, ",")
+	suffixes := strings.Split(filetypes, ",")
 	for idx, s := range suffixes {
 		withoutWhitespace := strings.TrimSpace(s)
 		withoutLeadingDot := strings.TrimPrefix(withoutWhitespace, ".")
@@ -179,11 +179,11 @@ func getFiletypes(args *rawArgs) []string {
 	return suffixes
 }
 
-func getSearchPattern(args *rawArgs) (string, error) {
-	if isEmpty(args.searchPattern) {
+func getSearchPattern(pattern string) (string, error) {
+	if isEmpty(pattern) {
 		return "", errors.New("search term must be specified; wrap multiple words in quotes")
 	}
-	return args.searchPattern, nil
+	return pattern, nil
 }
 
 func isEmpty(s string) bool {
@@ -208,18 +208,21 @@ func isSupportedHost(host string) error {
 	return fmt.Errorf("unsupported git hosting provider %s", host)
 }
 
-func getAccessToken(args *rawArgs) (oauth2.TokenSource, error) {
-	if isEmpty(args.accessToken) && isEmpty(args.accessTokenFile) {
+func getAccessToken(
+	accessToken string,
+	accessTokenFile string,
+) (oauth2.TokenSource, error) {
+	if isEmpty(accessToken) && isEmpty(accessTokenFile) {
 		return nil, errors.New("must specify either access token or access token file")
 	}
 
-	if !isEmpty(args.accessToken) && !isEmpty(args.accessTokenFile) {
+	if !isEmpty(accessToken) && !isEmpty(accessTokenFile) {
 		return nil, errors.New("only one of access token and access token file may be specified")
 	}
 
-	tokenSource, err := auth.TokenSourceFromString(args.accessToken)
+	tokenSource, err := auth.TokenSourceFromString(accessToken)
 	if err != nil {
-		tokenSource, err = auth.TokenSourceFromFile(args.accessTokenFile)
+		tokenSource, err = auth.TokenSourceFromFile(accessTokenFile)
 	}
 
 	return tokenSource, err

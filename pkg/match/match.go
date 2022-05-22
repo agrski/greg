@@ -12,7 +12,7 @@ type Matcher interface {
 }
 
 type Match struct {
-	line uint
+	lines []uint
 }
 
 type filteringMatcher struct {

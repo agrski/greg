@@ -77,11 +77,14 @@ func GetArgs() (*Args, error) {
 
 	filetypes := getFiletypes(raw.filetypes)
 
+	verbosity := getVerbosity(raw.quiet, raw.verbose)
+
 	return &Args{
 		location:      location,
 		searchPattern: pattern,
 		filetypes:     filetypes,
 		tokenSource:   tokenSource,
+		verbosity:     verbosity,
 	}, nil
 }
 
@@ -105,6 +108,8 @@ func parseArguments() (*rawArgs, error) {
 		"",
 		"file containing access token for repository access",
 	)
+	flag.BoolVar(&args.quiet, "quiet", false, "disable logging; overrides verbose mode")
+	flag.BoolVar(&args.verbose, "verbose", false, "increase logging; overridden by quiet mode")
 	flag.Parse()
 
 	if 1 != flag.NArg() {
@@ -230,4 +235,14 @@ func getAccessToken(
 	}
 
 	return tokenSource, err
+}
+
+func getVerbosity(quiet bool, verbose bool) VerbosityLevel {
+	if quiet {
+		return VerbosityQuiet
+	} else if verbose {
+		return VerbosityHigh
+	} else {
+		return VerbosityNormal
+	}
 }

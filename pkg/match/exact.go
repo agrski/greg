@@ -22,7 +22,10 @@ func newExactMatcher(logger zerolog.Logger) *exactMatcher {
 }
 
 func (em *exactMatcher) Match(pattern string, next *github.FileInfo) (*Match, bool) {
+	logger := em.logger.With().Str("func", "Match").Logger()
+
 	if next.IsBinary {
+		logger.Debug().Str("filename", next.Path).Msg("rejecting binary file")
 		return nil, false
 	}
 

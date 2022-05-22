@@ -12,7 +12,12 @@ type Matcher interface {
 }
 
 type Match struct {
-	lines []uint
+	lines []FilePosition
+}
+
+type FilePosition struct {
+	line   uint
+	column uint
 }
 
 type filteringMatcher struct {

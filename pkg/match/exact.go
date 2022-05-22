@@ -5,19 +5,19 @@ import (
 	"github.com/rs/zerolog"
 )
 
-type ExactMatcher struct {
+type exactMatcher struct {
 	logger zerolog.Logger
 }
 
-var _ Matcher = (*ExactMatcher)(nil)
+var _ Matcher = (*exactMatcher)(nil)
 
-func newExactMatcher(logger zerolog.Logger) *ExactMatcher {
+func newExactMatcher(logger zerolog.Logger) *exactMatcher {
 	logger = logger.With().Str("source", "ExactMatcher").Logger()
-	return &ExactMatcher{
+	return &exactMatcher{
 		logger: logger,
 	}
 }
 
-func (em *ExactMatcher) Match(pattern string, next *github.FileInfo) (*Match, bool) {
+func (em *exactMatcher) Match(pattern string, next *github.FileInfo) (*Match, bool) {
 	return nil, false
 }

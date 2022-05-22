@@ -15,26 +15,26 @@ type Match struct {
 	line uint
 }
 
-type FilteringMatcher struct {
+type filteringMatcher struct {
 	matcher   Matcher
 	filetypes []string
 	logger    zerolog.Logger
 }
 
-var _ Matcher = (*FilteringMatcher)(nil)
+var _ Matcher = (*filteringMatcher)(nil)
 
-func New(logger zerolog.Logger, allowedFiletypes []string) *FilteringMatcher {
+func New(logger zerolog.Logger, allowedFiletypes []string) *filteringMatcher {
 	em := newExactMatcher(logger)
 	logger = logger.With().Str("source", "FilteringMatcher").Logger()
 
-	return &FilteringMatcher{
+	return &filteringMatcher{
 		matcher:   em,
 		filetypes: allowedFiletypes,
 		logger:    logger,
 	}
 }
 
-func (fm *FilteringMatcher) Match(pattern string, next *github.FileInfo) (*Match, bool) {
+func (fm *filteringMatcher) Match(pattern string, next *github.FileInfo) (*Match, bool) {
 	if ok := FilterFiletype(fm.filetypes, next); !ok {
 		return nil, false
 	}

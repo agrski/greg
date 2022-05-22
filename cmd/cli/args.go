@@ -11,6 +11,14 @@ import (
 	"golang.org/x/oauth2"
 )
 
+type VerbosityLevel int
+
+const (
+	VerbosityQuiet VerbosityLevel = iota
+	VerbosityNormal
+	VerbosityHigh
+)
+
 const (
 	httpScheme = "https"
 	githubHost = "github.com"
@@ -19,6 +27,7 @@ const (
 var supportedHosts = [...]fetch.HostName{githubHost}
 
 type rawArgs struct {
+	// Application behaviour
 	host            string
 	org             string
 	repo            string
@@ -27,6 +36,9 @@ type rawArgs struct {
 	searchPattern   string
 	accessToken     string
 	accessTokenFile string
+	// Presentation/display behaviour
+	quiet   bool
+	verbose bool
 }
 
 type Args struct {
@@ -34,6 +46,7 @@ type Args struct {
 	searchPattern string
 	filetypes     []string
 	tokenSource   oauth2.TokenSource
+	verbosity     VerbosityLevel
 }
 
 func GetArgs() (*Args, error) {
@@ -64,11 +77,14 @@ func GetArgs() (*Args, error) {
 
 	filetypes := getFiletypes(raw.filetypes)
 
+	verbosity := getVerbosity(raw.quiet, raw.verbose)
+
 	return &Args{
 		location:      location,
 		searchPattern: pattern,
 		filetypes:     filetypes,
 		tokenSource:   tokenSource,
+		verbosity:     verbosity,
 	}, nil
 }
 
@@ -92,6 +108,8 @@ func parseArguments() (*rawArgs, error) {
 		"",
 		"file containing access token for repository access",
 	)
+	flag.BoolVar(&args.quiet, "quiet", false, "disable logging; overrides verbose mode")
+	flag.BoolVar(&args.verbose, "verbose", false, "increase logging; overridden by quiet mode")
 	flag.Parse()
 
 	if 1 != flag.NArg() {
@@ -217,4 +235,14 @@ func getAccessToken(
 	}
 
 	return tokenSource, err
+}
+
+func getVerbosity(quiet bool, verbose bool) VerbosityLevel {
+	if quiet {
+		return VerbosityQuiet
+	} else if verbose {
+		return VerbosityHigh
+	} else {
+		return VerbosityNormal
+	}
 }

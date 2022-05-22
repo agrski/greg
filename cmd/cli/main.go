@@ -19,6 +19,15 @@ func main() {
 		logger.Fatal().Err(err).Send()
 	}
 
+	switch args.verbosity {
+	case VerbosityQuiet:
+		logger = logger.Level(zerolog.Disabled)
+	case VerbosityHigh:
+		logger = logger.Level(zerolog.DebugLevel)
+	default:
+		// Already at normal verbosity
+	}
+
 	fetcher := fetch.New(logger, args.location, args.tokenSource)
 	uri := makeURI(args.location)
 

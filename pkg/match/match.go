@@ -13,3 +13,7 @@ type Matcher interface {
 type Match struct {
 	line uint
 }
+
+type FiletypeFilter interface {
+	Filter(allowed []string, next *github.FileInfo) bool
+}

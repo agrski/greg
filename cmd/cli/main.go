@@ -25,7 +25,7 @@ func main() {
 	case VerbosityHigh:
 		logger = logger.Level(zerolog.DebugLevel)
 	default:
-		// Almost at normal verbosity
+		// Already at normal verbosity
 	}
 
 	fetcher := fetch.New(logger, args.location, args.tokenSource)

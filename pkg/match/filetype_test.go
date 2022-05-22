@@ -65,6 +65,48 @@ func TestFilterFiletype(t *testing.T) {
 			extension: "md",
 			expected:  true,
 		},
+		{
+			name:      "should allow everything when allowed is empty",
+			allowed:   []string{},
+			extension: "md",
+			expected:  true,
+		},
+		{
+			name:      "single-element filter matches",
+			allowed:   []string{"md"},
+			extension: "md",
+			expected:  true,
+		},
+		{
+			name:      "multi-element filter matches",
+			allowed:   []string{"a", "b", "md", "c"},
+			extension: "md",
+			expected:  true,
+		},
+		{
+			name:      "single-element filter does not match",
+			allowed:   []string{"go"},
+			extension: "md",
+			expected:  false,
+		},
+		{
+			name:      "multi-element filter does not match",
+			allowed:   []string{"go", "py", "sh"},
+			extension: "md",
+			expected:  false,
+		},
+		{
+			name:      "should not match when extension is prefix of an allowed file-type",
+			allowed:   []string{"pyc"},
+			extension: "py",
+			expected:  false,
+		},
+		{
+			name:      "should not match when extension is substring of an allowed file-type",
+			allowed:   []string{"numpy"},
+			extension: "py",
+			expected:  false,
+		},
 	}
 
 	for _, tt := range tests {

@@ -19,6 +19,7 @@ const (
 var supportedHosts = [...]fetch.HostName{githubHost}
 
 type rawArgs struct {
+	// Application behaviour
 	host            string
 	org             string
 	repo            string
@@ -27,6 +28,9 @@ type rawArgs struct {
 	searchPattern   string
 	accessToken     string
 	accessTokenFile string
+	// Presentation/display behaviour
+	quiet   bool
+	verbose bool
 }
 
 type Args struct {

@@ -7,12 +7,17 @@ import (
 )
 
 func FilterFiletype(allowed []string, next *github.FileInfo) bool {
+	if len(allowed) == 0 {
+		return true
+	}
+
 	normalised := NormaliseExtension(next.Extension)
 	for _, a := range allowed {
 		if normalised == a {
 			return true
 		}
 	}
+
 	return false
 }
 

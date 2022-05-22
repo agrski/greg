@@ -11,6 +11,14 @@ import (
 	"golang.org/x/oauth2"
 )
 
+type VerbosityLevel int
+
+const (
+	VerbosityQuiet VerbosityLevel = iota
+	VerbosityNormal
+	VerbosityHigh
+)
+
 const (
 	httpScheme = "https"
 	githubHost = "github.com"
@@ -38,6 +46,7 @@ type Args struct {
 	searchPattern string
 	filetypes     []string
 	tokenSource   oauth2.TokenSource
+	verbosity     VerbosityLevel
 }
 
 func GetArgs() (*Args, error) {

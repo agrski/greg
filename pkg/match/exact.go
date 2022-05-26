@@ -30,7 +30,7 @@ func (em *exactMatcher) Match(pattern string, next *github.FileInfo) (*Match, bo
 	}
 
 	match := &Match{
-		lines: []FilePosition{},
+		Lines: []FilePosition{},
 	}
 	lineReader := bufio.NewScanner(
 		strings.NewReader(next.Text),
@@ -41,9 +41,9 @@ func (em *exactMatcher) Match(pattern string, next *github.FileInfo) (*Match, bo
 		row++
 		column := strings.Index(next.Text, pattern)
 		if column >= 0 {
-			match.lines = append(
-				match.lines,
-				FilePosition{line: row, column: uint(column)},
+			match.Lines = append(
+				match.Lines,
+				FilePosition{Line: row, Column: uint(column)},
 			)
 		}
 	}
@@ -52,7 +52,7 @@ func (em *exactMatcher) Match(pattern string, next *github.FileInfo) (*Match, bo
 		return nil, false
 	}
 
-	if len(match.lines) == 0 {
+	if len(match.Lines) == 0 {
 		return nil, false
 	}
 

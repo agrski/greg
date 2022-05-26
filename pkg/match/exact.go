@@ -43,7 +43,7 @@ func (em *exactMatcher) Match(pattern string, next *github.FileInfo) (*Match, bo
 		if column >= 0 {
 			match.Lines = append(
 				match.Lines,
-				FilePosition{Line: row, Column: uint(column)},
+				FilePosition{Line: row, Column: 1 + uint(column)},
 			)
 		}
 	}

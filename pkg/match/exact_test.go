@@ -94,6 +94,25 @@ foo fifth
 			},
 			expectedOk: true,
 		},
+		{
+			name:     "should accept multiple matches on same line",
+			isBinary: false,
+			text:     "foo bar foo",
+			pattern:  "foo",
+			expected: &Match{
+				Lines: []FilePosition{
+					{
+						Line:   1,
+						Column: 1,
+					},
+					{
+						Line:   1,
+						Column: 9,
+					},
+				},
+			},
+			expectedOk: true,
+		},
 	}
 
 	for _, tt := range tests {

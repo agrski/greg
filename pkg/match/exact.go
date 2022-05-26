@@ -52,5 +52,9 @@ func (em *exactMatcher) Match(pattern string, next *github.FileInfo) (*Match, bo
 		return nil, false
 	}
 
+	if len(match.lines) == 0 {
+		return nil, false
+	}
+
 	return match, true
 }

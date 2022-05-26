@@ -39,12 +39,25 @@ func (em *exactMatcher) Match(pattern string, next *github.FileInfo) (*Match, bo
 
 	for lineReader.Scan() {
 		row++
-		column := strings.Index(lineReader.Text(), pattern)
-		if column >= 0 {
-			match.Lines = append(
-				match.Lines,
-				FilePosition{Line: row, Column: 1 + uint(column)},
-			)
+
+		text := lineReader.Text()
+		column := 0
+
+		for {
+			offset := strings.Index(text, pattern)
+			if offset == -1 {
+				break
+			} else {
+				column += offset
+
+				match.Lines = append(
+					match.Lines,
+					FilePosition{Line: row, Column: 1 + uint(column)},
+				)
+
+				column += len(pattern)
+				text = text[offset+len(pattern):]
+			}
 		}
 	}
 

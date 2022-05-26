@@ -18,7 +18,24 @@ func TestMatch(t *testing.T) {
 		expectedOk bool
 	}
 
-	tests := []test{}
+	tests := []test{
+		{
+			name:       "should ignore binary files",
+			isBinary:   true,
+			text:       "asdf",
+			pattern:    "as",
+			expected:   nil,
+			expectedOk: false,
+		},
+		{
+			name:       "should reject non-matching text file",
+			isBinary:   false,
+			text:       "asdf",
+			pattern:    "foo",
+			expected:   nil,
+			expectedOk: false,
+		},
+	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

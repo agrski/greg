@@ -48,7 +48,7 @@ func TestMatch(t *testing.T) {
 			actual, ok := matcher.Match(tt.pattern, fileInfo)
 
 			require.Equal(t, tt.expectedOk, ok)
-			require.Equal(t, actual, tt.expected)
+			require.Equal(t, tt.expected, actual)
 		})
 	}
 }

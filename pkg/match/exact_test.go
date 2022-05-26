@@ -35,6 +35,21 @@ func TestMatch(t *testing.T) {
 			expected:   nil,
 			expectedOk: false,
 		},
+		{
+			name:     "should accept matching text file",
+			isBinary: false,
+			text:     "foo bar baz",
+			pattern:  "bar",
+			expected: &Match{
+				Lines: []FilePosition{
+					{
+						Line:   1,
+						Column: 5,
+					},
+				},
+			},
+			expectedOk: true,
+		},
 	}
 
 	for _, tt := range tests {

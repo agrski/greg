@@ -36,6 +36,22 @@ func TestMatch(t *testing.T) {
 			expectedOk: false,
 		},
 		{
+			name:       "should reject empty text file with non-empty pattern",
+			isBinary:   false,
+			text:       "",
+			pattern:    "foo",
+			expected:   nil,
+			expectedOk: false,
+		},
+		{
+			name:       "should reject empty text file with empty pattern",
+			isBinary:   false,
+			text:       "",
+			pattern:    "",
+			expected:   nil,
+			expectedOk: false,
+		},
+		{
 			name:     "should accept matching text file",
 			isBinary: false,
 			text:     "foo bar baz",

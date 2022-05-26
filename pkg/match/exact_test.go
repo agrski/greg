@@ -50,6 +50,26 @@ func TestMatch(t *testing.T) {
 			},
 			expectedOk: true,
 		},
+		{
+			name:     "should accept matching multi-line text file",
+			isBinary: false,
+			text: `first
+second
+
+fourth
+foo
+			`,
+			pattern: "foo",
+			expected: &Match{
+				Lines: []FilePosition{
+					{
+						Line:   5,
+						Column: 1,
+					},
+				},
+			},
+			expectedOk: true,
+		},
 	}
 
 	for _, tt := range tests {

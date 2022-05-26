@@ -70,6 +70,30 @@ foo
 			},
 			expectedOk: true,
 		},
+		{
+			name:     "should accept multiple matches in multi-line text file",
+			isBinary: false,
+			text: `first
+second foo
+
+fourth
+foo fifth
+			`,
+			pattern: "foo",
+			expected: &Match{
+				Lines: []FilePosition{
+					{
+						Line:   2,
+						Column: 8,
+					},
+					{
+						Line:   5,
+						Column: 1,
+					},
+				},
+			},
+			expectedOk: true,
+		},
 	}
 
 	for _, tt := range tests {

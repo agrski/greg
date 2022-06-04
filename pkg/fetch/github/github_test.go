@@ -56,6 +56,7 @@ func TestParseTree(t *testing.T) {
 					fileMetadata{
 						Type:      TreeEntryFile,
 						Name:      "file1.txt",
+						Path:      "file1.txt",
 						Extension: ".txt",
 					},
 					entryObject{
@@ -83,6 +84,7 @@ func TestParseTree(t *testing.T) {
 					fileMetadata{
 						Type:      TreeEntryFile,
 						Name:      "file1.txt",
+						Path:      "file1.txt",
 						Extension: ".txt",
 					},
 					entryObject{

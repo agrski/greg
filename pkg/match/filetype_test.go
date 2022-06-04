@@ -11,7 +11,7 @@ func TestNormaliseExtension(t *testing.T) {
 	type test struct {
 		name      string
 		extension types.FileExtension
-		expected  string
+		expected  types.FileExtension
 	}
 
 	tests := []test{

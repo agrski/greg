@@ -8,6 +8,8 @@ import (
 	"testing"
 
 	"github.com/agrski/greg/pkg/auth"
+	"github.com/agrski/greg/pkg/fetch/types"
+	common "github.com/agrski/greg/pkg/types"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -41,9 +43,9 @@ func TestGetDefaultBranchRef(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			g := New(
 				zerolog.Nop(),
-				QueryParams{
-					RepoOwner: tt.owner,
-					RepoName:  tt.repo,
+				types.Location{
+					Organisation: types.OrganisationName(tt.owner),
+					Repository:   types.RepositoryName(tt.repo),
 				},
 				getTokenSource(t),
 			)
@@ -76,13 +78,14 @@ func TestEnsureCommitish(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			g := New(
 				zerolog.Nop(),
-				QueryParams{
-					Commitish: tt.commit,
-					RepoOwner: "agrski",
-					RepoName:  "gitfind",
+				types.Location{
+					Organisation: types.OrganisationName("agrski"),
+					Repository:   types.RepositoryName("gitfind"),
 				},
 				getTokenSource(t),
 			)
+
+			g.queryParams.Commitish = tt.commit
 
 			err := g.ensureCommitish()
 			if err != nil {
@@ -100,9 +103,9 @@ func TestGetFiles(t *testing.T) {
 	numResults := 0
 	g := New(
 		zerolog.Nop(),
-		QueryParams{
-			RepoOwner: "agrski",
-			RepoName:  "gitfind",
+		types.Location{
+			Organisation: types.OrganisationName("agrski"),
+			Repository:   types.RepositoryName("gitfind"),
 		},
 		getTokenSource(t),
 	)
@@ -119,12 +122,12 @@ func TestGetFiles(t *testing.T) {
 
 func TestStart(t *testing.T) {
 	numFiles := 5
-	results := make([]*FileInfo, 0, numFiles)
+	results := make([]*common.FileInfo, 0, numFiles)
 	g := New(
 		zerolog.Nop(),
-		QueryParams{
-			RepoOwner: "agrski",
-			RepoName:  "gitfind",
+		types.Location{
+			Organisation: types.OrganisationName("agrski"),
+			Repository:   types.RepositoryName("gitfind"),
 		},
 		getTokenSource(t),
 	)
@@ -133,8 +136,7 @@ func TestStart(t *testing.T) {
 	g.Start()
 	for i := 0; i < numFiles; i++ {
 		if next, ok := g.Next(); ok {
-			assert.IsType(t, &FileInfo{}, next)
-			results = append(results, next.(*FileInfo))
+			results = append(results, next)
 		}
 	}
 	g.Stop()
@@ -145,9 +147,9 @@ func TestStart(t *testing.T) {
 func TestStop(t *testing.T) {
 	g := New(
 		zerolog.Nop(),
-		QueryParams{
-			RepoOwner: "agrski",
-			RepoName:  "gitfind",
+		types.Location{
+			Organisation: types.OrganisationName("agrski"),
+			Repository:   types.RepositoryName("gitfind"),
 		},
 		getTokenSource(t),
 	)

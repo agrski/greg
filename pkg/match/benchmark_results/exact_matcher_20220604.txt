@@ -2,15 +2,15 @@ goos: linux
 goarch: amd64
 pkg: github.com/agrski/greg/pkg/match
 cpu: 11th Gen Intel(R) Core(TM) i5-11400H @ 2.70GHz
-BenchmarkExactMatcher_Pattern10_Text100-12            	 1508732	       790.4 ns/op
-BenchmarkExactMatcher_Pattern10_Text1_000-12          	  871252	      1394 ns/op
-BenchmarkExactMatcher_Pattern100_Text1_000-12         	  989268	      1125 ns/op
-BenchmarkExactMatcher_Pattern10_Text10_000-12         	  162526	      7220 ns/op
-BenchmarkExactMatcher_Pattern100_Text10_000-12        	  208962	      6714 ns/op
-BenchmarkExactMatcher_Pattern1_000_Text10_000-12      	  217537	      5503 ns/op
-BenchmarkExactMatcher_Pattern10_Text100_000-12        	   13759	     73479 ns/op
-BenchmarkExactMatcher_Pattern100_Text100_000-12       	   18019	     66094 ns/op
-BenchmarkExactMatcher_Pattern1_000_Text100_000-12     	   20331	     60084 ns/op
-BenchmarkExactMatcher_Pattern10_000_Text100_000-12    	   19768	     60943 ns/op
+BenchmarkExactMatcher_Pattern10_Text100-12            	 1567184	       861.6 ns/op	    4760 B/op	       6 allocs/op
+BenchmarkExactMatcher_Pattern10_Text1_000-12          	  861532	      1428 ns/op	    5624 B/op	      14 allocs/op
+BenchmarkExactMatcher_Pattern100_Text1_000-12         	  974822	      1177 ns/op	    5560 B/op	      11 allocs/op
+BenchmarkExactMatcher_Pattern10_Text10_000-12         	  154910	      7543 ns/op	   14408 B/op	     103 allocs/op
+BenchmarkExactMatcher_Pattern100_Text10_000-12        	  197840	      5940 ns/op	   14136 B/op	      93 allocs/op
+BenchmarkExactMatcher_Pattern1_000_Text10_000-12      	  202940	      5914 ns/op	   14568 B/op	     107 allocs/op
+BenchmarkExactMatcher_Pattern10_Text100_000-12        	   16332	     91042 ns/op	  101662 B/op	     950 allocs/op
+BenchmarkExactMatcher_Pattern100_Text100_000-12       	   16977	     69614 ns/op	  102030 B/op	     924 allocs/op
+BenchmarkExactMatcher_Pattern1_000_Text100_000-12     	   18177	     61081 ns/op	  101934 B/op	     898 allocs/op
+BenchmarkExactMatcher_Pattern10_000_Text100_000-12    	   19057	     64094 ns/op	  101470 B/op	     934 allocs/op
 PASS
-ok  	github.com/agrski/greg/pkg/match	15.725s
+ok  	github.com/agrski/greg/pkg/match	17.201s

@@ -46,12 +46,12 @@ func makeTextOfLength(n int) string {
 	return sb.String()
 }
 
-func BenchmarkExactMatcher(b *testing.B) {
+func benchmarkExactMatcher(b *testing.B, patternSize int, textSize int) {
 	matcher := newExactMatcher(zerolog.Nop())
-	pattern := ""
+	pattern := makeTextOfLength(patternSize)
 	fileInfo := &github.FileInfo{}
 	fileInfo.IsBinary = false
-	fileInfo.Text = ""
+	fileInfo.Text = makeTextOfLength(textSize)
 
 	for i := 0; i < b.N; i++ {
 		matches, ok := matcher.Match(pattern, &github.FileInfo{})

@@ -116,8 +116,8 @@ func TestParseTree(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tree := &treeQuery{}
-			tree.repository.Name = "some repo"
-			tree.repository.Object.Tree.Entries = tt.entries
+			tree.Repository.Name = "some repo"
+			tree.Repository.Object.Tree.Entries = tt.entries
 
 			results := make(chan *types.FileInfo, 100)
 			remaining := make(chan string, 100)

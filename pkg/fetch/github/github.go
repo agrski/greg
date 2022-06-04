@@ -200,7 +200,7 @@ func (g *GitHub) parseTree(
 	cancel <-chan struct{},
 ) {
 	logger := g.logger.With().Str("func", "parseTree").Logger()
-	root := tree.repository.Object.Tree
+	root := tree.Repository.Object.Tree
 
 	for _, e := range root.Entries {
 		select {

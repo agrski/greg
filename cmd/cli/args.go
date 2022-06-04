@@ -8,6 +8,7 @@ import (
 
 	"github.com/agrski/greg/pkg/auth"
 	"github.com/agrski/greg/pkg/fetch"
+	"github.com/agrski/greg/pkg/match"
 	"golang.org/x/oauth2"
 )
 
@@ -187,10 +188,8 @@ func getFiletypes(filetypes string) []string {
 
 	suffixes := strings.Split(filetypes, ",")
 	for idx, s := range suffixes {
-		withoutWhitespace := strings.TrimSpace(s)
-		withoutLeadingDot := strings.TrimPrefix(withoutWhitespace, ".")
-
-		suffixes[idx] = withoutLeadingDot
+		normalised := match.NormaliseExtension(s)
+		suffixes[idx] = normalised
 	}
 
 	return suffixes

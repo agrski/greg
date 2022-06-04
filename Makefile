@@ -3,7 +3,7 @@
 
 SHELL = /bin/bash
 
-.DEFAULT_GOAL := cli
+.DEFAULT_GOAL := build
 .SUFFIXES =
 .SUFFIXES = .go
 
@@ -35,12 +35,18 @@ lint: fmt
 vet: fmt
 	$(GOCMD) vet $(ALL_FILES)
 
-.PHONY:cli
-cli: clean vet
+.PHONY:build
+build: build-cli
+
+.PHONY:build-cli
+build-cli: clean vet
 	GOOS=linux GOARCH=amd64 \
 			 $(GOCMD) build -o $(BIN_DIR)/$(BINARY_LINUX) ./cmd/cli/
 	GOOS=windows GOARCH=amd64 \
 			 $(GOCMD) build -o $(BIN_DIR)/$(BINARY_WINDOWS) ./cmd/cli/
+
+.PHONY:test
+test: test-unit test-integration
 
 .PHONY:test-unit
 test-unit:
@@ -50,8 +56,10 @@ test-unit:
 test-integration:
 	$(GOCMD) test $(VERBOSE) -tags integration $(ALL_FILES)
 
-.PHONY:test
-test: test-unit test-integration
+.PHONY:benchmark
+benchmark:
+	# Use -run to exclude non-benchmark tests
+	$(GOCMD) test $(VERBOSE) -bench=. -run=XXX ./pkg/...
 
 .PHONY:clean
 clean:

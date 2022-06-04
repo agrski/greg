@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	fetchTypes "github.com/agrski/greg/pkg/fetch/types"
+	"github.com/agrski/greg/pkg/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -13,7 +14,7 @@ func Test_getFiletypes(t *testing.T) {
 	type test struct {
 		name      string
 		filetypes string
-		want      []string
+		want      []types.FileExtension
 	}
 
 	tests := []test{
@@ -25,22 +26,22 @@ func Test_getFiletypes(t *testing.T) {
 		{
 			name:      "simple letter-only filetype is unchanged",
 			filetypes: "md",
-			want:      []string{"md"},
+			want:      []types.FileExtension{"md"},
 		},
 		{
 			name:      "dot prefix is removed",
 			filetypes: ".md",
-			want:      []string{"md"},
+			want:      []types.FileExtension{"md"},
 		},
 		{
 			name:      "multiple suffices are handled correctly",
 			filetypes: ".md,go,.txt",
-			want:      []string{"md", "go", "txt"},
+			want:      []types.FileExtension{"md", "go", "txt"},
 		},
 		{
 			name:      "multiple suffices with whitespace are handled correctly",
 			filetypes: ".md,go , .txt",
-			want:      []string{"md", "go", "txt"},
+			want:      []types.FileExtension{"md", "go", "txt"},
 		},
 	}
 

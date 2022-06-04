@@ -10,6 +10,7 @@ import (
 	"github.com/rs/zerolog"
 	"golang.org/x/oauth2"
 
+	fetch "github.com/agrski/greg/pkg/fetch/types"
 	"github.com/agrski/greg/pkg/types"
 )
 
@@ -32,6 +33,8 @@ type GitHub struct {
 	results     <-chan *types.FileInfo
 	cancel      func()
 }
+
+var _ fetch.Fetcher = (*GitHub)(nil)
 
 func New(l zerolog.Logger, q QueryParams, tokenSource oauth2.TokenSource) *GitHub {
 	authClient := oauth2.NewClient(context.Background(), tokenSource)
@@ -69,7 +72,7 @@ func (g *GitHub) Stop() error {
 	return nil
 }
 
-func (g *GitHub) Next() (interface{}, bool) {
+func (g *GitHub) Next() (*types.FileInfo, bool) {
 	logger := g.logger.With().Str("func", "Next").Logger()
 	next := <-g.results
 	if next == nil {

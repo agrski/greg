@@ -1,7 +1,11 @@
 package types
 
+import (
+	common "github.com/agrski/greg/pkg/types"
+)
+
 type Fetcher interface {
 	Start() error
 	Stop() error
-	Next() (interface{}, bool) // TODO - formalise this return param for interop with matcher
+	Next() (*common.FileInfo, bool)
 }

@@ -3,7 +3,7 @@ package match
 import (
 	"strings"
 
-	"github.com/agrski/greg/pkg/fetch/types"
+	"github.com/agrski/greg/pkg/types"
 )
 
 func FilterFiletype(allowed []string, next *types.FileInfo) bool {

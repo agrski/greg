@@ -5,7 +5,7 @@ package github
 import (
 	"testing"
 
-	"github.com/agrski/greg/pkg/fetch/types"
+	"github.com/agrski/greg/pkg/types"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )

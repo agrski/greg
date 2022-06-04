@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/agrski/greg/pkg/fetch/types"
+	"github.com/agrski/greg/pkg/types"
 	"github.com/rs/zerolog"
 )
 

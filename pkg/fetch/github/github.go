@@ -10,7 +10,7 @@ import (
 	"github.com/rs/zerolog"
 	"golang.org/x/oauth2"
 
-	"github.com/agrski/greg/pkg/fetch/types"
+	"github.com/agrski/greg/pkg/types"
 )
 
 const (

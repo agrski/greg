@@ -60,3 +60,17 @@ func benchmarkExactMatcher(b *testing.B, patternSize int, textSize int) {
 		}
 	}
 }
+
+func BenchmarkExactMatcher_Pattern10_Text100(b *testing.B)     { benchmarkExactMatcher(b, 10, 100) }
+func BenchmarkExactMatcher_Pattern10_Text1000(b *testing.B)    { benchmarkExactMatcher(b, 10, 1000) }
+func BenchmarkExactMatcher_Pattern10_Text10_000(b *testing.B)  { benchmarkExactMatcher(b, 10, 10_000) }
+func BenchmarkExactMatcher_Pattern10_Text100_000(b *testing.B) { benchmarkExactMatcher(b, 10, 100_000) }
+func BenchmarkExactMatcher_Pattern100_Text100_000(b *testing.B) {
+	benchmarkExactMatcher(b, 10, 100_000)
+}
+func BenchmarkExactMatcher_Pattern1000_Text100_000(b *testing.B) {
+	benchmarkExactMatcher(b, 10, 100_000)
+}
+func BenchmarkExactMatcher_Pattern10_000_Text100_000(b *testing.B) {
+	benchmarkExactMatcher(b, 10, 100_000)
+}

@@ -13,10 +13,14 @@ import (
 	but really that information should come from this package.
 */
 
-func New(logger zerolog.Logger, l types.Location, tokenSource oauth2.TokenSource) types.Fetcher {
+func New(
+	logger zerolog.Logger,
+	location types.Location,
+	tokenSource oauth2.TokenSource,
+) types.Fetcher {
 	githubFetcher := github.New(
 		logger,
-		l,
+		location,
 		tokenSource,
 	)
 	return githubFetcher

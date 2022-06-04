@@ -38,24 +38,12 @@ func (em *exactMatcher) Match(pattern string, next *github.FileInfo) (*Match, bo
 	for lineReader.Scan() {
 		row++
 
-		text := lineReader.Text()
-		column := 0
-
-		for {
-			offset := strings.Index(text, pattern)
-			if offset == -1 {
-				break
-			} else {
-				column += offset
-
-				match.Lines = append(
-					match.Lines,
-					FilePosition{Line: row, Column: 1 + uint(column)},
-				)
-
-				column += len(pattern)
-				text = text[offset+len(pattern):]
-			}
+		matchColumns := em.matchLine(pattern, lineReader.Text())
+		for _, column := range matchColumns {
+			match.Lines = append(
+				match.Lines,
+				FilePosition{Line: row, Column: column},
+			)
 		}
 	}
 
@@ -68,4 +56,24 @@ func (em *exactMatcher) Match(pattern string, next *github.FileInfo) (*Match, bo
 	}
 
 	return match, true
+}
+
+func (em *exactMatcher) matchLine(pattern string, line string) []uint {
+	column := 0
+	matchColumns := []uint{}
+
+	for {
+		offset := strings.Index(line, pattern)
+		if offset == -1 {
+			break
+		} else {
+			column += offset
+			matchColumns = append(matchColumns, uint(1+column))
+
+			column += len(pattern)
+			line = line[offset+len(pattern):]
+		}
+	}
+
+	return matchColumns
 }

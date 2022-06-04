@@ -21,8 +21,8 @@ const (
 type graphqlVariables map[string]interface{}
 
 type FileInfo struct {
-	FileMetadata
-	FileContents
+	fileMetadata
+	fileContents
 }
 
 // GitHub instances retrieve the files present as of some commit in a GitHub repository.
@@ -196,7 +196,7 @@ func (g *GitHub) parseTree(
 	cancel <-chan struct{},
 ) {
 	logger := g.logger.With().Str("func", "parseTree").Logger()
-	root := tree.Repository.Object.Tree
+	root := tree.repository.Object.Tree
 
 	for _, e := range root.Entries {
 		select {
@@ -208,8 +208,8 @@ func (g *GitHub) parseTree(
 				remaining <- e.Path
 			case TreeEntryFile:
 				f := &FileInfo{
-					FileMetadata: e.FileMetadata,
-					FileContents: e.Object.FileContents,
+					fileMetadata: e.fileMetadata,
+					fileContents: e.Object.fileContents,
 				}
 				results <- f
 			default:

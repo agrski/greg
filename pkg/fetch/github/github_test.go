@@ -11,9 +11,9 @@ import (
 
 func TestParseTree(t *testing.T) {
 	type treeEntry struct {
-		FileMetadata
+		fileMetadata
 		Object struct {
-			FileContents "graphql:\"... on Blob\""
+			fileContents "graphql:\"... on Blob\""
 		}
 	}
 
@@ -35,13 +35,13 @@ func TestParseTree(t *testing.T) {
 			name: "one empty directory",
 			entries: []entry{
 				{
-					FileMetadata{
+					fileMetadata{
 						Type: TreeEntryDir,
 						Name: "dir1",
 						Path: "dir1",
 					},
 					entryObject{
-						FileContents{},
+						fileContents{},
 					},
 				},
 			},
@@ -52,13 +52,13 @@ func TestParseTree(t *testing.T) {
 			name: "one file in root dir",
 			entries: []entry{
 				{
-					FileMetadata{
+					fileMetadata{
 						Type:      TreeEntryFile,
 						Name:      "file1.txt",
 						Extension: ".txt",
 					},
 					entryObject{
-						FileContents{
+						fileContents{
 							IsBinary: false,
 							Text:     "some text",
 						},
@@ -67,12 +67,12 @@ func TestParseTree(t *testing.T) {
 			},
 			expectedResults: []*FileInfo{
 				{
-					FileMetadata{
+					fileMetadata{
 						Type:      TreeEntryFile,
 						Name:      "file1.txt",
 						Extension: ".txt",
 					},
-					FileContents{
+					fileContents{
 						IsBinary: false,
 						Text:     "some text",
 					},
@@ -84,20 +84,20 @@ func TestParseTree(t *testing.T) {
 			name: "files and nested dirs",
 			entries: []entry{
 				{
-					FileMetadata{
+					fileMetadata{
 						Type:      TreeEntryFile,
 						Name:      "file1.txt",
 						Extension: ".txt",
 					},
 					entryObject{
-						FileContents{
+						fileContents{
 							IsBinary: false,
 							Text:     "some text",
 						},
 					},
 				},
 				{
-					FileMetadata{
+					fileMetadata{
 						Type: TreeEntryDir,
 						Name: "dir1",
 						Path: "dir1",
@@ -107,12 +107,12 @@ func TestParseTree(t *testing.T) {
 			},
 			expectedResults: []*FileInfo{
 				{
-					FileMetadata{
+					fileMetadata{
 						Type:      TreeEntryFile,
 						Name:      "file1.txt",
 						Extension: ".txt",
 					},
-					FileContents{
+					fileContents{
 						IsBinary: false,
 						Text:     "some text",
 					},
@@ -125,8 +125,8 @@ func TestParseTree(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tree := &treeQuery{}
-			tree.Repository.Name = "some repo"
-			tree.Repository.Object.Tree.Entries = tt.entries
+			tree.repository.Name = "some repo"
+			tree.repository.Object.Tree.Entries = tt.entries
 
 			results := make(chan *FileInfo, 100)
 			remaining := make(chan string, 100)

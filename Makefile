@@ -56,6 +56,11 @@ test-unit:
 test-integration:
 	$(GOCMD) test $(VERBOSE) -tags integration $(ALL_FILES)
 
+.PHONY:benchmark
+benchmark:
+	# Use -run to exclude non-benchmark tests
+	$(GOCMD) test $(VERBOSE) -bench=. -run=XXX ./pkg/...
+
 .PHONY:clean
 clean:
 	$(GOCMD) clean

@@ -10,7 +10,7 @@ import (
 	"github.com/rs/zerolog"
 	"golang.org/x/oauth2"
 
-	fetch "github.com/agrski/greg/pkg/fetch/types"
+	fetchTypes "github.com/agrski/greg/pkg/fetch/types"
 	"github.com/agrski/greg/pkg/types"
 )
 
@@ -34,7 +34,7 @@ type GitHub struct {
 	cancel      func()
 }
 
-var _ fetch.Fetcher = (*GitHub)(nil)
+var _ fetchTypes.Fetcher = (*GitHub)(nil)
 
 func New(l zerolog.Logger, q QueryParams, tokenSource oauth2.TokenSource) *GitHub {
 	authClient := oauth2.NewClient(context.Background(), tokenSource)

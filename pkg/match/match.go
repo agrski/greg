@@ -6,8 +6,6 @@ import (
 )
 
 type Matcher interface {
-	// FIXME - move github.FileInfo -> fetch.FileInfo
-	//	as we should not be relying on something so specific.
 	Match(pattern string, next *types.FileInfo) (*Match, bool)
 }
 

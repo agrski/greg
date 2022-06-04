@@ -57,7 +57,7 @@ func TestMatch(t *testing.T) {
 			text:     "foo bar baz",
 			pattern:  "bar",
 			expected: &Match{
-				Positions: []FilePosition{
+				Positions: []*FilePosition{
 					{
 						Line:   1,
 						Column: 5,
@@ -77,7 +77,7 @@ foo
 			`,
 			pattern: "foo",
 			expected: &Match{
-				Positions: []FilePosition{
+				Positions: []*FilePosition{
 					{
 						Line:   5,
 						Column: 1,
@@ -97,7 +97,7 @@ foo fifth
 			`,
 			pattern: "foo",
 			expected: &Match{
-				Positions: []FilePosition{
+				Positions: []*FilePosition{
 					{
 						Line:   2,
 						Column: 8,
@@ -116,7 +116,7 @@ foo fifth
 			text:     "foo bar foo",
 			pattern:  "foo",
 			expected: &Match{
-				Positions: []FilePosition{
+				Positions: []*FilePosition{
 					{
 						Line:   1,
 						Column: 1,

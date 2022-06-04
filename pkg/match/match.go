@@ -12,7 +12,7 @@ type Matcher interface {
 }
 
 type Match struct {
-	Positions []FilePosition
+	Positions []*FilePosition
 }
 
 type FilePosition struct {

@@ -42,7 +42,7 @@ func (em *exactMatcher) Match(pattern string, next *github.FileInfo) (*Match, bo
 		for _, column := range matchColumns {
 			match.Positions = append(
 				match.Positions,
-				FilePosition{Line: row, Column: column},
+				&FilePosition{Line: row, Column: column},
 			)
 		}
 	}

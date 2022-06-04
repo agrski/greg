@@ -6,21 +6,21 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/agrski/greg/pkg/fetch"
+	fetchTypes "github.com/agrski/greg/pkg/fetch/types"
 	"github.com/stretchr/testify/require"
 )
 
 func Test_makeURI(t *testing.T) {
 	type test struct {
 		name     string
-		location fetch.Location
+		location fetchTypes.Location
 		want     url.URL
 	}
 
 	tests := []test{
 		{
 			name:     "github.com/agrski/gitfind",
-			location: fetch.Location{Host: "github.com", Organisation: "agrski", Repository: "gitfind"},
+			location: fetchTypes.Location{Host: "github.com", Organisation: "agrski", Repository: "gitfind"},
 			want: url.URL{
 				Scheme: "https",
 				Host:   "github.com",

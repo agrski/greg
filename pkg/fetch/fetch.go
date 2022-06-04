@@ -13,17 +13,7 @@ import (
 	but really that information should come from this package.
 */
 
-type HostName string
-type OrganisationName string
-type RepositoryName string
-
-type Location struct {
-	Host         HostName
-	Organisation OrganisationName
-	Repository   RepositoryName
-}
-
-func New(logger zerolog.Logger, l Location, tokenSource oauth2.TokenSource) types.Fetcher {
+func New(logger zerolog.Logger, l types.Location, tokenSource oauth2.TokenSource) types.Fetcher {
 	githubFetcher := github.New(
 		logger,
 		github.QueryParams{

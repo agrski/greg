@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/agrski/greg/pkg/auth"
-	"github.com/agrski/greg/pkg/fetch"
+	fetchTypes "github.com/agrski/greg/pkg/fetch/types"
 	"github.com/agrski/greg/pkg/match"
 	"golang.org/x/oauth2"
 )
@@ -25,7 +25,7 @@ const (
 	githubHost = "github.com"
 )
 
-var supportedHosts = [...]fetch.HostName{githubHost}
+var supportedHosts = [...]fetchTypes.HostName{githubHost}
 
 type rawArgs struct {
 	// Application behaviour
@@ -43,7 +43,7 @@ type rawArgs struct {
 }
 
 type Args struct {
-	location      fetch.Location
+	location      fetchTypes.Location
 	searchPattern string
 	filetypes     []string
 	tokenSource   oauth2.TokenSource
@@ -121,42 +121,42 @@ func parseArguments() (*rawArgs, error) {
 	return &args, nil
 }
 
-func getLocation(args *rawArgs) (fetch.Location, error) {
+func getLocation(args *rawArgs) (fetchTypes.Location, error) {
 	if isEmpty(args.url) && (isEmpty(args.org) || isEmpty(args.repo)) {
-		return fetch.Location{}, errors.New("must specify either url or both org and repo")
+		return fetchTypes.Location{}, errors.New("must specify either url or both org and repo")
 	}
 
 	if !isEmpty(args.url) && (!isEmpty(args.org) || !isEmpty(args.repo)) {
-		return fetch.Location{}, errors.New("cannot specify both url and org or repo")
+		return fetchTypes.Location{}, errors.New("cannot specify both url and org or repo")
 	}
 
 	if isEmpty(args.url) {
-		return fetch.Location{
-			Host:         fetch.HostName(args.host),
-			Organisation: fetch.OrganisationName(args.org),
-			Repository:   fetch.RepositoryName(args.repo),
+		return fetchTypes.Location{
+			Host:         fetchTypes.HostName(args.host),
+			Organisation: fetchTypes.OrganisationName(args.org),
+			Repository:   fetchTypes.RepositoryName(args.repo),
 		}, nil
 	}
 
 	return parseLocationFromURL(args.url)
 }
 
-func parseLocationFromURL(rawURL string) (fetch.Location, error) {
+func parseLocationFromURL(rawURL string) (fetchTypes.Location, error) {
 	if isEmpty(rawURL) {
-		return fetch.Location{}, errors.New("cannot parse empty string")
+		return fetchTypes.Location{}, errors.New("cannot parse empty string")
 	}
 
 	noWhitespace := strings.TrimSpace(rawURL)
 
 	parts := strings.SplitAfter(noWhitespace, "://")
 	if len(parts) > 2 {
-		return fetch.Location{}, fmt.Errorf("cannot parse malformed string '%v'", noWhitespace)
+		return fetchTypes.Location{}, fmt.Errorf("cannot parse malformed string '%v'", noWhitespace)
 	}
 
 	withoutScheme := parts[len(parts)-1]
 	hostAndPath := strings.Split(withoutScheme, "/")
 	if len(hostAndPath) < 3 {
-		return fetch.Location{}, fmt.Errorf("unable to parse host, org, and repo from %v", hostAndPath)
+		return fetchTypes.Location{}, fmt.Errorf("unable to parse host, org, and repo from %v", hostAndPath)
 	}
 
 	host := hostAndPath[0]
@@ -165,19 +165,19 @@ func parseLocationFromURL(rawURL string) (fetch.Location, error) {
 	repo = strings.TrimSuffix(repo, ".git")
 
 	if isEmpty(host) {
-		return fetch.Location{}, errors.New("host cannot be empty")
+		return fetchTypes.Location{}, errors.New("host cannot be empty")
 	}
 	if isEmpty(org) {
-		return fetch.Location{}, errors.New("org cannot be empty")
+		return fetchTypes.Location{}, errors.New("org cannot be empty")
 	}
 	if isEmpty(repo) {
-		return fetch.Location{}, errors.New("repo cannot be empty")
+		return fetchTypes.Location{}, errors.New("repo cannot be empty")
 	}
 
-	return fetch.Location{
-		Host:         fetch.HostName(host),
-		Organisation: fetch.OrganisationName(org),
-		Repository:   fetch.RepositoryName(repo),
+	return fetchTypes.Location{
+		Host:         fetchTypes.HostName(host),
+		Organisation: fetchTypes.OrganisationName(org),
+		Repository:   fetchTypes.RepositoryName(repo),
 	}, nil
 }
 
@@ -207,7 +207,7 @@ func isEmpty(s string) bool {
 }
 
 func isSupportedHost(host string) error {
-	hostname := fetch.HostName(host)
+	hostname := fetchTypes.HostName(host)
 	for _, h := range supportedHosts {
 		if hostname == h {
 			return nil

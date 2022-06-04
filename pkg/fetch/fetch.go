@@ -2,6 +2,7 @@ package fetch
 
 import (
 	"github.com/agrski/greg/pkg/fetch/github"
+	"github.com/agrski/greg/pkg/fetch/types"
 	"github.com/rs/zerolog"
 	"golang.org/x/oauth2"
 )
@@ -22,13 +23,7 @@ type Location struct {
 	Repository   RepositoryName
 }
 
-type Fetcher interface {
-	Start() error
-	Stop() error
-	Next() (interface{}, bool) // TODO - formalise this return param for interop with matcher
-}
-
-func New(logger zerolog.Logger, l Location, tokenSource oauth2.TokenSource) Fetcher {
+func New(logger zerolog.Logger, l Location, tokenSource oauth2.TokenSource) types.Fetcher {
 	githubFetcher := github.New(
 		logger,
 		github.QueryParams{

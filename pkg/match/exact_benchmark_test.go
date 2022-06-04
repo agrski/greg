@@ -56,7 +56,7 @@ func benchmarkExactMatcher(b *testing.B, patternSize int, textSize int) {
 	for i := 0; i < b.N; i++ {
 		matches, ok := matcher.Match(pattern, fileInfo)
 		if ok {
-			results = len(matches.Lines)
+			results = len(matches.Positions)
 		}
 	}
 }

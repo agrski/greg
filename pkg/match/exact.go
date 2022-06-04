@@ -40,8 +40,8 @@ func (em *exactMatcher) Match(pattern string, next *github.FileInfo) (*Match, bo
 
 		matchColumns := em.matchLine(pattern, lineReader.Text())
 		for _, column := range matchColumns {
-			match.Lines = append(
-				match.Lines,
+			match.Positions = append(
+				match.Positions,
 				FilePosition{Line: row, Column: column},
 			)
 		}
@@ -51,7 +51,7 @@ func (em *exactMatcher) Match(pattern string, next *github.FileInfo) (*Match, bo
 		return nil, false
 	}
 
-	if len(match.Lines) == 0 {
+	if len(match.Positions) == 0 {
 		return nil, false
 	}
 

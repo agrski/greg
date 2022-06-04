@@ -9,6 +9,7 @@ import (
 	"github.com/agrski/greg/pkg/auth"
 	fetchTypes "github.com/agrski/greg/pkg/fetch/types"
 	"github.com/agrski/greg/pkg/match"
+	"github.com/agrski/greg/pkg/types"
 	"golang.org/x/oauth2"
 )
 
@@ -45,7 +46,7 @@ type rawArgs struct {
 type Args struct {
 	location      fetchTypes.Location
 	searchPattern string
-	filetypes     []string
+	filetypes     []types.FileExtension
 	tokenSource   oauth2.TokenSource
 	verbosity     VerbosityLevel
 }
@@ -181,18 +182,19 @@ func parseLocationFromURL(rawURL string) (fetchTypes.Location, error) {
 	}, nil
 }
 
-func getFiletypes(filetypes string) []string {
+func getFiletypes(filetypes string) []types.FileExtension {
 	if isEmpty(filetypes) {
 		return nil
 	}
 
 	suffixes := strings.Split(filetypes, ",")
+	extensions := make([]types.FileExtension, len(suffixes))
 	for idx, s := range suffixes {
-		normalised := match.NormaliseExtension(s)
-		suffixes[idx] = normalised
+		normalised := match.NormaliseExtension(types.FileExtension(s))
+		extensions[idx] = normalised
 	}
 
-	return suffixes
+	return extensions
 }
 
 func getSearchPattern(pattern string) (string, error) {

@@ -20,13 +20,13 @@ type FilePosition struct {
 
 type filteringMatcher struct {
 	matcher   Matcher
-	filetypes []string
+	filetypes []types.FileExtension
 	logger    zerolog.Logger
 }
 
 var _ Matcher = (*filteringMatcher)(nil)
 
-func New(logger zerolog.Logger, allowedFiletypes []string) *filteringMatcher {
+func New(logger zerolog.Logger, allowedFiletypes []types.FileExtension) *filteringMatcher {
 	em := newExactMatcher(logger)
 	logger = logger.With().Str("source", "FilteringMatcher").Logger()
 

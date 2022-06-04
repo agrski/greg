@@ -6,7 +6,7 @@ import (
 	"github.com/agrski/greg/pkg/types"
 )
 
-func FilterFiletype(allowed []string, next *types.FileInfo) bool {
+func FilterFiletype(allowed []types.FileExtension, next *types.FileInfo) bool {
 	if len(allowed) == 0 {
 		return true
 	}
@@ -21,7 +21,8 @@ func FilterFiletype(allowed []string, next *types.FileInfo) bool {
 	return false
 }
 
-func NormaliseExtension(ext string) string {
-	trimmed := strings.TrimSpace(ext)
-	return strings.TrimPrefix(trimmed, ".")
+func NormaliseExtension(ext types.FileExtension) types.FileExtension {
+	trimmed := strings.TrimSpace(string(ext))
+	withoutDot := strings.TrimPrefix(trimmed, ".")
+	return types.FileExtension(withoutDot)
 }

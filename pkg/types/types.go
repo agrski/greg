@@ -1,8 +1,10 @@
 package types
 
+type FileExtension string
+
 type FileInfo struct {
 	Path      string
-	Extension string
+	Extension FileExtension
 	IsBinary  bool
 	Text      string
 }

@@ -10,7 +10,7 @@ import (
 func TestNormaliseExtension(t *testing.T) {
 	type test struct {
 		name      string
-		extension string
+		extension types.FileExtension
 		expected  string
 	}
 
@@ -53,8 +53,8 @@ func TestNormaliseExtension(t *testing.T) {
 func TestFilterFiletype(t *testing.T) {
 	type test struct {
 		name      string
-		allowed   []string
-		extension string
+		allowed   []types.FileExtension
+		extension types.FileExtension
 		expected  bool
 	}
 
@@ -67,43 +67,43 @@ func TestFilterFiletype(t *testing.T) {
 		},
 		{
 			name:      "should allow everything when allowed is empty",
-			allowed:   []string{},
+			allowed:   []types.FileExtension{},
 			extension: "md",
 			expected:  true,
 		},
 		{
 			name:      "single-element filter matches",
-			allowed:   []string{"md"},
+			allowed:   []types.FileExtension{"md"},
 			extension: "md",
 			expected:  true,
 		},
 		{
 			name:      "multi-element filter matches",
-			allowed:   []string{"a", "b", "md", "c"},
+			allowed:   []types.FileExtension{"a", "b", "md", "c"},
 			extension: "md",
 			expected:  true,
 		},
 		{
 			name:      "single-element filter does not match",
-			allowed:   []string{"go"},
+			allowed:   []types.FileExtension{"go"},
 			extension: "md",
 			expected:  false,
 		},
 		{
 			name:      "multi-element filter does not match",
-			allowed:   []string{"go", "py", "sh"},
+			allowed:   []types.FileExtension{"go", "py", "sh"},
 			extension: "md",
 			expected:  false,
 		},
 		{
 			name:      "should not match when extension is prefix of an allowed file-type",
-			allowed:   []string{"pyc"},
+			allowed:   []types.FileExtension{"pyc"},
 			extension: "py",
 			expected:  false,
 		},
 		{
 			name:      "should not match when extension is substring of an allowed file-type",
-			allowed:   []string{"numpy"},
+			allowed:   []types.FileExtension{"numpy"},
 			extension: "py",
 			expected:  false,
 		},

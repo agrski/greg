@@ -213,7 +213,7 @@ func (g *GitHub) parseTree(
 			case TreeEntryFile:
 				f := &types.FileInfo{
 					Path:      e.Path,
-					Extension: e.Extension,
+					Extension: types.FileExtension(e.Extension),
 					IsBinary:  e.Object.IsBinary,
 					Text:      e.Object.Text,
 				}

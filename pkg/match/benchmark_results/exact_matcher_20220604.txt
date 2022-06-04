@@ -1,0 +1,16 @@
+goos: linux
+goarch: amd64
+pkg: github.com/agrski/greg/pkg/match
+cpu: 11th Gen Intel(R) Core(TM) i5-11400H @ 2.70GHz
+BenchmarkExactMatcher_Pattern10_Text100-12            	 1508732	       790.4 ns/op
+BenchmarkExactMatcher_Pattern10_Text1_000-12          	  871252	      1394 ns/op
+BenchmarkExactMatcher_Pattern100_Text1_000-12         	  989268	      1125 ns/op
+BenchmarkExactMatcher_Pattern10_Text10_000-12         	  162526	      7220 ns/op
+BenchmarkExactMatcher_Pattern100_Text10_000-12        	  208962	      6714 ns/op
+BenchmarkExactMatcher_Pattern1_000_Text10_000-12      	  217537	      5503 ns/op
+BenchmarkExactMatcher_Pattern10_Text100_000-12        	   13759	     73479 ns/op
+BenchmarkExactMatcher_Pattern100_Text100_000-12       	   18019	     66094 ns/op
+BenchmarkExactMatcher_Pattern1_000_Text100_000-12     	   20331	     60084 ns/op
+BenchmarkExactMatcher_Pattern10_000_Text100_000-12    	   19768	     60943 ns/op
+PASS
+ok  	github.com/agrski/greg/pkg/match	15.725s

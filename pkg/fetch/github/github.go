@@ -36,15 +36,19 @@ type GitHub struct {
 
 var _ fetchTypes.Fetcher = (*GitHub)(nil)
 
-func New(l zerolog.Logger, q QueryParams, tokenSource oauth2.TokenSource) *GitHub {
+func New(logger zerolog.Logger, location fetchTypes.Location, tokenSource oauth2.TokenSource) *GitHub {
 	authClient := oauth2.NewClient(context.Background(), tokenSource)
 	client := graphql.NewClient(apiUrl, authClient)
-	logger := l.With().Str("source", "GitHub").Logger()
+	logger = logger.With().Str("source", "GitHub").Logger()
+	queryParams := QueryParams{
+		RepoOwner: string(location.Organisation),
+		RepoName:  string(location.Repository),
+	}
 
 	return &GitHub{
 		logger:      logger,
 		client:      client,
-		queryParams: q,
+		queryParams: queryParams,
 	}
 }
 

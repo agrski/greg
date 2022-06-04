@@ -16,10 +16,7 @@ import (
 func New(logger zerolog.Logger, l types.Location, tokenSource oauth2.TokenSource) types.Fetcher {
 	githubFetcher := github.New(
 		logger,
-		github.QueryParams{
-			RepoOwner: string(l.Organisation),
-			RepoName:  string(l.Repository),
-		},
+		l,
 		tokenSource,
 	)
 	return githubFetcher

@@ -7,7 +7,7 @@ const (
 	TreeEntryFile TreeEntry = "blob"
 )
 
-type QueryParams struct {
+type queryParams struct {
 	RepoOwner  string
 	RepoName   string
 	Commitish  string

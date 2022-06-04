@@ -28,7 +28,7 @@ type graphqlVariables map[string]interface{}
 // A stopped instance cannot be restarted cleanly; instead, create a fresh instance.
 type GitHub struct {
 	client      *graphql.Client
-	queryParams QueryParams
+	queryParams queryParams
 	logger      zerolog.Logger
 	results     <-chan *types.FileInfo
 	cancel      func()
@@ -40,7 +40,7 @@ func New(logger zerolog.Logger, location fetchTypes.Location, tokenSource oauth2
 	authClient := oauth2.NewClient(context.Background(), tokenSource)
 	client := graphql.NewClient(apiUrl, authClient)
 	logger = logger.With().Str("source", "GitHub").Logger()
-	queryParams := QueryParams{
+	queryParams := queryParams{
 		RepoOwner: string(location.Organisation),
 		RepoName:  string(location.Repository),
 	}

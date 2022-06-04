@@ -9,6 +9,8 @@ import (
 	"github.com/hasura/go-graphql-client"
 	"github.com/rs/zerolog"
 	"golang.org/x/oauth2"
+
+	"github.com/agrski/greg/pkg/fetch/types"
 )
 
 const (
@@ -20,11 +22,6 @@ const (
 
 type graphqlVariables map[string]interface{}
 
-type FileInfo struct {
-	fileMetadata
-	fileContents
-}
-
 // GitHub instances retrieve the files present as of some commit in a GitHub repository.
 // An instance should only be used once, as it stores intermediate state internally.
 // A stopped instance cannot be restarted cleanly; instead, create a fresh instance.
@@ -32,7 +29,7 @@ type GitHub struct {
 	client      *graphql.Client
 	queryParams QueryParams
 	logger      zerolog.Logger
-	results     <-chan *FileInfo
+	results     <-chan *types.FileInfo
 	cancel      func()
 }
 
@@ -84,10 +81,10 @@ func (g *GitHub) Next() (interface{}, bool) {
 	}
 }
 
-func (g *GitHub) getFiles() (<-chan *FileInfo, func()) {
+func (g *GitHub) getFiles() (<-chan *types.FileInfo, func()) {
 	logger := g.logger.With().Str("func", "getFiles").Logger()
 
-	results := make(chan *FileInfo, treeResultsCapacity)
+	results := make(chan *types.FileInfo, treeResultsCapacity)
 	remaining := make(chan string, treesRemainingCapacity)
 	cancel := make(chan struct{})
 	canceller := func() {
@@ -191,7 +188,7 @@ func (g *GitHub) getTree(variables graphqlVariables) (*treeQuery, error) {
 
 func (g *GitHub) parseTree(
 	tree *treeQuery,
-	results chan<- *FileInfo,
+	results chan<- *types.FileInfo,
 	remaining chan<- string,
 	cancel <-chan struct{},
 ) {
@@ -207,9 +204,11 @@ func (g *GitHub) parseTree(
 			case TreeEntryDir:
 				remaining <- e.Path
 			case TreeEntryFile:
-				f := &FileInfo{
-					fileMetadata: e.fileMetadata,
-					fileContents: e.Object.fileContents,
+				f := &types.FileInfo{
+					Path:      e.Path,
+					Extension: e.Extension,
+					IsBinary:  e.Object.IsBinary,
+					Text:      e.Object.Text,
 				}
 				results <- f
 			default:

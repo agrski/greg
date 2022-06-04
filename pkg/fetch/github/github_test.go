@@ -5,6 +5,7 @@ package github
 import (
 	"testing"
 
+	"github.com/agrski/greg/pkg/fetch/types"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )
@@ -20,7 +21,7 @@ func TestParseTree(t *testing.T) {
 	type test struct {
 		name              string
 		entries           []entry
-		expectedResults   []*FileInfo
+		expectedResults   []*types.FileInfo
 		expectedRemaining []string
 	}
 
@@ -28,7 +29,7 @@ func TestParseTree(t *testing.T) {
 		{
 			name:              "empty root dir",
 			entries:           []entry{},
-			expectedResults:   []*FileInfo{},
+			expectedResults:   []*types.FileInfo{},
 			expectedRemaining: []string{},
 		},
 		{
@@ -45,7 +46,7 @@ func TestParseTree(t *testing.T) {
 					},
 				},
 			},
-			expectedResults:   []*FileInfo{},
+			expectedResults:   []*types.FileInfo{},
 			expectedRemaining: []string{"dir1"},
 		},
 		{
@@ -65,17 +66,12 @@ func TestParseTree(t *testing.T) {
 					},
 				},
 			},
-			expectedResults: []*FileInfo{
+			expectedResults: []*types.FileInfo{
 				{
-					fileMetadata{
-						Type:      TreeEntryFile,
-						Name:      "file1.txt",
-						Extension: ".txt",
-					},
-					fileContents{
-						IsBinary: false,
-						Text:     "some text",
-					},
+					Path:      "file1.txt",
+					Extension: ".txt",
+					IsBinary:  false,
+					Text:      "some text",
 				},
 			},
 			expectedRemaining: []string{},
@@ -105,17 +101,12 @@ func TestParseTree(t *testing.T) {
 					entryObject{},
 				},
 			},
-			expectedResults: []*FileInfo{
+			expectedResults: []*types.FileInfo{
 				{
-					fileMetadata{
-						Type:      TreeEntryFile,
-						Name:      "file1.txt",
-						Extension: ".txt",
-					},
-					fileContents{
-						IsBinary: false,
-						Text:     "some text",
-					},
+					Path:      "file1.txt",
+					Extension: ".txt",
+					IsBinary:  false,
+					Text:      "some text",
 				},
 			},
 			expectedRemaining: []string{"dir1"},
@@ -128,7 +119,7 @@ func TestParseTree(t *testing.T) {
 			tree.repository.Name = "some repo"
 			tree.repository.Object.Tree.Entries = tt.entries
 
-			results := make(chan *FileInfo, 100)
+			results := make(chan *types.FileInfo, 100)
 			remaining := make(chan string, 100)
 			cancel := make(chan struct{}, 1)
 
@@ -141,7 +132,7 @@ func TestParseTree(t *testing.T) {
 			close(results)
 			close(remaining)
 
-			actualResults := make([]*FileInfo, 0)
+			actualResults := make([]*types.FileInfo, 0)
 			for f := range results {
 				actualResults = append(actualResults, f)
 			}

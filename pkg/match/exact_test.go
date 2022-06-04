@@ -3,7 +3,7 @@ package match
 import (
 	"testing"
 
-	"github.com/agrski/greg/pkg/fetch/github"
+	"github.com/agrski/greg/pkg/fetch/types"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )
@@ -133,7 +133,7 @@ foo fifth
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			fileInfo := &github.FileInfo{}
+			fileInfo := &types.FileInfo{}
 			fileInfo.IsBinary = tt.isBinary
 			fileInfo.Text = tt.text
 

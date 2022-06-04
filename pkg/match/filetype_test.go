@@ -3,7 +3,7 @@ package match
 import (
 	"testing"
 
-	"github.com/agrski/greg/pkg/fetch/github"
+	"github.com/agrski/greg/pkg/fetch/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -111,7 +111,7 @@ func TestFilterFiletype(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			fileInfo := &github.FileInfo{}
+			fileInfo := &types.FileInfo{}
 			fileInfo.Extension = tt.extension
 
 			actual := FilterFiletype(tt.allowed, fileInfo)

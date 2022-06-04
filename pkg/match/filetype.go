@@ -3,10 +3,10 @@ package match
 import (
 	"strings"
 
-	"github.com/agrski/greg/pkg/fetch/github"
+	"github.com/agrski/greg/pkg/fetch/types"
 )
 
-func FilterFiletype(allowed []string, next *github.FileInfo) bool {
+func FilterFiletype(allowed []string, next *types.FileInfo) bool {
 	if len(allowed) == 0 {
 		return true
 	}

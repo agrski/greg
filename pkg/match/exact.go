@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"strings"
 
-	"github.com/agrski/greg/pkg/fetch/github"
+	"github.com/agrski/greg/pkg/fetch/types"
 	"github.com/rs/zerolog"
 )
 
@@ -21,7 +21,7 @@ func newExactMatcher(logger zerolog.Logger) *exactMatcher {
 	}
 }
 
-func (em *exactMatcher) Match(pattern string, next *github.FileInfo) (*Match, bool) {
+func (em *exactMatcher) Match(pattern string, next *types.FileInfo) (*Match, bool) {
 	logger := em.logger.With().Str("func", "Match").Logger()
 
 	if next.IsBinary {

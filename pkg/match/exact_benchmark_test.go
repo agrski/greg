@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/agrski/greg/pkg/fetch/github"
+	"github.com/agrski/greg/pkg/fetch/types"
 	"github.com/rs/zerolog"
 )
 
@@ -49,7 +49,7 @@ func makeTextOfLength(n int) string {
 func benchmarkExactMatcher(b *testing.B, patternSize int, textSize int) {
 	matcher := newExactMatcher(zerolog.Nop())
 	pattern := makeTextOfLength(patternSize)
-	fileInfo := &github.FileInfo{}
+	fileInfo := &types.FileInfo{}
 	fileInfo.IsBinary = false
 	fileInfo.Text = makeTextOfLength(textSize)
 

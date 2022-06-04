@@ -5,22 +5,23 @@ package github
 import (
 	"testing"
 
+	"github.com/agrski/greg/pkg/types"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )
 
 func TestParseTree(t *testing.T) {
 	type treeEntry struct {
-		FileMetadata
+		fileMetadata
 		Object struct {
-			FileContents "graphql:\"... on Blob\""
+			fileContents "graphql:\"... on Blob\""
 		}
 	}
 
 	type test struct {
 		name              string
 		entries           []entry
-		expectedResults   []*FileInfo
+		expectedResults   []*types.FileInfo
 		expectedRemaining []string
 	}
 
@@ -28,54 +29,49 @@ func TestParseTree(t *testing.T) {
 		{
 			name:              "empty root dir",
 			entries:           []entry{},
-			expectedResults:   []*FileInfo{},
+			expectedResults:   []*types.FileInfo{},
 			expectedRemaining: []string{},
 		},
 		{
 			name: "one empty directory",
 			entries: []entry{
 				{
-					FileMetadata{
+					fileMetadata{
 						Type: TreeEntryDir,
 						Name: "dir1",
 						Path: "dir1",
 					},
 					entryObject{
-						FileContents{},
+						fileContents{},
 					},
 				},
 			},
-			expectedResults:   []*FileInfo{},
+			expectedResults:   []*types.FileInfo{},
 			expectedRemaining: []string{"dir1"},
 		},
 		{
 			name: "one file in root dir",
 			entries: []entry{
 				{
-					FileMetadata{
+					fileMetadata{
 						Type:      TreeEntryFile,
 						Name:      "file1.txt",
 						Extension: ".txt",
 					},
 					entryObject{
-						FileContents{
+						fileContents{
 							IsBinary: false,
 							Text:     "some text",
 						},
 					},
 				},
 			},
-			expectedResults: []*FileInfo{
+			expectedResults: []*types.FileInfo{
 				{
-					FileMetadata{
-						Type:      TreeEntryFile,
-						Name:      "file1.txt",
-						Extension: ".txt",
-					},
-					FileContents{
-						IsBinary: false,
-						Text:     "some text",
-					},
+					Path:      "file1.txt",
+					Extension: ".txt",
+					IsBinary:  false,
+					Text:      "some text",
 				},
 			},
 			expectedRemaining: []string{},
@@ -84,20 +80,20 @@ func TestParseTree(t *testing.T) {
 			name: "files and nested dirs",
 			entries: []entry{
 				{
-					FileMetadata{
+					fileMetadata{
 						Type:      TreeEntryFile,
 						Name:      "file1.txt",
 						Extension: ".txt",
 					},
 					entryObject{
-						FileContents{
+						fileContents{
 							IsBinary: false,
 							Text:     "some text",
 						},
 					},
 				},
 				{
-					FileMetadata{
+					fileMetadata{
 						Type: TreeEntryDir,
 						Name: "dir1",
 						Path: "dir1",
@@ -105,17 +101,12 @@ func TestParseTree(t *testing.T) {
 					entryObject{},
 				},
 			},
-			expectedResults: []*FileInfo{
+			expectedResults: []*types.FileInfo{
 				{
-					FileMetadata{
-						Type:      TreeEntryFile,
-						Name:      "file1.txt",
-						Extension: ".txt",
-					},
-					FileContents{
-						IsBinary: false,
-						Text:     "some text",
-					},
+					Path:      "file1.txt",
+					Extension: ".txt",
+					IsBinary:  false,
+					Text:      "some text",
 				},
 			},
 			expectedRemaining: []string{"dir1"},
@@ -125,10 +116,10 @@ func TestParseTree(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tree := &treeQuery{}
-			tree.Repository.Name = "some repo"
-			tree.Repository.Object.Tree.Entries = tt.entries
+			tree.repository.Name = "some repo"
+			tree.repository.Object.Tree.Entries = tt.entries
 
-			results := make(chan *FileInfo, 100)
+			results := make(chan *types.FileInfo, 100)
 			remaining := make(chan string, 100)
 			cancel := make(chan struct{}, 1)
 
@@ -141,7 +132,7 @@ func TestParseTree(t *testing.T) {
 			close(results)
 			close(remaining)
 
-			actualResults := make([]*FileInfo, 0)
+			actualResults := make([]*types.FileInfo, 0)
 			for f := range results {
 				actualResults = append(actualResults, f)
 			}

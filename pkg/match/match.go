@@ -1,14 +1,12 @@
 package match
 
 import (
-	"github.com/agrski/greg/pkg/fetch/github"
+	"github.com/agrski/greg/pkg/types"
 	"github.com/rs/zerolog"
 )
 
 type Matcher interface {
-	// FIXME - move github.FileInfo -> fetch.FileInfo
-	//	as we should not be relying on something so specific.
-	Match(pattern string, next *github.FileInfo) (*Match, bool)
+	Match(pattern string, next *types.FileInfo) (*Match, bool)
 }
 
 type Match struct {
@@ -22,13 +20,13 @@ type FilePosition struct {
 
 type filteringMatcher struct {
 	matcher   Matcher
-	filetypes []string
+	filetypes []types.FileExtension
 	logger    zerolog.Logger
 }
 
 var _ Matcher = (*filteringMatcher)(nil)
 
-func New(logger zerolog.Logger, allowedFiletypes []string) *filteringMatcher {
+func New(logger zerolog.Logger, allowedFiletypes []types.FileExtension) *filteringMatcher {
 	em := newExactMatcher(logger)
 	logger = logger.With().Str("source", "FilteringMatcher").Logger()
 
@@ -39,7 +37,7 @@ func New(logger zerolog.Logger, allowedFiletypes []string) *filteringMatcher {
 	}
 }
 
-func (fm *filteringMatcher) Match(pattern string, next *github.FileInfo) (*Match, bool) {
+func (fm *filteringMatcher) Match(pattern string, next *types.FileInfo) (*Match, bool) {
 	if ok := FilterFiletype(fm.filetypes, next); !ok {
 		return nil, false
 	}

@@ -7,7 +7,7 @@ const (
 	TreeEntryFile TreeEntry = "blob"
 )
 
-type QueryParams struct {
+type queryParams struct {
 	RepoOwner  string
 	RepoName   string
 	Commitish  string
@@ -23,10 +23,10 @@ type branchRefQuery struct {
 }
 
 type treeQuery struct {
-	Repository `graphql:"repository(owner: $owner, name: $repo)"`
+	repository `graphql:"repository(owner: $owner, name: $repo)"`
 }
 
-type Repository struct {
+type repository struct {
 	Name   string
 	Object repositoryObject `graphql:"object(expression: $commitishAndPath)"`
 }
@@ -40,22 +40,22 @@ type tree struct {
 }
 
 type entry struct {
-	FileMetadata
+	fileMetadata
 	Object entryObject
 }
 
 type entryObject struct {
-	FileContents `graphql:"... on Blob"`
+	fileContents `graphql:"... on Blob"`
 }
 
-type FileMetadata struct {
+type fileMetadata struct {
 	Type      TreeEntry
 	Name      string
 	Extension string
 	Path      string
 }
 
-type FileContents struct {
+type fileContents struct {
 	IsBinary bool
 	Text     string
 }

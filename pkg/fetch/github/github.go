@@ -9,6 +9,9 @@ import (
 	"github.com/hasura/go-graphql-client"
 	"github.com/rs/zerolog"
 	"golang.org/x/oauth2"
+
+	fetchTypes "github.com/agrski/greg/pkg/fetch/types"
+	"github.com/agrski/greg/pkg/types"
 )
 
 const (
@@ -20,31 +23,32 @@ const (
 
 type graphqlVariables map[string]interface{}
 
-type FileInfo struct {
-	FileMetadata
-	FileContents
-}
-
 // GitHub instances retrieve the files present as of some commit in a GitHub repository.
 // An instance should only be used once, as it stores intermediate state internally.
 // A stopped instance cannot be restarted cleanly; instead, create a fresh instance.
 type GitHub struct {
 	client      *graphql.Client
-	queryParams QueryParams
+	queryParams queryParams
 	logger      zerolog.Logger
-	results     <-chan *FileInfo
+	results     <-chan *types.FileInfo
 	cancel      func()
 }
 
-func New(l zerolog.Logger, q QueryParams, tokenSource oauth2.TokenSource) *GitHub {
+var _ fetchTypes.Fetcher = (*GitHub)(nil)
+
+func New(logger zerolog.Logger, location fetchTypes.Location, tokenSource oauth2.TokenSource) *GitHub {
 	authClient := oauth2.NewClient(context.Background(), tokenSource)
 	client := graphql.NewClient(apiUrl, authClient)
-	logger := l.With().Str("source", "GitHub").Logger()
+	logger = logger.With().Str("source", "GitHub").Logger()
+	queryParams := queryParams{
+		RepoOwner: string(location.Organisation),
+		RepoName:  string(location.Repository),
+	}
 
 	return &GitHub{
 		logger:      logger,
 		client:      client,
-		queryParams: q,
+		queryParams: queryParams,
 	}
 }
 
@@ -72,7 +76,7 @@ func (g *GitHub) Stop() error {
 	return nil
 }
 
-func (g *GitHub) Next() (interface{}, bool) {
+func (g *GitHub) Next() (*types.FileInfo, bool) {
 	logger := g.logger.With().Str("func", "Next").Logger()
 	next := <-g.results
 	if next == nil {
@@ -84,10 +88,10 @@ func (g *GitHub) Next() (interface{}, bool) {
 	}
 }
 
-func (g *GitHub) getFiles() (<-chan *FileInfo, func()) {
+func (g *GitHub) getFiles() (<-chan *types.FileInfo, func()) {
 	logger := g.logger.With().Str("func", "getFiles").Logger()
 
-	results := make(chan *FileInfo, treeResultsCapacity)
+	results := make(chan *types.FileInfo, treeResultsCapacity)
 	remaining := make(chan string, treesRemainingCapacity)
 	cancel := make(chan struct{})
 	canceller := func() {
@@ -191,12 +195,12 @@ func (g *GitHub) getTree(variables graphqlVariables) (*treeQuery, error) {
 
 func (g *GitHub) parseTree(
 	tree *treeQuery,
-	results chan<- *FileInfo,
+	results chan<- *types.FileInfo,
 	remaining chan<- string,
 	cancel <-chan struct{},
 ) {
 	logger := g.logger.With().Str("func", "parseTree").Logger()
-	root := tree.Repository.Object.Tree
+	root := tree.repository.Object.Tree
 
 	for _, e := range root.Entries {
 		select {
@@ -207,9 +211,11 @@ func (g *GitHub) parseTree(
 			case TreeEntryDir:
 				remaining <- e.Path
 			case TreeEntryFile:
-				f := &FileInfo{
-					FileMetadata: e.FileMetadata,
-					FileContents: e.Object.FileContents,
+				f := &types.FileInfo{
+					Path:      e.Path,
+					Extension: types.FileExtension(e.Extension),
+					IsBinary:  e.Object.IsBinary,
+					Text:      e.Object.Text,
 				}
 				results <- f
 			default:

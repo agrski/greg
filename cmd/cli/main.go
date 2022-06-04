@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/agrski/greg/pkg/fetch"
+	fetchTypes "github.com/agrski/greg/pkg/fetch/types"
 	"github.com/rs/zerolog"
 )
 
@@ -78,7 +79,7 @@ func makeLogger(level zerolog.Level) zerolog.Logger {
 	return logger
 }
 
-func makeURI(l fetch.Location) url.URL {
+func makeURI(l fetchTypes.Location) url.URL {
 	return url.URL{
 		Scheme: httpScheme,
 		Host:   string(l.Host),

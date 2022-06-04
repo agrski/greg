@@ -29,9 +29,7 @@ func (em *exactMatcher) Match(pattern string, next *github.FileInfo) (*Match, bo
 		return nil, false
 	}
 
-	match := &Match{
-		Lines: []FilePosition{},
-	}
+	match := &Match{}
 	lineReader := bufio.NewScanner(
 		strings.NewReader(next.Text),
 	)

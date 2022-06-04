@@ -3,7 +3,7 @@
 
 SHELL = /bin/bash
 
-.DEFAULT_GOAL := cli
+.DEFAULT_GOAL := build
 .SUFFIXES =
 .SUFFIXES = .go
 
@@ -35,8 +35,11 @@ lint: fmt
 vet: fmt
 	$(GOCMD) vet $(ALL_FILES)
 
-.PHONY:cli
-cli: clean vet
+.PHONY:build
+build: build-cli
+
+.PHONY:build-cli
+build-cli: clean vet
 	GOOS=linux GOARCH=amd64 \
 			 $(GOCMD) build -o $(BIN_DIR)/$(BINARY_LINUX) ./cmd/cli/
 	GOOS=windows GOARCH=amd64 \

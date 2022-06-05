@@ -2,60 +2,60 @@ package console
 
 // ANSI colour codes
 
-type AnsiCode string
+type ansiCode string
 
 const (
-	escape     AnsiCode = "\u001b"
-	csi        AnsiCode = "["
+	escape     ansiCode = "\u001b"
+	csi        ansiCode = "["
 	codePrefix          = escape + csi
 	codeSuffix          = "m"
 )
 
 const (
-	reset AnsiCode = codePrefix + "0" + codeSuffix
+	reset ansiCode = codePrefix + "0" + codeSuffix
 
-	bold          AnsiCode = codePrefix + "1" + codeSuffix
-	faint         AnsiCode = codePrefix + "2" + codeSuffix
-	italic        AnsiCode = codePrefix + "3" + codeSuffix
-	underline     AnsiCode = codePrefix + "4" + codeSuffix
-	invert        AnsiCode = codePrefix + "7" + codeSuffix
-	conceal       AnsiCode = codePrefix + "8" + codeSuffix
-	strikethrough AnsiCode = codePrefix + "9" + codeSuffix
+	bold          ansiCode = codePrefix + "1" + codeSuffix
+	faint         ansiCode = codePrefix + "2" + codeSuffix
+	italic        ansiCode = codePrefix + "3" + codeSuffix
+	underline     ansiCode = codePrefix + "4" + codeSuffix
+	invert        ansiCode = codePrefix + "7" + codeSuffix
+	conceal       ansiCode = codePrefix + "8" + codeSuffix
+	strikethrough ansiCode = codePrefix + "9" + codeSuffix
 
-	fgBlack   AnsiCode = codePrefix + "30" + codeSuffix
-	fgRed     AnsiCode = codePrefix + "31" + codeSuffix
-	fgGreen   AnsiCode = codePrefix + "32" + codeSuffix
-	fgYellow  AnsiCode = codePrefix + "33" + codeSuffix
-	fgBlue    AnsiCode = codePrefix + "34" + codeSuffix
-	fgMagenta AnsiCode = codePrefix + "35" + codeSuffix
-	fgCyan    AnsiCode = codePrefix + "36" + codeSuffix
-	fgWhite   AnsiCode = codePrefix + "37" + codeSuffix
-	fgDefault AnsiCode = codePrefix + "39" + codeSuffix
+	fgBlack   ansiCode = codePrefix + "30" + codeSuffix
+	fgRed     ansiCode = codePrefix + "31" + codeSuffix
+	fgGreen   ansiCode = codePrefix + "32" + codeSuffix
+	fgYellow  ansiCode = codePrefix + "33" + codeSuffix
+	fgBlue    ansiCode = codePrefix + "34" + codeSuffix
+	fgMagenta ansiCode = codePrefix + "35" + codeSuffix
+	fgCyan    ansiCode = codePrefix + "36" + codeSuffix
+	fgWhite   ansiCode = codePrefix + "37" + codeSuffix
+	fgDefault ansiCode = codePrefix + "39" + codeSuffix
 
-	bgBlack   AnsiCode = codePrefix + "40" + codeSuffix
-	bgRed     AnsiCode = codePrefix + "41" + codeSuffix
-	bgGreen   AnsiCode = codePrefix + "42" + codeSuffix
-	bgYellow  AnsiCode = codePrefix + "43" + codeSuffix
-	bgBlue    AnsiCode = codePrefix + "44" + codeSuffix
-	bgMagenta AnsiCode = codePrefix + "45" + codeSuffix
-	bgCyan    AnsiCode = codePrefix + "46" + codeSuffix
-	bgWhite   AnsiCode = codePrefix + "47" + codeSuffix
+	bgBlack   ansiCode = codePrefix + "40" + codeSuffix
+	bgRed     ansiCode = codePrefix + "41" + codeSuffix
+	bgGreen   ansiCode = codePrefix + "42" + codeSuffix
+	bgYellow  ansiCode = codePrefix + "43" + codeSuffix
+	bgBlue    ansiCode = codePrefix + "44" + codeSuffix
+	bgMagenta ansiCode = codePrefix + "45" + codeSuffix
+	bgCyan    ansiCode = codePrefix + "46" + codeSuffix
+	bgWhite   ansiCode = codePrefix + "47" + codeSuffix
 
-	fgIntenseBlack   AnsiCode = codePrefix + "90" + codeSuffix
-	fgIntenseRed     AnsiCode = codePrefix + "91" + codeSuffix
-	fgIntenseGreen   AnsiCode = codePrefix + "92" + codeSuffix
-	fgIntenseYellow  AnsiCode = codePrefix + "93" + codeSuffix
-	fgIntenseBlue    AnsiCode = codePrefix + "94" + codeSuffix
-	fgIntenseMagenta AnsiCode = codePrefix + "95" + codeSuffix
-	fgIntenseCyan    AnsiCode = codePrefix + "96" + codeSuffix
-	fgIntenseWhite   AnsiCode = codePrefix + "97" + codeSuffix
+	fgIntenseBlack   ansiCode = codePrefix + "90" + codeSuffix
+	fgIntenseRed     ansiCode = codePrefix + "91" + codeSuffix
+	fgIntenseGreen   ansiCode = codePrefix + "92" + codeSuffix
+	fgIntenseYellow  ansiCode = codePrefix + "93" + codeSuffix
+	fgIntenseBlue    ansiCode = codePrefix + "94" + codeSuffix
+	fgIntenseMagenta ansiCode = codePrefix + "95" + codeSuffix
+	fgIntenseCyan    ansiCode = codePrefix + "96" + codeSuffix
+	fgIntenseWhite   ansiCode = codePrefix + "97" + codeSuffix
 
-	bgIntenseBlack   AnsiCode = codePrefix + "100" + codeSuffix
-	bgIntenseRed     AnsiCode = codePrefix + "101" + codeSuffix
-	bgIntenseGreen   AnsiCode = codePrefix + "102" + codeSuffix
-	bgIntenseYellow  AnsiCode = codePrefix + "103" + codeSuffix
-	bgIntenseBlue    AnsiCode = codePrefix + "104" + codeSuffix
-	bgIntenseMagenta AnsiCode = codePrefix + "105" + codeSuffix
-	bgIntenseCyan    AnsiCode = codePrefix + "106" + codeSuffix
-	bgIntenseWhite   AnsiCode = codePrefix + "107" + codeSuffix
+	bgIntenseBlack   ansiCode = codePrefix + "100" + codeSuffix
+	bgIntenseRed     ansiCode = codePrefix + "101" + codeSuffix
+	bgIntenseGreen   ansiCode = codePrefix + "102" + codeSuffix
+	bgIntenseYellow  ansiCode = codePrefix + "103" + codeSuffix
+	bgIntenseBlue    ansiCode = codePrefix + "104" + codeSuffix
+	bgIntenseMagenta ansiCode = codePrefix + "105" + codeSuffix
+	bgIntenseCyan    ansiCode = codePrefix + "106" + codeSuffix
+	bgIntenseWhite   ansiCode = codePrefix + "107" + codeSuffix
 )

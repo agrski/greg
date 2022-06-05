@@ -35,7 +35,8 @@ func (em *exactMatcher) Match(pattern string, next *types.FileInfo) (*Match, boo
 	)
 
 	for row := 0; lineReader.Scan(); row++ {
-		matchColumns := em.matchLine(pattern, lineReader.Text())
+		line := lineReader.Text()
+		matchColumns := em.matchLine(pattern, line)
 		for _, column := range matchColumns {
 			match.Positions = append(
 				match.Positions,
@@ -43,6 +44,7 @@ func (em *exactMatcher) Match(pattern string, next *types.FileInfo) (*Match, boo
 					Line:        uint(row),
 					ColumnStart: column,
 					ColumnEnd:   column + uint(len(pattern)),
+					Text:        line,
 				},
 			)
 		}

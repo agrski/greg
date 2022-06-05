@@ -42,6 +42,7 @@ func (em *exactMatcher) Match(pattern string, next *types.FileInfo) (*Match, boo
 				&FilePosition{
 					Line:        uint(row),
 					ColumnStart: column,
+					ColumnEnd:   column + uint(len(pattern)),
 				},
 			)
 		}

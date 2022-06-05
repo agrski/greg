@@ -35,9 +35,9 @@ func (c *Console) Write(fileInfo *types.FileInfo, match *match.Match) {
 		// Text
 		sb.WriteString(p.Text[:p.ColumnStart])
 		sb.WriteString(string(FgRed))
-		sb.WriteString(p.Text[p.ColumnStart : p.ColumnStart+p.Length])
+		sb.WriteString(p.Text[p.ColumnStart:p.ColumnEnd])
 		sb.WriteString(string(Reset))
-		sb.WriteString(p.Text[p.ColumnStart+p.Length:])
+		sb.WriteString(p.Text[p.ColumnEnd:])
 
 		c.logger.Log().Msg(sb.String())
 	}

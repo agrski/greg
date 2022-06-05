@@ -14,8 +14,10 @@ type Match struct {
 }
 
 type FilePosition struct {
-	Line   uint
-	Column uint
+	Line        uint
+	ColumnStart uint
+	ColumnEnd   uint
+	Text        string
 }
 
 type filteringMatcher struct {

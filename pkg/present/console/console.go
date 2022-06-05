@@ -22,22 +22,22 @@ func New(logger zerolog.Logger, enableColour bool) *Console {
 }
 
 func (c *Console) Write(fileInfo *types.FileInfo, match *match.Match) {
-	c.logger.Log().Msg(string(FgBlue) + fileInfo.Path + string(Reset))
+	c.logger.Log().Msg(string(fgBlue) + fileInfo.Path + string(reset))
 
 	for _, p := range match.Positions {
 		sb := strings.Builder{}
 
 		if c.enableColour {
 			// Line number
-			sb.WriteString(string(FgMagenta))
+			sb.WriteString(string(fgMagenta))
 			sb.WriteString(fileInfo.Path)
-			sb.WriteString(string(Reset))
+			sb.WriteString(string(reset))
 			sb.WriteByte(':')
 			// Text
 			sb.WriteString(p.Text[:p.ColumnStart])
-			sb.WriteString(string(FgRed))
+			sb.WriteString(string(fgRed))
 			sb.WriteString(p.Text[p.ColumnStart:p.ColumnEnd])
-			sb.WriteString(string(Reset))
+			sb.WriteString(string(reset))
 			sb.WriteString(p.Text[p.ColumnEnd:])
 		} else {
 			// Line number

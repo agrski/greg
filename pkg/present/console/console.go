@@ -27,17 +27,25 @@ func (c *Console) Write(fileInfo *types.FileInfo, match *match.Match) {
 	for _, p := range match.Positions {
 		sb := strings.Builder{}
 
-		// Line number
-		sb.WriteString(string(FgMagenta))
-		sb.WriteString(fileInfo.Path)
-		sb.WriteString(string(Reset))
-		sb.WriteByte(':')
-		// Text
-		sb.WriteString(p.Text[:p.ColumnStart])
-		sb.WriteString(string(FgRed))
-		sb.WriteString(p.Text[p.ColumnStart:p.ColumnEnd])
-		sb.WriteString(string(Reset))
-		sb.WriteString(p.Text[p.ColumnEnd:])
+		if c.enableColour {
+			// Line number
+			sb.WriteString(string(FgMagenta))
+			sb.WriteString(fileInfo.Path)
+			sb.WriteString(string(Reset))
+			sb.WriteByte(':')
+			// Text
+			sb.WriteString(p.Text[:p.ColumnStart])
+			sb.WriteString(string(FgRed))
+			sb.WriteString(p.Text[p.ColumnStart:p.ColumnEnd])
+			sb.WriteString(string(Reset))
+			sb.WriteString(p.Text[p.ColumnEnd:])
+		} else {
+			// Line number
+			sb.WriteString(fileInfo.Path)
+			sb.WriteByte(':')
+			// Text
+			sb.WriteString(p.Text)
+		}
 
 		c.logger.Log().Msg(sb.String())
 	}

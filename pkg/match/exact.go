@@ -33,16 +33,19 @@ func (em *exactMatcher) Match(pattern string, next *types.FileInfo) (*Match, boo
 	lineReader := bufio.NewScanner(
 		strings.NewReader(next.Text),
 	)
-	row := uint(0)
 
-	for lineReader.Scan() {
-		row++
-
-		matchColumns := em.matchLine(pattern, lineReader.Text())
+	for row := 0; lineReader.Scan(); row++ {
+		line := lineReader.Text()
+		matchColumns := em.matchLine(pattern, line)
 		for _, column := range matchColumns {
 			match.Positions = append(
 				match.Positions,
-				&FilePosition{Line: row, Column: column},
+				&FilePosition{
+					Line:        uint(row),
+					ColumnStart: column,
+					ColumnEnd:   column + uint(len(pattern)),
+					Text:        line,
+				},
 			)
 		}
 	}
@@ -68,7 +71,7 @@ func (em *exactMatcher) matchLine(pattern string, line string) []uint {
 			break
 		} else {
 			column += offset
-			matchColumns = append(matchColumns, uint(1+column))
+			matchColumns = append(matchColumns, uint(column))
 
 			column += len(pattern)
 			line = line[offset+len(pattern):]

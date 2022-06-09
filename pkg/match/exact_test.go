@@ -59,8 +59,10 @@ func TestMatch(t *testing.T) {
 			expected: &Match{
 				Positions: []*FilePosition{
 					{
-						Line:   1,
-						Column: 5,
+						Line:        0,
+						ColumnStart: 4,
+						ColumnEnd:   7,
+						Text:        "foo bar baz",
 					},
 				},
 			},
@@ -79,8 +81,10 @@ foo
 			expected: &Match{
 				Positions: []*FilePosition{
 					{
-						Line:   5,
-						Column: 1,
+						Line:        4,
+						ColumnStart: 0,
+						ColumnEnd:   3,
+						Text:        "foo",
 					},
 				},
 			},
@@ -99,12 +103,16 @@ foo fifth
 			expected: &Match{
 				Positions: []*FilePosition{
 					{
-						Line:   2,
-						Column: 8,
+						Line:        1,
+						ColumnStart: 7,
+						ColumnEnd:   10,
+						Text:        "second foo",
 					},
 					{
-						Line:   5,
-						Column: 1,
+						Line:        4,
+						ColumnStart: 0,
+						ColumnEnd:   3,
+						Text:        "foo fifth",
 					},
 				},
 			},
@@ -118,12 +126,16 @@ foo fifth
 			expected: &Match{
 				Positions: []*FilePosition{
 					{
-						Line:   1,
-						Column: 1,
+						Line:        0,
+						ColumnStart: 0,
+						ColumnEnd:   3,
+						Text:        "foo bar foo",
 					},
 					{
-						Line:   1,
-						Column: 9,
+						Line:        0,
+						ColumnStart: 8,
+						ColumnEnd:   11,
+						Text:        "foo bar foo",
 					},
 				},
 			},

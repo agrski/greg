@@ -4,12 +4,14 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/agrski/greg/pkg/auth"
 	fetchTypes "github.com/agrski/greg/pkg/fetch/types"
 	"github.com/agrski/greg/pkg/match"
 	"github.com/agrski/greg/pkg/types"
+	"github.com/mattn/go-isatty"
 	"golang.org/x/oauth2"
 )
 
@@ -39,8 +41,10 @@ type rawArgs struct {
 	accessToken     string
 	accessTokenFile string
 	// Presentation/display behaviour
-	quiet   bool
-	verbose bool
+	quiet    bool
+	verbose  bool
+	colour   bool
+	noColour bool
 }
 
 type Args struct {
@@ -49,6 +53,7 @@ type Args struct {
 	filetypes     []types.FileExtension
 	tokenSource   oauth2.TokenSource
 	verbosity     VerbosityLevel
+	enableColour  bool
 }
 
 func GetArgs() (*Args, error) {
@@ -81,12 +86,15 @@ func GetArgs() (*Args, error) {
 
 	verbosity := getVerbosity(raw.quiet, raw.verbose)
 
+	enableColour := getColourEnabled(raw.colour, raw.noColour)
+
 	return &Args{
 		location:      location,
 		searchPattern: pattern,
 		filetypes:     filetypes,
 		tokenSource:   tokenSource,
 		verbosity:     verbosity,
+		enableColour:  enableColour,
 	}, nil
 }
 
@@ -112,6 +120,8 @@ func parseArguments() (*rawArgs, error) {
 	)
 	flag.BoolVar(&args.quiet, "quiet", false, "disable logging; overrides verbose mode")
 	flag.BoolVar(&args.verbose, "verbose", false, "increase logging; overridden by quiet mode")
+	flag.BoolVar(&args.colour, "colour", false, "force coloured outputs; overridden by no-colour")
+	flag.BoolVar(&args.noColour, "no-colour", false, "force uncoloured outputs; overrides colour")
 	flag.Parse()
 
 	if 1 != flag.NArg() {
@@ -245,5 +255,16 @@ func getVerbosity(quiet bool, verbose bool) VerbosityLevel {
 		return VerbosityHigh
 	} else {
 		return VerbosityNormal
+	}
+}
+
+func getColourEnabled(forceColour bool, forceNoColour bool) bool {
+	if forceNoColour {
+		return false
+	} else if forceColour {
+		return true
+	} else {
+		fd := os.Stdout.Fd()
+		return isatty.IsTerminal(fd) || isatty.IsCygwinTerminal(fd)
 	}
 }

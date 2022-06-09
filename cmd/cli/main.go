@@ -80,6 +80,18 @@ func makeLogger(level zerolog.Level) zerolog.Logger {
 	return logger
 }
 
+func makeConsoleLogger() zerolog.Logger {
+	logWriter := zerolog.ConsoleWriter{
+		Out:        os.Stdout,
+		NoColor:    true,
+		TimeFormat: "",
+		PartsOrder: []string{zerolog.MessageFieldName},
+	}
+	logger := zerolog.New(logWriter).With().Logger()
+
+	return logger
+}
+
 func makeURI(l fetchTypes.Location) url.URL {
 	return url.URL{
 		Scheme: httpScheme,

@@ -1,6 +1,7 @@
 package console
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/rs/zerolog"
@@ -27,10 +28,12 @@ func (c *Console) Write(fileInfo *types.FileInfo, match *match.Match) {
 	for _, p := range match.Positions {
 		sb := strings.Builder{}
 
+		line := strconv.Itoa(int(p.Line + 1))
+
 		if c.enableColour {
 			// Line number
 			sb.WriteString(string(fgMagenta))
-			sb.WriteString(fileInfo.Path)
+			sb.WriteString(line)
 			sb.WriteString(string(reset))
 			sb.WriteByte(':')
 			// Text
@@ -41,7 +44,7 @@ func (c *Console) Write(fileInfo *types.FileInfo, match *match.Match) {
 			sb.WriteString(p.Text[p.ColumnEnd:])
 		} else {
 			// Line number
-			sb.WriteString(fileInfo.Path)
+			sb.WriteString(line)
 			sb.WriteByte(':')
 			// Text
 			sb.WriteString(p.Text)

@@ -16,12 +16,13 @@ import (
 )
 
 func main() {
-	logger := makeLogger(zerolog.InfoLevel)
-
 	args, err := GetArgs()
 	if err != nil {
+		logger := makeLogger(zerolog.InfoLevel, false)
 		logger.Fatal().Err(err).Send()
 	}
+
+	logger := makeLogger(zerolog.InfoLevel, args.enableColour)
 
 	switch args.verbosity {
 	case VerbosityQuiet:
@@ -55,7 +56,7 @@ func main() {
 	fetcher.Stop()
 }
 
-func makeLogger(level zerolog.Level) zerolog.Logger {
+func makeLogger(level zerolog.Level, enableColour bool) zerolog.Logger {
 	fieldKeyFormatter := func(v interface{}) string {
 		return strings.ToUpper(
 			fmt.Sprintf("%s=", v),
@@ -63,6 +64,7 @@ func makeLogger(level zerolog.Level) zerolog.Logger {
 	}
 	logWriter := zerolog.ConsoleWriter{
 		Out:        os.Stderr,
+		NoColor:    !enableColour,
 		TimeFormat: time.RFC3339,
 		FormatLevel: func(v interface{}) string {
 			l, ok := v.(string)

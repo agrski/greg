@@ -40,6 +40,7 @@ type rawArgs struct {
 	searchPattern   string
 	accessToken     string
 	accessTokenFile string
+	caseInsensitive bool
 	// Presentation/display behaviour
 	quiet    bool
 	verbose  bool
@@ -48,12 +49,13 @@ type rawArgs struct {
 }
 
 type Args struct {
-	location      fetchTypes.Location
-	searchPattern string
-	filetypes     []types.FileExtension
-	tokenSource   oauth2.TokenSource
-	verbosity     VerbosityLevel
-	enableColour  bool
+	location        fetchTypes.Location
+	searchPattern   string
+	filetypes       []types.FileExtension
+	tokenSource     oauth2.TokenSource
+	caseInsensitive bool
+	verbosity       VerbosityLevel
+	enableColour    bool
 }
 
 func GetArgs() (*Args, error) {

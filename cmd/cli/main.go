@@ -11,6 +11,8 @@ import (
 
 	"github.com/agrski/greg/pkg/fetch"
 	fetchTypes "github.com/agrski/greg/pkg/fetch/types"
+	"github.com/agrski/greg/pkg/match"
+	"github.com/agrski/greg/pkg/present/console"
 )
 
 func main() {
@@ -30,6 +32,11 @@ func main() {
 		// Already at normal verbosity
 	}
 
+	consoleLogger := makeConsoleLogger()
+	console := console.New(consoleLogger, args.enableColour)
+
+	matcher := match.New(logger, args.filetypes)
+
 	fetcher := fetch.New(logger, args.location, args.tokenSource)
 	uri := makeURI(args.location)
 
@@ -42,7 +49,9 @@ func main() {
 	fetcher.Start()
 	next, ok := fetcher.Next()
 	if ok {
-		fmt.Println(next)
+		if m, ok := matcher.Match(args.searchPattern, next); ok {
+			console.Write(next, m)
+		}
 	}
 	fetcher.Stop()
 }

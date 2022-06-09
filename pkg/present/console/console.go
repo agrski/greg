@@ -22,7 +22,17 @@ func New(out io.StringWriter, enableColour bool) *Console {
 }
 
 func (c *Console) Write(fileInfo *types.FileInfo, match *match.Match) {
-	_, err := c.out.WriteString(string(fgBlue) + fileInfo.Path + string(reset) + "\n")
+	sb := strings.Builder{}
+
+	if c.enableColour {
+		sb.WriteString(string(fgBlue))
+		sb.WriteString(fileInfo.Path)
+		sb.WriteString(string(reset))
+	} else {
+		sb.WriteString(fileInfo.Path)
+	}
+	sb.WriteString("\n")
+	_, err := c.out.WriteString(sb.String())
 	if err != nil {
 		return
 	}

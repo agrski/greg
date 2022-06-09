@@ -1,10 +1,9 @@
 package console
 
 import (
+	"io"
 	"strconv"
 	"strings"
-
-	"github.com/rs/zerolog"
 
 	"github.com/agrski/greg/pkg/match"
 	"github.com/agrski/greg/pkg/types"
@@ -12,18 +11,21 @@ import (
 
 type Console struct {
 	enableColour bool
-	logger       zerolog.Logger
+	out          io.StringWriter
 }
 
-func New(logger zerolog.Logger, enableColour bool) *Console {
+func New(out io.StringWriter, enableColour bool) *Console {
 	return &Console{
 		enableColour: enableColour,
-		logger:       logger,
+		out:          out,
 	}
 }
 
 func (c *Console) Write(fileInfo *types.FileInfo, match *match.Match) {
-	c.logger.Log().Msg(string(fgBlue) + fileInfo.Path + string(reset))
+	_, err := c.out.WriteString(string(fgBlue) + fileInfo.Path + string(reset) + "\n")
+	if err != nil {
+		return
+	}
 
 	for _, p := range match.Positions {
 		sb := strings.Builder{}
@@ -50,8 +52,13 @@ func (c *Console) Write(fileInfo *types.FileInfo, match *match.Match) {
 			sb.WriteString(p.Text)
 		}
 
-		c.logger.Log().Msg(sb.String())
+		sb.WriteString("\n")
+
+		_, err := c.out.WriteString(sb.String())
+		if err != nil {
+			return
+		}
 	}
 
-	c.logger.Log().Send()
+	_, _ = c.out.WriteString("\n")
 }

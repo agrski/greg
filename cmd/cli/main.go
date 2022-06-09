@@ -32,8 +32,7 @@ func main() {
 		// Already at normal verbosity
 	}
 
-	consoleLogger := makeConsoleLogger()
-	console := console.New(consoleLogger, args.enableColour)
+	console := console.New(os.Stdout, args.enableColour)
 
 	matcher := match.New(logger, args.filetypes)
 
@@ -85,18 +84,6 @@ func makeLogger(level zerolog.Level) zerolog.Logger {
 		With().
 		Timestamp().
 		Logger()
-
-	return logger
-}
-
-func makeConsoleLogger() zerolog.Logger {
-	logWriter := zerolog.ConsoleWriter{
-		Out:        os.Stdout,
-		NoColor:    true,
-		TimeFormat: "",
-		PartsOrder: []string{zerolog.MessageFieldName},
-	}
-	logger := zerolog.New(logWriter).With().Logger()
 
 	return logger
 }

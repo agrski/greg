@@ -7,9 +7,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/rs/zerolog"
+
 	"github.com/agrski/greg/pkg/fetch"
 	fetchTypes "github.com/agrski/greg/pkg/fetch/types"
-	"github.com/rs/zerolog"
 )
 
 func main() {

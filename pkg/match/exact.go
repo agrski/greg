@@ -9,15 +9,17 @@ import (
 )
 
 type exactMatcher struct {
-	logger zerolog.Logger
+	caseInsensitive bool
+	logger          zerolog.Logger
 }
 
 var _ Matcher = (*exactMatcher)(nil)
 
-func newExactMatcher(logger zerolog.Logger) *exactMatcher {
+func newExactMatcher(logger zerolog.Logger, caseInsensitive bool) *exactMatcher {
 	logger = logger.With().Str("source", "ExactMatcher").Logger()
 	return &exactMatcher{
-		logger: logger,
+		caseInsensitive: caseInsensitive,
+		logger:          logger,
 	}
 }
 

@@ -150,6 +150,60 @@ foo fifth
 			},
 			expectedOk: true,
 		},
+		{
+			name:              "should accept lowercase pattern, uppercase text when case-insensitive",
+			isBinary:          false,
+			isCaseInsensitive: true,
+			text:              "HELLO WORLD",
+			pattern:           "world",
+			expected: &Match{
+				Positions: []*FilePosition{
+					{
+						Line:        0,
+						ColumnStart: 6,
+						ColumnEnd:   11,
+						Text:        "HELLO WORLD",
+					},
+				},
+			},
+			expectedOk: true,
+		},
+		{
+			name:              "should accept uppercase pattern, lowercase text when case-insensitive",
+			isBinary:          false,
+			isCaseInsensitive: true,
+			text:              "hello world",
+			pattern:           "WORLD",
+			expected: &Match{
+				Positions: []*FilePosition{
+					{
+						Line:        0,
+						ColumnStart: 6,
+						ColumnEnd:   11,
+						Text:        "hello world",
+					},
+				},
+			},
+			expectedOk: true,
+		},
+		{
+			name:              "should accept mixed-case pattern, mixed-case text when case-insensitive",
+			isBinary:          false,
+			isCaseInsensitive: true,
+			text:              "Hello wOrLd",
+			pattern:           "WoRlD",
+			expected: &Match{
+				Positions: []*FilePosition{
+					{
+						Line:        0,
+						ColumnStart: 6,
+						ColumnEnd:   11,
+						Text:        "Hello wOrLd",
+					},
+				},
+			},
+			expectedOk: true,
+		},
 	}
 
 	for _, tt := range tests {

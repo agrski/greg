@@ -64,12 +64,21 @@ func benchmarkExactMatcher(b *testing.B, patternSize int, textSize int, caseInse
 func BenchmarkExactMatcher_Pattern10_Text100(b *testing.B) {
 	benchmarkExactMatcher(b, 10, 100, false)
 }
+func BenchmarkExactMatcher_Pattern10_Text100_CaseInsensitive(b *testing.B) {
+	benchmarkExactMatcher(b, 10, 100, true)
+}
 
 func BenchmarkExactMatcher_Pattern10_Text1_000(b *testing.B) {
 	benchmarkExactMatcher(b, 10, 1_000, false)
 }
 func BenchmarkExactMatcher_Pattern100_Text1_000(b *testing.B) {
 	benchmarkExactMatcher(b, 100, 1_000, false)
+}
+func BenchmarkExactMatcher_Pattern10_Text1_000_CaseInsensitive(b *testing.B) {
+	benchmarkExactMatcher(b, 10, 1_000, true)
+}
+func BenchmarkExactMatcher_Pattern100_Text1_000_CaseInsensitive(b *testing.B) {
+	benchmarkExactMatcher(b, 100, 1_000, true)
 }
 
 func BenchmarkExactMatcher_Pattern10_Text10_000(b *testing.B) {
@@ -80,6 +89,15 @@ func BenchmarkExactMatcher_Pattern100_Text10_000(b *testing.B) {
 }
 func BenchmarkExactMatcher_Pattern1_000_Text10_000(b *testing.B) {
 	benchmarkExactMatcher(b, 1_000, 10_000, false)
+}
+func BenchmarkExactMatcher_Pattern10_Text10_000_CaseInsensitive(b *testing.B) {
+	benchmarkExactMatcher(b, 10, 10_000, true)
+}
+func BenchmarkExactMatcher_Pattern100_Text10_000_CaseInsensitive(b *testing.B) {
+	benchmarkExactMatcher(b, 100, 10_000, true)
+}
+func BenchmarkExactMatcher_Pattern1_000_Text10_000_CaseInsensitive(b *testing.B) {
+	benchmarkExactMatcher(b, 1_000, 10_000, true)
 }
 
 func BenchmarkExactMatcher_Pattern10_Text100_000(b *testing.B) {
@@ -93,4 +111,16 @@ func BenchmarkExactMatcher_Pattern1_000_Text100_000(b *testing.B) {
 }
 func BenchmarkExactMatcher_Pattern10_000_Text100_000(b *testing.B) {
 	benchmarkExactMatcher(b, 10_000, 100_000, false)
+}
+func BenchmarkExactMatcher_Pattern10_Text100_000_CaseInsensitive(b *testing.B) {
+	benchmarkExactMatcher(b, 10, 100_000, true)
+}
+func BenchmarkExactMatcher_Pattern100_Text100_000_CaseInsensitive(b *testing.B) {
+	benchmarkExactMatcher(b, 100, 100_000, true)
+}
+func BenchmarkExactMatcher_Pattern1_000_Text100_000_CaseInsensitive(b *testing.B) {
+	benchmarkExactMatcher(b, 1_000, 100_000, true)
+}
+func BenchmarkExactMatcher_Pattern10_000_Text100_000_CaseInsensitive(b *testing.B) {
+	benchmarkExactMatcher(b, 10_000, 100_000, true)
 }

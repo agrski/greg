@@ -47,7 +47,7 @@ func makeTextOfLength(n int) string {
 }
 
 func benchmarkExactMatcher(b *testing.B, patternSize int, textSize int) {
-	matcher := newExactMatcher(zerolog.Nop())
+	matcher := newExactMatcher(zerolog.Nop(), false)
 	pattern := makeTextOfLength(patternSize)
 	fileInfo := &types.FileInfo{}
 	fileInfo.IsBinary = false

@@ -10,52 +10,58 @@ import (
 
 func TestMatch(t *testing.T) {
 	type test struct {
-		name       string
-		isBinary   bool
-		text       string
-		pattern    string
-		expected   *Match
-		expectedOk bool
+		name              string
+		isBinary          bool
+		isCaseInsensitive bool
+		text              string
+		pattern           string
+		expected          *Match
+		expectedOk        bool
 	}
 
 	tests := []test{
 		{
-			name:       "should ignore binary files",
-			isBinary:   true,
-			text:       "asdf",
-			pattern:    "as",
-			expected:   nil,
-			expectedOk: false,
+			name:              "should ignore binary files",
+			isBinary:          true,
+			isCaseInsensitive: false,
+			text:              "asdf",
+			pattern:           "as",
+			expected:          nil,
+			expectedOk:        false,
 		},
 		{
-			name:       "should reject non-matching text file",
-			isBinary:   false,
-			text:       "asdf",
-			pattern:    "foo",
-			expected:   nil,
-			expectedOk: false,
+			name:              "should reject non-matching text file",
+			isBinary:          false,
+			isCaseInsensitive: false,
+			text:              "asdf",
+			pattern:           "foo",
+			expected:          nil,
+			expectedOk:        false,
 		},
 		{
-			name:       "should reject empty text file with non-empty pattern",
-			isBinary:   false,
-			text:       "",
-			pattern:    "foo",
-			expected:   nil,
-			expectedOk: false,
+			name:              "should reject empty text file with non-empty pattern",
+			isBinary:          false,
+			isCaseInsensitive: false,
+			text:              "",
+			pattern:           "foo",
+			expected:          nil,
+			expectedOk:        false,
 		},
 		{
-			name:       "should reject empty text file with empty pattern",
-			isBinary:   false,
-			text:       "",
-			pattern:    "",
-			expected:   nil,
-			expectedOk: false,
+			name:              "should reject empty text file with empty pattern",
+			isBinary:          false,
+			isCaseInsensitive: false,
+			text:              "",
+			pattern:           "",
+			expected:          nil,
+			expectedOk:        false,
 		},
 		{
-			name:     "should accept matching text file",
-			isBinary: false,
-			text:     "foo bar baz",
-			pattern:  "bar",
+			name:              "should accept matching text file",
+			isBinary:          false,
+			isCaseInsensitive: false,
+			text:              "foo bar baz",
+			pattern:           "bar",
 			expected: &Match{
 				Positions: []*FilePosition{
 					{
@@ -69,8 +75,9 @@ func TestMatch(t *testing.T) {
 			expectedOk: true,
 		},
 		{
-			name:     "should accept matching multi-line text file",
-			isBinary: false,
+			name:              "should accept matching multi-line text file",
+			isBinary:          false,
+			isCaseInsensitive: false,
 			text: `first
 second
 
@@ -91,8 +98,9 @@ foo
 			expectedOk: true,
 		},
 		{
-			name:     "should accept multiple matches in multi-line text file",
-			isBinary: false,
+			name:              "should accept multiple matches in multi-line text file",
+			isBinary:          false,
+			isCaseInsensitive: false,
 			text: `first
 second foo
 
@@ -119,10 +127,11 @@ foo fifth
 			expectedOk: true,
 		},
 		{
-			name:     "should accept multiple matches on same line",
-			isBinary: false,
-			text:     "foo bar foo",
-			pattern:  "foo",
+			name:              "should accept multiple matches on same line",
+			isBinary:          false,
+			isCaseInsensitive: false,
+			text:              "foo bar foo",
+			pattern:           "foo",
 			expected: &Match{
 				Positions: []*FilePosition{
 					{
@@ -149,7 +158,7 @@ foo fifth
 			fileInfo.IsBinary = tt.isBinary
 			fileInfo.Text = tt.text
 
-			matcher := newExactMatcher(zerolog.Nop())
+			matcher := newExactMatcher(zerolog.Nop(), tt.isCaseInsensitive)
 
 			actual, ok := matcher.Match(tt.pattern, fileInfo)
 

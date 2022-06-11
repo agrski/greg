@@ -64,6 +64,11 @@ func (em *exactMatcher) Match(pattern string, next *types.FileInfo) (*Match, boo
 }
 
 func (em *exactMatcher) matchLine(pattern string, line string) []uint {
+	if em.caseInsensitive {
+		pattern = strings.ToLower(pattern)
+		line = strings.ToLower(line)
+	}
+
 	column := 0
 	matchColumns := []uint{}
 

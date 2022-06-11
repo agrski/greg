@@ -46,8 +46,8 @@ func makeTextOfLength(n int) string {
 	return sb.String()
 }
 
-func benchmarkExactMatcher(b *testing.B, patternSize int, textSize int) {
-	matcher := newExactMatcher(zerolog.Nop(), false)
+func benchmarkExactMatcher(b *testing.B, patternSize int, textSize int, caseInsensitive bool) {
+	matcher := newExactMatcher(zerolog.Nop(), caseInsensitive)
 	pattern := makeTextOfLength(patternSize)
 	fileInfo := &types.FileInfo{}
 	fileInfo.IsBinary = false
@@ -62,35 +62,35 @@ func benchmarkExactMatcher(b *testing.B, patternSize int, textSize int) {
 }
 
 func BenchmarkExactMatcher_Pattern10_Text100(b *testing.B) {
-	benchmarkExactMatcher(b, 10, 100)
+	benchmarkExactMatcher(b, 10, 100, false)
 }
 
 func BenchmarkExactMatcher_Pattern10_Text1_000(b *testing.B) {
-	benchmarkExactMatcher(b, 10, 1_000)
+	benchmarkExactMatcher(b, 10, 1_000, false)
 }
 func BenchmarkExactMatcher_Pattern100_Text1_000(b *testing.B) {
-	benchmarkExactMatcher(b, 100, 1_000)
+	benchmarkExactMatcher(b, 100, 1_000, false)
 }
 
 func BenchmarkExactMatcher_Pattern10_Text10_000(b *testing.B) {
-	benchmarkExactMatcher(b, 10, 10_000)
+	benchmarkExactMatcher(b, 10, 10_000, false)
 }
 func BenchmarkExactMatcher_Pattern100_Text10_000(b *testing.B) {
-	benchmarkExactMatcher(b, 100, 10_000)
+	benchmarkExactMatcher(b, 100, 10_000, false)
 }
 func BenchmarkExactMatcher_Pattern1_000_Text10_000(b *testing.B) {
-	benchmarkExactMatcher(b, 1_000, 10_000)
+	benchmarkExactMatcher(b, 1_000, 10_000, false)
 }
 
 func BenchmarkExactMatcher_Pattern10_Text100_000(b *testing.B) {
-	benchmarkExactMatcher(b, 10, 100_000)
+	benchmarkExactMatcher(b, 10, 100_000, false)
 }
 func BenchmarkExactMatcher_Pattern100_Text100_000(b *testing.B) {
-	benchmarkExactMatcher(b, 100, 100_000)
+	benchmarkExactMatcher(b, 100, 100_000, false)
 }
 func BenchmarkExactMatcher_Pattern1_000_Text100_000(b *testing.B) {
-	benchmarkExactMatcher(b, 1_000, 100_000)
+	benchmarkExactMatcher(b, 1_000, 100_000, false)
 }
 func BenchmarkExactMatcher_Pattern10_000_Text100_000(b *testing.B) {
-	benchmarkExactMatcher(b, 10_000, 100_000)
+	benchmarkExactMatcher(b, 10_000, 100_000, false)
 }

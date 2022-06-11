@@ -35,7 +35,7 @@ func main() {
 
 	console := console.New(os.Stdout, args.enableColour)
 
-	matcher := match.New(logger, args.filetypes)
+	matcher := match.New(logger, args.caseInsensitive, args.filetypes)
 
 	fetcher := fetch.New(logger, args.location, args.tokenSource)
 	uri := makeURI(args.location)

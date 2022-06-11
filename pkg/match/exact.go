@@ -9,15 +9,17 @@ import (
 )
 
 type exactMatcher struct {
-	logger zerolog.Logger
+	caseInsensitive bool
+	logger          zerolog.Logger
 }
 
 var _ Matcher = (*exactMatcher)(nil)
 
-func newExactMatcher(logger zerolog.Logger) *exactMatcher {
+func newExactMatcher(logger zerolog.Logger, caseInsensitive bool) *exactMatcher {
 	logger = logger.With().Str("source", "ExactMatcher").Logger()
 	return &exactMatcher{
-		logger: logger,
+		caseInsensitive: caseInsensitive,
+		logger:          logger,
 	}
 }
 
@@ -62,6 +64,11 @@ func (em *exactMatcher) Match(pattern string, next *types.FileInfo) (*Match, boo
 }
 
 func (em *exactMatcher) matchLine(pattern string, line string) []uint {
+	if em.caseInsensitive {
+		pattern = strings.ToLower(pattern)
+		line = strings.ToLower(line)
+	}
+
 	column := 0
 	matchColumns := []uint{}
 

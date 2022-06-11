@@ -28,8 +28,12 @@ type filteringMatcher struct {
 
 var _ Matcher = (*filteringMatcher)(nil)
 
-func New(logger zerolog.Logger, allowedFiletypes []types.FileExtension) *filteringMatcher {
-	em := newExactMatcher(logger)
+func New(
+	logger zerolog.Logger,
+	caseInsensitive bool,
+	allowedFiletypes []types.FileExtension,
+) *filteringMatcher {
+	em := newExactMatcher(logger, caseInsensitive)
 	logger = logger.With().Str("source", "FilteringMatcher").Logger()
 
 	return &filteringMatcher{

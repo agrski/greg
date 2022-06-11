@@ -40,6 +40,7 @@ type rawArgs struct {
 	searchPattern   string
 	accessToken     string
 	accessTokenFile string
+	caseInsensitive bool
 	// Presentation/display behaviour
 	quiet    bool
 	verbose  bool
@@ -48,12 +49,13 @@ type rawArgs struct {
 }
 
 type Args struct {
-	location      fetchTypes.Location
-	searchPattern string
-	filetypes     []types.FileExtension
-	tokenSource   oauth2.TokenSource
-	verbosity     VerbosityLevel
-	enableColour  bool
+	location        fetchTypes.Location
+	searchPattern   string
+	filetypes       []types.FileExtension
+	tokenSource     oauth2.TokenSource
+	caseInsensitive bool
+	verbosity       VerbosityLevel
+	enableColour    bool
 }
 
 func GetArgs() (*Args, error) {
@@ -89,12 +91,13 @@ func GetArgs() (*Args, error) {
 	enableColour := getColourEnabled(raw.colour, raw.noColour)
 
 	return &Args{
-		location:      location,
-		searchPattern: pattern,
-		filetypes:     filetypes,
-		tokenSource:   tokenSource,
-		verbosity:     verbosity,
-		enableColour:  enableColour,
+		location:        location,
+		searchPattern:   pattern,
+		filetypes:       filetypes,
+		tokenSource:     tokenSource,
+		caseInsensitive: raw.caseInsensitive,
+		verbosity:       verbosity,
+		enableColour:    enableColour,
 	}, nil
 }
 
@@ -118,6 +121,7 @@ func parseArguments() (*rawArgs, error) {
 		"",
 		"file containing access token for repository access",
 	)
+	flag.BoolVar(&args.caseInsensitive, "i", false, "enable case-insensitive matching")
 	flag.BoolVar(&args.quiet, "quiet", false, "disable logging; overrides verbose mode")
 	flag.BoolVar(&args.verbose, "verbose", false, "increase logging; overridden by quiet mode")
 	flag.BoolVar(&args.colour, "colour", false, "force coloured outputs; overridden by no-colour")

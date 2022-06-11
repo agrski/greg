@@ -1,0 +1,35 @@
+# Use -run to exclude non-benchmark tests
+go test  -bench=. -benchmem -run=XXX ./pkg/...
+?   	github.com/agrski/greg/pkg/auth	[no test files]
+?   	github.com/agrski/greg/pkg/fetch	[no test files]
+PASS
+ok  	github.com/agrski/greg/pkg/fetch/github	0.003s
+?   	github.com/agrski/greg/pkg/fetch/types	[no test files]
+goos: linux
+goarch: amd64
+pkg: github.com/agrski/greg/pkg/match
+cpu: 11th Gen Intel(R) Core(TM) i5-11400H @ 2.70GHz
+BenchmarkExactMatcher_Pattern10_Text100-12                            	  894871	      1321 ns/op	    4784 B/op	       7 allocs/op
+BenchmarkExactMatcher_Pattern10_Text100_CaseInsensitive-12            	  695253	      2016 ns/op	    4968 B/op	      17 allocs/op
+BenchmarkExactMatcher_Pattern10_Text1_000-12                          	  508456	      2249 ns/op	    5760 B/op	      17 allocs/op
+BenchmarkExactMatcher_Pattern100_Text1_000-12                         	  564966	      2041 ns/op	    5720 B/op	      17 allocs/op
+BenchmarkExactMatcher_Pattern10_Text1_000_CaseInsensitive-12          	  201091	      6317 ns/op	    7096 B/op	      62 allocs/op
+BenchmarkExactMatcher_Pattern100_Text1_000_CaseInsensitive-12         	  119967	     10515 ns/op	    9016 B/op	      61 allocs/op
+BenchmarkExactMatcher_Pattern10_Text10_000-12                         	  102597	     11269 ns/op	   15392 B/op	     150 allocs/op
+BenchmarkExactMatcher_Pattern100_Text10_000-12                        	  121268	      9567 ns/op	   15472 B/op	     150 allocs/op
+BenchmarkExactMatcher_Pattern1_000_Text10_000-12                      	  125361	      9173 ns/op	   15360 B/op	     151 allocs/op
+BenchmarkExactMatcher_Pattern10_Text10_000_CaseInsensitive-12         	   15655	     79508 ns/op	   28232 B/op	     431 allocs/op
+BenchmarkExactMatcher_Pattern100_Text10_000_CaseInsensitive-12        	   10242	    109205 ns/op	   42089 B/op	     426 allocs/op
+BenchmarkExactMatcher_Pattern1_000_Text10_000_CaseInsensitive-12      	    2324	    473883 ns/op	  193198 B/op	     472 allocs/op
+BenchmarkExactMatcher_Pattern10_Text100_000-12                        	    7128	    144612 ns/op	  112047 B/op	    1500 allocs/op
+BenchmarkExactMatcher_Pattern100_Text100_000-12                       	    9650	    109717 ns/op	  111955 B/op	    1546 allocs/op
+BenchmarkExactMatcher_Pattern1_000_Text100_000-12                     	   11798	    102373 ns/op	  112273 B/op	    1551 allocs/op
+BenchmarkExactMatcher_Pattern10_000_Text100_000-12                    	    9936	    100823 ns/op	  112196 B/op	    1527 allocs/op
+BenchmarkExactMatcher_Pattern10_Text100_000_CaseInsensitive-12        	    1245	    918331 ns/op	  244030 B/op	    4607 allocs/op
+BenchmarkExactMatcher_Pattern100_Text100_000_CaseInsensitive-12       	     957	   1290626 ns/op	  398777 B/op	    4704 allocs/op
+BenchmarkExactMatcher_Pattern1_000_Text100_000_CaseInsensitive-12     	     258	   4819877 ns/op	 1820148 B/op	    4589 allocs/op
+BenchmarkExactMatcher_Pattern10_000_Text100_000_CaseInsensitive-12    	      15	  73241531 ns/op	15966074 B/op	    4473 allocs/op
+PASS
+ok  	github.com/agrski/greg/pkg/match	29.407s
+?   	github.com/agrski/greg/pkg/present/console	[no test files]
+?   	github.com/agrski/greg/pkg/types	[no test files]

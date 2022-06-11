@@ -59,7 +59,7 @@ test-integration:
 .PHONY:benchmark
 benchmark:
 	# Use -run to exclude non-benchmark tests
-	$(GOCMD) test $(VERBOSE) -bench=. -run=XXX ./pkg/...
+	$(GOCMD) test $(VERBOSE) -bench=. -benchmem -run=XXX ./pkg/...
 
 .PHONY:clean
 clean:

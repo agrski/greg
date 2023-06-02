@@ -15,7 +15,7 @@ jobs:
       pull-requests: read
     steps:
       - name: Check PR title matches Conventional Commit format
-        uses: lab42/conventional-commit@v0.2.0
+        uses: lab42/conventional-commit@v0.2.2
         with:
           gh_token: ${{ secrets.GITHUB_TOKEN }}
           require_scope: "true"

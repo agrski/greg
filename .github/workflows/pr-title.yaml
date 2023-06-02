@@ -20,7 +20,7 @@ jobs:
           gh_token: ${{ secrets.GITHUB_TOKEN }}
           require_scope: "false"
           scope_regexp: (\w+)
-          description_regexp: ([\w- ]+)
+          description_regexp: "[\w- ]+"
           allowed_types: |
             build
             ci

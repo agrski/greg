@@ -27,3 +27,5 @@ jobs:
             refactor
             revert
             test
+        permissions:
+          pull-requests: read

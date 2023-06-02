@@ -1,0 +1,16 @@
+name: lint-pr-title
+on:
+  pull_request:
+    branches:
+      - master
+    types:
+      - opened
+      - reopened
+      - edited
+      - synchronize
+jobs:
+  lint-pr-title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR title matches Conventional Commit format
+        uses: lab42/conventional-commit@v0.2.0

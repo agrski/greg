@@ -18,8 +18,8 @@ jobs:
         uses: lab42/conventional-commit@v0.2.0
         with:
           require_scope: "true"
-          scope_regex: (\w+)
-          description_regex: ([\w- ]+)
+          scope_regexp: (\w+)
+          description_regexp: ([\w- ]+)
           allowed_types: |
             build
             ci

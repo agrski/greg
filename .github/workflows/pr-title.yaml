@@ -11,6 +11,8 @@ on:
 jobs:
   lint-pr-title:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
     steps:
       - name: Check PR title matches Conventional Commit format
         uses: lab42/conventional-commit@v0.2.0
@@ -27,5 +29,3 @@ jobs:
             refactor
             revert
             test
-        permissions:
-          pull-requests: read

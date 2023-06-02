@@ -15,17 +15,6 @@ jobs:
       pull-requests: read
     steps:
       - name: Check PR title matches Conventional Commit format
-        uses: lab42/conventional-commit@v0.2.2
+        uses: matthiashermsen/lint-pull-request-title@v1.0.0
         with:
-          gh_token: ${{ secrets.GITHUB_TOKEN }}
-          require_scope: "false"
-          scope_regexp: (\w+)
-          allowed_types: |
-            build
-            ci
-            docs
-            feat
-            fix
-            refactor
-            revert
-            test
+          allowed-pull-request-types: build,ci,docs,feat,fix,refactor,revert,test

@@ -14,3 +14,16 @@ jobs:
     steps:
       - name: Check PR title matches Conventional Commit format
         uses: lab42/conventional-commit@v0.2.0
+        with:
+          require_scope: "true"
+          scope_regex: (\w+)
+          description_regex: ([\w- ]+)
+          allowed_types: |
+            build
+            ci
+            docs
+            feat
+            fix
+            refactor
+            revert
+            test

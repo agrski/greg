@@ -76,4 +76,4 @@ build-deps:
 
 .PHONY:generate
 generate:
-	$(GOCMD) generate generate.go
+	$(GOCMD) generate tools.go

@@ -6,8 +6,9 @@ import (
 	"net/url"
 	"testing"
 
-	fetchTypes "github.com/agrski/greg/pkg/fetch/types"
 	"github.com/stretchr/testify/require"
+
+	fetchTypes "github.com/agrski/greg/pkg/fetch/types"
 )
 
 func Test_makeURI(t *testing.T) {

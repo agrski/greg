@@ -7,12 +7,13 @@ import (
 	"os"
 	"strings"
 
+	"github.com/mattn/go-isatty"
+	"golang.org/x/oauth2"
+
 	"github.com/agrski/greg/pkg/auth"
 	fetchTypes "github.com/agrski/greg/pkg/fetch/types"
 	"github.com/agrski/greg/pkg/match"
 	"github.com/agrski/greg/pkg/types"
-	"github.com/mattn/go-isatty"
-	"golang.org/x/oauth2"
 )
 
 type VerbosityLevel int

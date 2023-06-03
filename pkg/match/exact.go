@@ -4,8 +4,9 @@ import (
 	"bufio"
 	"strings"
 
-	"github.com/agrski/greg/pkg/types"
 	"github.com/rs/zerolog"
+
+	"github.com/agrski/greg/pkg/types"
 )
 
 type exactMatcher struct {

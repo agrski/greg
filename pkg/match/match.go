@@ -1,8 +1,9 @@
 package match
 
 import (
-	"github.com/agrski/greg/pkg/types"
 	"github.com/rs/zerolog"
+
+	"github.com/agrski/greg/pkg/types"
 )
 
 type Matcher interface {

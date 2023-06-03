@@ -1,0 +1,28 @@
+run:
+  concurrency: 4
+  timeout: 2m
+
+output:
+  sort-results: true
+
+linters:
+  disable-all: true
+  enable:
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - typecheck
+    - bodyclose
+    - exportloopref
+    - gci
+    - goconst
+    - gofmt
+    - whitespace
+
+linters-settings:
+  gci:
+    sections:
+      - standard
+      - default
+      - prefix(github.com/agrski/greg)

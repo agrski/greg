@@ -12,13 +12,6 @@ import (
 )
 
 func TestParseTree(t *testing.T) {
-	type treeEntry struct {
-		fileMetadata
-		Object struct {
-			fileContents "graphql:\"... on Blob\""
-		}
-	}
-
 	type test struct {
 		name              string
 		entries           []entry

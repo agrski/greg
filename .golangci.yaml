@@ -13,6 +13,7 @@ linters:
     - ineffassign
     - staticcheck
     - typecheck
+    - unused
     - bodyclose
     - exportloopref
     - gci
@@ -26,3 +27,9 @@ linters-settings:
       - standard
       - default
       - prefix(github.com/agrski/greg)
+
+issues:
+  exclude-rules:
+    - path: pkg/present/console/colour.go
+      linters:
+        - unused

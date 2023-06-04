@@ -1,0 +1,17 @@
+name: create-release
+on:
+  push:
+    tags:
+      - v[0-9].[0-9].[0-9]*
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+      - name: Set up Golang environment
+        uses: actions/setup-go@v4
+      - name: Build artifacts
+        run: make build

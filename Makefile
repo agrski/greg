@@ -62,10 +62,6 @@ clean:
 deps:
 	$(GOCMD) get
 
-.PHONY:build-deps
-build-deps:
-	$(GOCMD) install golang.org/x/lint/golint@latest
-
 .PHONY:generate
 generate:
 	$(GOCMD) generate tools.go

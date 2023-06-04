@@ -8,19 +8,19 @@ output:
 linters:
   disable-all: true
   enable:
+    - bodyclose
     - errcheck
+    - exhaustive
+    - exportloopref
+    - gci
+    - goconst
+    - gofmt
     - gosimple
     - govet
     - ineffassign
     - staticcheck
     - typecheck
     - unused
-    - bodyclose
-    - exhaustive
-    - exportloopref
-    - gci
-    - goconst
-    - gofmt
     - whitespace
 
 linters-settings:

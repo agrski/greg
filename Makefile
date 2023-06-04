@@ -29,7 +29,7 @@ fmt:
 
 .PHONY:lint
 lint: fmt
-	$(GOCMD) lint $(ALL_FILES)
+	golangci-lint run
 
 .PHONY:vet
 vet: fmt

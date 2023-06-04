@@ -16,6 +16,7 @@ linters:
     - typecheck
     - unused
     - bodyclose
+    - exhaustive
     - exportloopref
     - gci
     - goconst

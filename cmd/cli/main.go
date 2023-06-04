@@ -29,8 +29,8 @@ func main() {
 		logger = logger.Level(zerolog.Disabled)
 	case VerbosityHigh:
 		logger = logger.Level(zerolog.DebugLevel)
-	default:
-		// Already at normal verbosity
+	case VerbosityNormal:
+		// Already at normal (info-level) verbosity
 	}
 
 	console := console.New(os.Stdout, args.enableColour)

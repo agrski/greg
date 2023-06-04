@@ -1,6 +1,6 @@
 run:
   concurrency: 4
-  timeout: 2m
+  timeout: 10s
 
 output:
   sort-results: true

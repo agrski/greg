@@ -46,14 +46,19 @@ func main() {
 		Str("URL", uri.String()).
 		Msg("searching")
 
-	fetcher.Start()
+	err = fetcher.Start()
+	if err != nil {
+		logger.Fatal().Err(err).Msg("unable to start fetching matches")
+	}
+
 	next, ok := fetcher.Next()
 	if ok {
 		if m, ok := matcher.Match(args.searchPattern, next); ok {
 			console.Write(next, m)
 		}
 	}
-	fetcher.Stop()
+
+	_ = fetcher.Stop()
 }
 
 func makeLogger(level zerolog.Level, enableColour bool) zerolog.Logger {

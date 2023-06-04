@@ -1,6 +1,6 @@
 module github.com/agrski/greg
 
-go 1.16
+go 1.20
 
 require (
 	github.com/daixiang0/gci v0.10.1

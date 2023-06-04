@@ -63,9 +63,15 @@ func (g *GitHub) Start() error {
 		Str("repo", g.queryParams.RepoName).
 		Msg("starting GitHub fetcher")
 
+	err := g.ensureCommitish()
+	if err != nil {
+		return err
+	}
+
 	results, cancel := g.getFiles()
 	g.results = results
 	g.cancel = cancel
+
 	return nil
 }
 
@@ -97,8 +103,6 @@ func (g *GitHub) getFiles() (<-chan *types.FileInfo, func()) {
 	canceller := func() {
 		close(cancel)
 	}
-
-	g.ensureCommitish()
 
 	// Bootstrap loop with root of query
 	remaining <- g.queryParams.PathPrefix

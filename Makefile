@@ -23,23 +23,15 @@ endif
 ################################################################################
 # Targets
 
-.PHONY:fmt
-fmt:
-	$(GOCMD) fmt $(ALL_FILES)
-
 .PHONY:lint
-lint: fmt
+lint:
 	golangci-lint run
-
-.PHONY:vet
-vet: fmt
-	$(GOCMD) vet $(ALL_FILES)
 
 .PHONY:build
 build: build-cli
 
 .PHONY:build-cli
-build-cli: clean vet
+build-cli: clean lint
 	GOOS=linux GOARCH=amd64 \
 			 $(GOCMD) build -o $(BIN_DIR)/$(BINARY_LINUX) ./cmd/cli/
 	GOOS=windows GOARCH=amd64 \

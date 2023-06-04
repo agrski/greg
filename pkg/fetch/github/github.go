@@ -136,6 +136,8 @@ func (g *GitHub) getFiles() (<-chan *types.FileInfo, func()) {
 }
 
 func (g *GitHub) ensureCommitish() error {
+	logger := g.logger.With().Str("func", "ensureCommitish").Logger()
+
 	if strings.TrimSpace(g.queryParams.Commitish) != "" {
 		return nil
 	}
@@ -145,7 +147,9 @@ func (g *GitHub) ensureCommitish() error {
 		return err
 	}
 
+	logger.Info().Str("ref", c).Msg("using default branch ref for querying")
 	g.queryParams.Commitish = c
+
 	return nil
 }
 

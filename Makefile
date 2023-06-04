@@ -23,23 +23,15 @@ endif
 ################################################################################
 # Targets
 
-.PHONY:fmt
-fmt:
-	$(GOCMD) fmt $(ALL_FILES)
-
 .PHONY:lint
-lint: fmt
-	$(GOCMD) lint $(ALL_FILES)
-
-.PHONY:vet
-vet: fmt
-	$(GOCMD) vet $(ALL_FILES)
+lint:
+	golangci-lint run
 
 .PHONY:build
 build: build-cli
 
 .PHONY:build-cli
-build-cli: clean vet
+build-cli: clean lint
 	GOOS=linux GOARCH=amd64 \
 			 $(GOCMD) build -o $(BIN_DIR)/$(BINARY_LINUX) ./cmd/cli/
 	GOOS=windows GOARCH=amd64 \
@@ -70,7 +62,6 @@ clean:
 deps:
 	$(GOCMD) get
 
-.PHONY:build-deps
-build-deps:
-	$(GOCMD) install golang.org/x/lint/golint@latest
-
+.PHONY:generate
+generate:
+	$(GOCMD) generate tools.go

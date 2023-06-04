@@ -7,13 +7,14 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/agrski/greg/pkg/auth"
-	"github.com/agrski/greg/pkg/fetch/types"
-	common "github.com/agrski/greg/pkg/types"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/oauth2"
+
+	"github.com/agrski/greg/pkg/auth"
+	"github.com/agrski/greg/pkg/fetch/types"
+	common "github.com/agrski/greg/pkg/types"
 )
 
 func getTokenSource(t *testing.T) oauth2.TokenSource {

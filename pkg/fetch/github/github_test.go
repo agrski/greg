@@ -5,19 +5,13 @@ package github
 import (
 	"testing"
 
-	"github.com/agrski/greg/pkg/types"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
+
+	"github.com/agrski/greg/pkg/types"
 )
 
 func TestParseTree(t *testing.T) {
-	type treeEntry struct {
-		fileMetadata
-		Object struct {
-			fileContents "graphql:\"... on Blob\""
-		}
-	}
-
 	type test struct {
 		name              string
 		entries           []entry

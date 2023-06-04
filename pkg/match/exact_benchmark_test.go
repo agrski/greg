@@ -5,8 +5,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/agrski/greg/pkg/types"
 	"github.com/rs/zerolog"
+
+	"github.com/agrski/greg/pkg/types"
 )
 
 var results int

@@ -1,10 +1,11 @@
 package fetch
 
 import (
-	"github.com/agrski/greg/pkg/fetch/github"
-	"github.com/agrski/greg/pkg/fetch/types"
 	"github.com/rs/zerolog"
 	"golang.org/x/oauth2"
+
+	"github.com/agrski/greg/pkg/fetch/github"
+	"github.com/agrski/greg/pkg/fetch/types"
 )
 
 /*
@@ -23,5 +24,6 @@ func New(
 		location,
 		tokenSource,
 	)
+
 	return githubFetcher
 }

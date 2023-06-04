@@ -1,0 +1,41 @@
+run:
+  concurrency: 4
+  timeout: 10s
+
+output:
+  sort-results: true
+
+linters:
+  disable-all: true
+  enable:
+    - bodyclose
+    - errcheck
+    - exhaustive
+    - exportloopref
+    - gci
+    - goconst
+    - gofmt
+    - gosimple
+    - govet
+    - ineffassign
+    - nlreturn
+    - staticcheck
+    - typecheck
+    - unused
+    - whitespace
+
+linters-settings:
+  gci:
+    sections:
+      - standard
+      - default
+      - prefix(github.com/agrski/greg)
+
+  nlreturn:
+    block-size: 2
+
+issues:
+  exclude-rules:
+    - path: pkg/present/console/colour.go
+      linters:
+        - unused

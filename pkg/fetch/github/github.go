@@ -63,9 +63,15 @@ func (g *GitHub) Start() error {
 		Str("repo", g.queryParams.RepoName).
 		Msg("starting GitHub fetcher")
 
+	err := g.ensureCommitish()
+	if err != nil {
+		return err
+	}
+
 	results, cancel := g.getFiles()
 	g.results = results
 	g.cancel = cancel
+
 	return nil
 }
 
@@ -73,6 +79,7 @@ func (g *GitHub) Stop() error {
 	g.logger.Debug().Str("func", "Stop").Msg("stopping GitHub fetcher")
 
 	g.cancel()
+
 	return nil
 }
 
@@ -97,8 +104,6 @@ func (g *GitHub) getFiles() (<-chan *types.FileInfo, func()) {
 	canceller := func() {
 		close(cancel)
 	}
-
-	g.ensureCommitish()
 
 	// Bootstrap loop with root of query
 	remaining <- g.queryParams.PathPrefix
@@ -132,6 +137,8 @@ func (g *GitHub) getFiles() (<-chan *types.FileInfo, func()) {
 }
 
 func (g *GitHub) ensureCommitish() error {
+	logger := g.logger.With().Str("func", "ensureCommitish").Logger()
+
 	if strings.TrimSpace(g.queryParams.Commitish) != "" {
 		return nil
 	}
@@ -141,7 +148,9 @@ func (g *GitHub) ensureCommitish() error {
 		return err
 	}
 
+	logger.Info().Str("ref", c).Msg("using default branch ref for querying")
 	g.queryParams.Commitish = c
+
 	return nil
 }
 

@@ -5,9 +5,10 @@ package main
 import (
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	fetchTypes "github.com/agrski/greg/pkg/fetch/types"
 	"github.com/agrski/greg/pkg/types"
-	"github.com/stretchr/testify/require"
 )
 
 func Test_getFiletypes(t *testing.T) {

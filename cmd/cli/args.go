@@ -7,12 +7,13 @@ import (
 	"os"
 	"strings"
 
+	"github.com/mattn/go-isatty"
+	"golang.org/x/oauth2"
+
 	"github.com/agrski/greg/pkg/auth"
 	fetchTypes "github.com/agrski/greg/pkg/fetch/types"
 	"github.com/agrski/greg/pkg/match"
 	"github.com/agrski/greg/pkg/types"
-	"github.com/mattn/go-isatty"
-	"golang.org/x/oauth2"
 )
 
 type VerbosityLevel int
@@ -215,6 +216,7 @@ func getSearchPattern(pattern string) (string, error) {
 	if isEmpty(pattern) {
 		return "", errors.New("search term must be specified; wrap multiple words in quotes")
 	}
+
 	return pattern, nil
 }
 
@@ -224,11 +226,13 @@ func isEmpty(s string) bool {
 
 func isSupportedHost(host string) error {
 	hostname := fetchTypes.HostName(host)
+
 	for _, h := range supportedHosts {
 		if hostname == h {
 			return nil
 		}
 	}
+
 	return fmt.Errorf("unsupported git hosting provider %s", host)
 }
 

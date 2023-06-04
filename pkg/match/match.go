@@ -45,8 +45,10 @@ func New(
 }
 
 func (fm *filteringMatcher) Match(pattern string, next *types.FileInfo) (*Match, bool) {
-	if ok := FilterFiletype(fm.filetypes, next); !ok {
+	ok := FilterFiletype(fm.filetypes, next)
+	if !ok {
 		return nil, false
 	}
+
 	return fm.matcher.Match(pattern, next)
 }

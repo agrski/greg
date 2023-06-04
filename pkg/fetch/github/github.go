@@ -79,6 +79,7 @@ func (g *GitHub) Stop() error {
 	g.logger.Debug().Str("func", "Stop").Msg("stopping GitHub fetcher")
 
 	g.cancel()
+
 	return nil
 }
 

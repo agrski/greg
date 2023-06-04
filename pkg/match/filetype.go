@@ -24,5 +24,6 @@ func FilterFiletype(allowed []types.FileExtension, next *types.FileInfo) bool {
 func NormaliseExtension(ext types.FileExtension) types.FileExtension {
 	trimmed := strings.TrimSpace(string(ext))
 	withoutDot := strings.TrimPrefix(trimmed, ".")
+
 	return types.FileExtension(withoutDot)
 }

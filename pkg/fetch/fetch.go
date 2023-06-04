@@ -24,5 +24,6 @@ func New(
 		location,
 		tokenSource,
 	)
+
 	return githubFetcher
 }

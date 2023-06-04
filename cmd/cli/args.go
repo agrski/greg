@@ -216,6 +216,7 @@ func getSearchPattern(pattern string) (string, error) {
 	if isEmpty(pattern) {
 		return "", errors.New("search term must be specified; wrap multiple words in quotes")
 	}
+
 	return pattern, nil
 }
 
@@ -225,11 +226,13 @@ func isEmpty(s string) bool {
 
 func isSupportedHost(host string) error {
 	hostname := fetchTypes.HostName(host)
+
 	for _, h := range supportedHosts {
 		if hostname == h {
 			return nil
 		}
 	}
+
 	return fmt.Errorf("unsupported git hosting provider %s", host)
 }
 

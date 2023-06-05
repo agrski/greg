@@ -25,7 +25,7 @@ endif
 
 .PHONY:lint
 lint:
-	golangci-lint run --verbose --print-resources-usage
+	golangci-lint run --verbose
 
 .PHONY:build
 build: build-cli
